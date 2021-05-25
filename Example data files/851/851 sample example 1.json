@@ -1,0 +1,22 @@
+[
+  {
+    "file_delete_team": "Team1",
+    "file_delete_users_in_team": false,
+    "file_delete": true
+  },
+  {
+    "file_delete_team": "Team2",
+    "file_delete_users_in_team": true,
+    "file_delete": false
+  },
+  {
+    "file_delete_team": "TeamA",
+    "file_delete_users_in_team": true,
+    "file_delete": true
+  },
+  {
+    "file_delete_team": "TeamB",
+    "file_delete_users_in_team": true,
+    "file_delete": true
+  }
+]

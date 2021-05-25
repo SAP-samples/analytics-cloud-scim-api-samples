@@ -1,0 +1,10 @@
+[
+  {
+    "file_team": "Team1",
+    "file_active": false
+  },
+  {
+    "file_team": "Team2",
+    "file_active": true
+  }
+]

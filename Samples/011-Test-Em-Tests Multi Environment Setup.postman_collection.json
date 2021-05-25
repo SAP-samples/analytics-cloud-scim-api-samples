@@ -1,0 +1,470 @@
+{
+	"info": {
+		"_postman_id": "d9a7fc87-3f24-4a90-8b63-a65f3acfb5e2",
+		"name": "011-Test-Em-Tests Multi Environment Setup",
+		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/s/c/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/24/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.5\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET source accesstoken (Step 1 - obtain a valid token)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Getting an access token using the SACtokenFQND as part of the access token URL');\r",
+							"const SourceSAC_platform = pm.variables.get(\"Source-SACplatform\");\r",
+							"if (SourceSAC_platform==='NEO')\r",
+							"{\r",
+							"    pm.variables.set(\"Source-oauthpath\",\"/oauth2/api/v1/\");\r",
+							"}\r",
+							"else if (SourceSAC_platform==='CF') // we are on a Cloud Foundary Platform\r",
+							"{\r",
+							"   pm.variables.set(\"Source-oauthpath\",\"/oauth/\");\r",
+							"}\r",
+							"else\r",
+							"{\r",
+							"    console.warn(pm.info.requestName+' '+pm.info.eventName+': Invalid Source-SACplatform setting, assuming CF. Supported values: NEO, CF. Source-SACplatform: '+ SourceSAC_platform);\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth/\");\r",
+							"}\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Source-SACserviceFQDN : '+pm.variables.get(\"Source-SACserviceFQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Source-SACtokenFQDN   : '+pm.variables.get(\"Source-SACtokenFQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Source-SACplatform    : '+pm.variables.get(\"Source-SACplatform\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Source-Username       : '+pm.variables.get(\"Source-Username\"));\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET source accesstoken\", function()\r",
+							"    {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"if (pm.response.code === 200)\r",
+							"    {\r",
+							"        const jsonData = JSON.parse(responseBody);\r",
+							"        pm.environment.set(\"Source-accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
+							"        pm.environment.set(\"Source-x-csrf-token\", \"fetch\");               // we will need to request a new csrf-token as we have a new session\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid accesstoken was obtained. This means your Source-SACtokenFQDN, Source-SACplatform, Source-Username and Source-Password are all valid. You can now test the source SCIM endpoint. The accesstoken provided was '+jsonData.access_token+' and will be re-presented in the header of subsequent requests');\r",
+							"        postman.setNextRequest();                                  // let the next request run (if being run in the runner)\r",
+							"    }\r",
+							"else if (pm.response.code === 401)\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"    }\r",
+							"else\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Check your Source-SACtokenFQDN is set correctly. Response Body: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"    }\r",
+							"; // end if"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{Source-Password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{Source-Username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{Source-SACtokenFQDN}}{{Source-oauthpath}}token?grant_type=client_credentials",
+					"protocol": "https",
+					"host": [
+						"{{Source-SACtokenFQDN}}{{Source-oauthpath}}token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET target accesstoken (Step 2 - obtain a valid token)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Getting an access token using the SACtokenFQND as part of the access token URL');\r",
+							"const TargetSAC_platform = pm.variables.get(\"Target-SACplatform\");\r",
+							"if (TargetSAC_platform==='NEO')\r",
+							"{\r",
+							"    pm.variables.set(\"Target-oauthpath\",\"/oauth2/api/v1/\");\r",
+							"}\r",
+							"else if (TargetSAC_platform==='CF') // we are on a Cloud Foundary Platform\r",
+							"{\r",
+							"   pm.variables.set(\"Target-oauthpath\",\"/oauth/\");\r",
+							"}\r",
+							"else\r",
+							"{\r",
+							"    console.warn(pm.info.requestName+' '+pm.info.eventName+': Invalid Target-SACplatform setting, assuming CF. Supported values: NEO, CF. Target-SACplatform: '+ TargetSAC_platform);\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth/\");\r",
+							"}\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Target-SACserviceFQDN : '+pm.variables.get(\"Target-SACserviceFQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Target-SACtokenFQDN   : '+pm.variables.get(\"Target-SACtokenFQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Target-SACplatform    : '+pm.variables.get(\"Target-SACplatform\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Target-Username       : '+pm.variables.get(\"Target-Username\"));\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET target accesstoken\", function()\r",
+							"    {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"if (pm.response.code === 200)\r",
+							"    {\r",
+							"        const jsonData = JSON.parse(responseBody);\r",
+							"        pm.environment.set(\"Target-accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
+							"        pm.environment.set(\"Target-x-csrf-token\", \"fetch\");               // we will need to request a new csrf-token as we have a new session\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid accesstoken was obtained. This means your Target-SACtokenFQDN, Target-SACplatform, Target-Username and Target-Password are all valid. You can now test the target SCIM endpoint. The accesstoken provided was '+jsonData.access_token+' and will be re-presented in the header of subsequent requests');\r",
+							"        postman.setNextRequest();                                  // let the next request run (if being run in the runner)\r",
+							"    }\r",
+							"else if (pm.response.code === 401)\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"    }\r",
+							"else\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Check your Target-SACtokenFQDN is set correctly. Response Body: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"    }\r",
+							"; // end if"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{Target-Password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{Target-Username}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{Target-SACtokenFQDN}}{{Target-oauthpath}}token?grant_type=client_credentials",
+					"protocol": "https",
+					"host": [
+						"{{Target-SACtokenFQDN}}{{Target-oauthpath}}token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "READ source users (Step 3 - read SCIM endpoint)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading SCIM API endpoint to obtain total user count. This will validate the SACserviceFQDN is valid or not');\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Source-SACserviceFQDN : '+pm.variables.get(\"Source-SACserviceFQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Source-SACtokenFQDN   : '+pm.variables.get(\"Source-SACtokenFQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Source-SACplatform    : '+pm.variables.get(\"Source-SACplatform\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Source-Username       : '+pm.variables.get(\"Source-Username\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Source-accesstoken    : '+pm.variables.get(\"Source-accesstoken\")+' (obtained from the token URL endpoint and re-presented to this endpoint)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Now making a request to the SCIM endpoint...');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Multiple Environment Setup OK for Source\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"if ( (pm.response.code === 200) )\r",
+							"{\r",
+							"        // we are authorised and the csrf-tokem is also valid. We need to set the x-csrf-token so the call is quicker.\r",
+							"        // Performing a 'fetch' of the x-csrf-token makes the call longer and its unnecessary. Setting the x-csrf-token to a valid value\r",
+							"        // will speed things up by a small fraction (which can be a lot of time if making thousands of calls!)\r",
+							"        const csrftoken=pm.environment.get(\"Source-x-csrf-token\");\r",
+							"        if (csrftoken===\"fetch\")\r",
+							"        {\r",
+							"            pm.environment.set(\"Source-x-csrf-token\",postman.getResponseHeader(\"x-csrf-token\"));\r",
+							"        }\r",
+							"};\r",
+							"\r",
+							"if (pm.response.code === 401)\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401 status was returned. This means this session is not authorised, likely due to an invalid access token. Response Body: '+ responseBody);\r",
+							"    }\r",
+							"else if (pm.response.code === 200)\r",
+							"    {\r",
+							"        const readbody    = JSON.parse(responseBody);\r",
+							"        const total_users_in_this_SAC_service= readbody.totalResults;\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid response was obtained and means your Source-SACserviceFQDN is set correctly. This SAP Analytics Cloud Service has '+total_users_in_this_SAC_service+' users. The x-csrf-token is '+pm.environment.get(\"Source-x-csrf-token\")+' and this will be re-presented in the header of subsequent requests');\r",
+							"    }\r",
+							"else // response code is unexpected\r",
+							"   {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response Body:: '+ responseBody);\r",
+							"   }\r",
+							";\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Source-accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"type": "text",
+						"value": "{{Source-x-csrf-token}}"
+					},
+					{
+						"key": "x-sap-sac-custom-auth",
+						"type": "text",
+						"value": "true"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://{{Source-SACserviceFQDN}}/api/v1/scim/Users/?startIndex=1&count=1",
+					"protocol": "https",
+					"host": [
+						"{{Source-SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"scim",
+						"Users",
+						""
+					],
+					"query": [
+						{
+							"key": "startIndex",
+							"value": "1"
+						},
+						{
+							"key": "count",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "READ target users (Step 4 - read SCIM endpoint)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading SCIM API endpoint to obtain total user count. This will validate the SACserviceFQDN is valid or not');\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Target-SACserviceFQDN : '+pm.variables.get(\"Target-SACserviceFQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Target-SACtokenFQDN   : '+pm.variables.get(\"Target-SACtokenFQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Target-SACplatform    : '+pm.variables.get(\"Target-SACplatform\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Target-Username       : '+pm.variables.get(\"Target-Username\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Target-accesstoken    : '+pm.variables.get(\"Target-accesstoken\")+' (obtained from the token URL endpoint and re-presented to this endpoint)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Now making a request to the SCIM endpoint...');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Multiple Environment Setup OK for Target\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"if ( (pm.response.code === 200) )\r",
+							"{\r",
+							"        // we are authorised and the csrf-tokem is also valid. We need to set the x-csrf-token so the call is quicker.\r",
+							"        // Performing a 'fetch' of the x-csrf-token makes the call longer and its unnecessary. Setting the x-csrf-token to a valid value\r",
+							"        // will speed things up by a small fraction (which can be a lot of time if making thousands of calls!)\r",
+							"        const csrftoken=pm.environment.get(\"Target-x-csrf-token\");\r",
+							"        if (csrftoken===\"fetch\")\r",
+							"        {\r",
+							"            pm.environment.set(\"Target-x-csrf-token\",postman.getResponseHeader(\"x-csrf-token\"));\r",
+							"        }\r",
+							"};\r",
+							"\r",
+							"if (pm.response.code === 401)\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401 status was returned. This means this session is not authorised, likely due to an invalid access token. Response Body: '+ responseBody);\r",
+							"    }\r",
+							"else if (pm.response.code === 200)\r",
+							"    {\r",
+							"        const readbody    = JSON.parse(responseBody);\r",
+							"        const total_users_in_this_SAC_service= readbody.totalResults;\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid response was obtained and means your Target-SACserviceFQDN is set correctly. This SAP Analytics Cloud Service has '+total_users_in_this_SAC_service+' users. The x-csrf-token is '+pm.environment.get(\"Target-x-csrf-token\")+' and this will be re-presented in the header of subsequent requests');\r",
+							"    }\r",
+							"else // response code is unexpected\r",
+							"   {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response Body:: '+ responseBody);\r",
+							"   }\r",
+							";\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Target-accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"type": "text",
+						"value": "{{Target-x-csrf-token}}"
+					},
+					{
+						"key": "x-sap-sac-custom-auth",
+						"type": "text",
+						"value": "true"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://{{Target-SACserviceFQDN}}/api/v1/scim/Users/?startIndex=1&count=1",
+					"protocol": "https",
+					"host": [
+						"{{Target-SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"scim",
+						"Users",
+						""
+					],
+					"query": [
+						{
+							"key": "startIndex",
+							"value": "1"
+						},
+						{
+							"key": "count",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

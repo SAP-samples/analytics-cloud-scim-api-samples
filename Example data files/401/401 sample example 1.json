@@ -1,0 +1,30 @@
+[
+  {
+    "file_userid": "MATTHEW1",
+    "file_isconcurrent": true
+  },
+  {
+    "file_userid": "MATTHEW2",
+    "file_isconcurrent": true
+  },
+  {
+    "file_userid": "MATTHEW2",
+    "file_isconcurrent": false
+  },
+  {
+    "file_userid": "MATTHEW2",
+    "file_isconcurrent": true
+  },
+  {
+    "file_userid": "MATTHEW3",
+    "file_isconcurrent": true
+  },
+  {
+    "file_userid": "MATTHEW4",
+    "file_isconcurrent": true
+  },
+  {
+    "file_userid": "MATTHEW5",
+    "file_isconcurrent": true
+  }
+]

@@ -1,0 +1,8 @@
+file_userid,file_active,file_isconcurrent
+MATTHEW1,false,false
+MATTHEW1,true,false
+MATTHEW1,false,true
+MATTHEW1,true,true
+MATTHEW1,false,false
+MATTHEW2,true,true
+MATTHEW2,true,false

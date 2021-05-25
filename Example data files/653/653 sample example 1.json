@@ -1,0 +1,44 @@
+[
+  {
+    "file_source_team": "Team1",
+	"file_target_team": "TeamA",
+	"file_users_action": "add",
+	"file_roles_action": "add"
+  },
+  {
+    "file_source_team": "Team1",
+	"file_target_team": "TeamB",
+	"file_users_action": "add",
+	"file_roles_action": "add"
+  },
+  {
+    "file_source_team": "TeamA",
+	"file_target_team": "TeamB",
+	"file_users_action": "remove",
+	"file_roles_action": "remove"
+  },
+  {
+    "file_source_team": "TeamA",
+	"file_target_team": "TeamB",
+	"file_users_action": "replace",
+	"file_roles_action": "replace"
+  },
+  {
+    "file_source_team": "TeamA",
+	"file_target_team": "TeamB",
+	"file_users_action": "intersect",
+	"file_roles_action": "intersect"
+  },
+  {
+    "file_source_team": "TeamA",
+	"file_target_team": "TeamB",
+	"file_users_action": "exclude",
+	"file_roles_action": "exclude"
+  },
+  {
+    "file_source_team": "TeamA",
+	"file_target_team": "TeamB",
+	"file_users_action": "add",
+	"file_roles_action": "keep"
+  }
+]

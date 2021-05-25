@@ -1,0 +1,37 @@
+[
+  {
+    "file_userid": "MATTHEW1",
+    "file_active": false,
+    "file_isconcurrent": false
+  },
+  {
+    "file_userid": "MATTHEW1",
+    "file_active": true,
+    "file_isconcurrent": false
+  },
+  {
+    "file_userid": "MATTHEW1",
+    "file_active": false,
+    "file_isconcurrent": true
+  },
+  {
+    "file_userid": "MATTHEW1",
+    "file_active": true,
+    "file_isconcurrent": true
+  },
+  {
+    "file_userid": "MATTHEW1",
+    "file_active": false,
+    "file_isconcurrent": false
+  },
+  {
+    "file_userid": "MATTHEW2",
+    "file_active": true,
+    "file_isconcurrent": true
+  },
+  {
+    "file_userid": "MATTHEW2",
+    "file_active": true,
+    "file_isconcurrent": false
+  }
+]

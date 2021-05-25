@@ -1,0 +1,30 @@
+[
+  {
+	"file_team": "Team1",
+	"file_users_action": "replace",
+	"file_roles_action": "replace",
+	"file_JSON_users": [{"value":"MATTHEW1"}],
+	"file_JSON_roles": [{"value":"PROFILE:sap.epm:BI_Admin"}]
+  },
+  {
+	"file_team": "Team2",
+	"file_users_action": "add",
+	"file_roles_action": "keep",
+	"file_JSON_users": [{"value":"MATTHEW1"},{"value":"MATTHEW2"}],
+	"file_JSON_roles": []
+  },
+  {
+	"file_team": "Team3",
+	"file_users_action": "add",
+	"file_roles_action": "add",
+	"file_JSON_users": [{"value":"MATTHEW2"},{"value":"MATTHEW3"}],
+	"file_JSON_roles": [{"value":"Role1"},{"value":"Role2"}]
+  },
+  {
+	"file_team": "Team3",
+	"file_users_action": "add",
+	"file_roles_action": "remove",
+	"file_JSON_users": [{"value":"MATTHEW4"}],
+	"file_JSON_roles": [{"value":"Role2"}]
+  }
+ ]

@@ -1,0 +1,38 @@
+[
+  {
+    "file_userid": "MATTHEW1",
+    "file_isconcurrent": true,
+	"file_preferredlanguage": "en-GB",
+    "file_dataaccesslanguage": "en",
+    "file_dateformatting": "MMM d, yyyy",
+    "file_timeformatting": "h:mm:ss A",
+    "file_numberformatting": "1 234,56"
+  },
+  {
+    "file_userid": "MATTHEW1",
+    "file_isconcurrent": true,
+	"file_preferredlanguage": "de",
+    "file_dataaccesslanguage": "de",
+    "file_dateformatting": "dd/MM/yyyy",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1.234,56"
+  },
+  {
+    "file_userid": "MATTHEW1",
+    "file_isconcurrent": false,
+	"file_preferredlanguage": "en-GB",
+    "file_dataaccesslanguage": "en",
+    "file_dateformatting": "MM.dd.yyyy",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1,234.56"
+  },
+  {
+    "file_userid": "MATTHEW2",
+    "file_isconcurrent": false,
+	"file_preferredlanguage": "en",
+    "file_dataaccesslanguage": "zz",
+    "file_dateformatting": "dd/MM/yyyy",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1,234.56"
+  }
+]

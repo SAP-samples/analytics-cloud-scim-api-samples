@@ -1,0 +1,8 @@
+file_source_team,file_target_team,file_users_action,file_roles_action
+Team1,TeamA,add,add
+Team1,TeamB,add,add
+TeamA,TeamB,remove,remove
+TeamA,TeamB,replace,replace
+TeamA,TeamB,intersect,intersect
+TeamA,TeamB,exclude,exclude
+TeamA,TeamB,add,keep

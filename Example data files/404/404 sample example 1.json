@@ -1,0 +1,26 @@
+[
+  {
+    "file_userid": "MATTHEW1",
+    "file_managerid": ""
+  },
+  {
+    "file_userid": "MATTHEW1",
+    "file_managerid": ""
+  },
+  {
+    "file_userid": "MATTHEW2",
+    "file_managerid": "MATTHEW1"
+  },
+  {
+    "file_userid": "MATTHEW2",
+    "file_managerid": ""
+  },
+  {
+    "file_userid": "MATTHEW1",
+    "file_managerid": "MATTHEW2"
+  },
+  {
+    "file_userid": "MATTHEW2",
+    "file_managerid": "MATTHEW1"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "file_primary_team": "TeamName",
+	"file_transport_primary_team_displayname": false,
+	"file_transport_primary_team_roles_action": "keep",
+	"file_transport_primary_team_user_membership": false,
+	"file_transport_users_of_primary_team": true,
+	"file_users_roles_action": "keep",
+	"file_users_teams_action": "keep"
+  },
+  {
+    "file_primary_team": "TeamName",
+	"file_transport_primary_team_displayname": true,
+	"file_transport_primary_team_roles_action": "keep",
+	"file_transport_primary_team_user_membership": false,
+	"file_transport_users_of_primary_team": true,
+	"file_users_roles_action": "keep",
+	"file_users_teams_action": "replace"
+  },
+  {
+    "file_primary_team": "TeamName",
+	"file_transport_primary_team_displayname": true,
+	"file_transport_primary_team_roles_action": "keep",
+	"file_transport_primary_team_user_membership": false,
+	"file_transport_users_of_primary_team": false,
+	"file_users_roles_action": "keep",
+	"file_users_teams_action": "keep"
+  },
+  {
+    "file_primary_team": "TeamName",
+	"file_transport_primary_team_displayname": true,
+	"file_transport_primary_team_roles_action": "replace",
+	"file_transport_primary_team_user_membership": true,
+	"file_transport_users_of_primary_team": false,
+	"file_users_roles_action": "keep",
+	"file_users_teams_action": "keep"
+  }
+]

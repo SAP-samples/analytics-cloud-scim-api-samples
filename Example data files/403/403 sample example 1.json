@@ -1,0 +1,22 @@
+[
+  {
+    "file_userid": "MATTHEW1",
+	"file_JSON_teams": [{"value":"Team1"},{"value":"Team2"}],
+	"file_teams_action": "replace"
+  },
+  {
+    "file_userid": "MATTHEW1",
+	"file_JSON_teams": [{"value":"Team2"},{"value":"Team3"}],
+	"file_teams_action": "add"
+  },
+  {
+    "file_userid": "MATTHEW1",
+	"file_JSON_teams": [{"value":"Team3"},{"value":"Team4"}],
+	"file_teams_action": "keep"
+  },
+  {
+    "file_userid": "MATTHEW2",
+	"file_JSON_teams": [{"value":"Team1"},{"value":"Team2"}],
+	"file_teams_action": "add"
+  }
+]

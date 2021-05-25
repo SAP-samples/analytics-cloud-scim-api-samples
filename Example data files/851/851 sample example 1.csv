@@ -1,0 +1,5 @@
+file_delete_team,file_delete_users_in_team,file_delete
+Team1,false,true
+Team2,true,false
+TeamA,true,true
+TeamB,true,true

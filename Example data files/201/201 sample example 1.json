@@ -1,0 +1,29 @@
+[
+  {
+    "file_userid": "MATTHEW1",
+    "file_isconcurrent": false,
+    "file_givenname": "Matthew",
+    "file_familyname": "Shaw",
+    "file_displayname": "Matthew Shaw 1",
+    "file_email": "matthew999999@sap.com",
+    "file_managerid": ""
+   },
+  {
+    "file_userid": "MATTHEW1",
+    "file_isconcurrent": false,
+    "file_givenname": "Matthew",
+    "file_familyname": "Shaw",
+    "file_displayname": "Matthew Shaw 1",
+    "file_email": "matthew+100001@sap.com",
+    "file_managerid": ""
+  },
+  {
+    "file_userid": "MATTHEW2",
+    "file_isconcurrent": true,
+    "file_givenname": "Matthew",
+    "file_familyname": "Shaw",
+    "file_displayname": "Matthew Shaw 2",
+    "file_email": "matthew+100002@sap.com",
+    "file_managerid": "MATTHEW1"
+  }
+]
