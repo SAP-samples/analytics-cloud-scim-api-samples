@@ -19,7 +19,7 @@ All known issues are described in the User Guide.
 ## How to obtain support
 [Create an issue](https://github.com/SAP-samples/analytics-cloud-scim-api-samples/issues) in this repository if you find a bug or have questions about the content.
 
-For an overview of these samples, associated best practices and to ask related questions please refer to this [blog](https://blogs.sap.com/2021/05/24/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts).
+For an overview of these samples, associated best practices and to ask related questions please refer to this [blog](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts).
 
 For additional support, [ask a question in SAP Community](https://answers.sap.com/questions/ask.html).
 
