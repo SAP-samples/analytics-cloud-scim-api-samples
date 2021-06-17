@@ -1,5 +1,7 @@
 # SAP Analytics Cloud User and Team Provisioning SCIM API Sample Scripts
 
+<!--[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/analytics-cloud-scim-api-samples)](https://api.reuse.software/info/github.com/SAP-samples/analytics-cloud-scim-api-samples)-->
+
 ## Description
 This is a collection of sample scripts, developed as collections in Postman. This provides a means for customers to use the SAP Analytics Cloud SCIM API out of the box. There are around 45 sample collections totalling over 59,000 lines of code. The samples create and update users, perform team management functions (like adding users to a team), and even transport users and teams from one SAP Analytics Cloud Service to another. The source and target services can be on SAP NEO or Cloud Foundry and any combination is supported.
 
