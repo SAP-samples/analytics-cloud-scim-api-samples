@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a22cdc05-4050-41e0-9610-24ee4cfa6964",
+		"_postman_id": "439f28fe-2f26-4b82-be26-222dd3c083b7",
 		"name": "802-T-D-Dt-Fcj-Es-Delete teams (empty first)",
 		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/s/c/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.5\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -48,7 +48,7 @@
 							"    } // end if response is 401\r",
 							"else if (pm.response.code === 404)\r",
 							"    {\r",
-							"        // Team not found, we need to create it.\r",
+							"        // Team not found\r",
 							"        pm.variables.set(\"NeedGetToBeAuthorised\",false); // we have now authorised this session, albeit with a 404 not found!\r",
 							"        const delete_team_in_current_file_row=pm.iterationData.get(\"file_delete_team\");\r",
 							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Team '+ delete_team_in_current_file_row+' already deleted!');\r",
@@ -666,6 +666,12 @@
 						"name": "Content-Type",
 						"type": "text",
 						"value": "application/json"
+					},
+					{
+						"key": "x-ignore-roles-if-missing",
+						"value": "true",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
