@@ -1,0 +1,32 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_Without_A_Team",
+	"file_team_displayname": "All users that are not a member of any team, except for these AdminToolKit teams! Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_JSON_users_to_exclude": [{"value":"SAP_SUPPORTXXXXXXXXX"}],
+	"file_action_users_match_all_users": false,
+	"file_action_users_with_bi_concurrent_license": false,
+	"file_action_users_with_bi_named_user_license": false,
+	"file_action_users_with_manager": false,
+	"file_action_users_without_manager": false,
+	"file_action_users_that_are_managers": false,
+	"file_action_users_active": false,
+	"file_action_users_not_active": false,
+	"file_action_users_with_username_ending_underscore_1": false,
+	"file_action_users_with_email_domain_matching": false,
+	"file_action_users_with_email_domain_not_matching": false,
+	"file_email_domain": "sap.com",
+	"file_action_users_with_a_role_or_a_team": false,
+	"file_action_users_with_no_teams": true,
+	"file_JSON_teams_to_exclude": [{"value":"AdminToolKit_Users_Without_A_Team"}],
+	"file_JSON_teamnames_starts_with_to_exclude": [{"value":"AdminToolKit_"}],
+	"file_action_users_with_no_roles": false,
+	"file_JSON_roles_to_exclude": [],
+	"file_actions_users_with_preferred_language_different_from": false,
+	"file_preferredlanguage": "en",
+    "file_dataaccesslanguage": "en",
+    "file_dateformatting": "MMM d, yyyy",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1,234.56"
+  }
+ ]
