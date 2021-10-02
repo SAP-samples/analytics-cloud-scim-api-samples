@@ -12,7 +12,7 @@
 	"file_action_users_that_are_managers": false,
 	"file_action_users_active": false,
 	"file_action_users_not_active": false,
-	"file_action_users_with_username_ending_underscore_1": false,
+	"file_action_users_with_userid_ending_underscore_1": false,
 	"file_action_users_with_email_domain_matching": false,
 	"file_action_users_with_email_domain_not_matching": true,
 	"file_email_domain": "sap.com",
