@@ -1,0 +1,7 @@
+[
+  {
+    "file_team": "R01_BIAdmin_Team_for_new_users_found",
+    "file_JSON_roles": [{"value":"PROFILE:sap.epm:BI_Admin"}],
+	"file_roles_action": "remove"
+  }
+]

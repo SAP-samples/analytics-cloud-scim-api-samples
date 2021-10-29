@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "R01_BIAdmin_Team",
+	"file_users_action": "keep",
+	"file_roles_action": "add",
+	"file_JSON_users": [],
+	"file_JSON_roles": [{"value":"PROFILE:sap.epm:BI_Admin"}]
+  }
+ ]

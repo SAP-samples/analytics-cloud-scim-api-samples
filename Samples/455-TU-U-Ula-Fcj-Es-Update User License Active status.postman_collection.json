@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "3be154e9-6520-48db-9d5b-518c9fe3d0cd",
+		"_postman_id": "c72bf498-2138-4b8f-98a6-f5af4bf80c33",
 		"name": "455-TU-U-Ula-Fcj-Es-Update User License Active status",
-		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/s/c/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.5\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
+		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/s/c/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.6\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -417,7 +417,7 @@
 							"// we need to read the current properties of the user,\r",
 							"// change the properties we want to and *then* we can PUT back all the user properties correctly having only changed the properties we need to change\r",
 							"const readbody            =pm.variables.get(\"readbody\"); // reading the response body of the previous call that read the user\r",
-							"const username            =readbody.userName; // changes to the username isn't allowed\r",
+							"const username            =readbody.userName; // changes to the username isn't allowed unless using custom SAML SSO mapping on email or custom mapping\r",
 							"\r",
 							"const preferredlanguage   =readbody.preferredLanguage;  // possible values: 'ar', 'bg', 'zh-CN', 'zh-TW', 'hr', 'ca', 'cs', 'cy', 'nl', 'da', 'en', 'en-GB', 'fi', 'fr', 'fr-CA', 'de', 'de-CH', 'el', 'he', 'hi', 'hu', 'id', 'it', 'ja', 'ko', 'ms', 'no', 'pl', 'pt', 'pt-PT', 'ro', 'ru', 'sh', 'sk', 'sl', 'es', 'es-MX', 'sv', 'th', 'tr', 'uk', 'vi', 'en-US-sappsd' and possibly more will be added over time!\r",
 							"const meta                =readbody.meta;    // changes to the meta isn't allowed\r",

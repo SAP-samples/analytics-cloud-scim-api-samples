@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "439f28fe-2f26-4b82-be26-222dd3c083b7",
 		"name": "802-T-D-Dt-Fcj-Es-Delete teams (empty first)",
-		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/s/c/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.5\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
+		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/s/c/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.6\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -237,7 +237,7 @@
 							"else\r",
 							"{\r",
 							"    const array_of_teams  = pm.variables.get(\"array_of_teams\");\r",
-							"    const this_team_index = array_of_teams.findIndex(element => element.teamname == currentteam);\r",
+							"    const this_team_index = array_of_teams.findIndex(element => element.teamname === currentteam);\r",
 							"    const this_team       = array_of_teams[this_team_index];\r",
 							"    const displayname     = this_team.displayname;\r",
 							"    const meta            = this_team.meta;\r",
@@ -320,7 +320,7 @@
 							"        let removing_user=users_waiting_to_be_removed_in_this_batch.shift();\r",
 							"        users_removed_in_this_chunk.push(removing_user);\r",
 							"        \r",
-							"        let removing_user_index = users_in_this_team_update.findIndex(element => element.value == removing_user.value);\r",
+							"        let removing_user_index = users_in_this_team_update.findIndex(element => element.value === removing_user.value);\r",
 							"        users_in_this_team_update.splice(removing_user_index,1);\r",
 							"        number_of_users_removed++;\r",
 							"    };\r",
@@ -334,7 +334,7 @@
 							"        let removing_role=roles_waiting_to_be_removed_in_this_batch.shift();\r",
 							"        roles_removed_in_this_chunk.push(removing_role);\r",
 							"        \r",
-							"        let removing_role_index = roles_in_this_team_update.findIndex(element => element == removing_role);\r",
+							"        let removing_role_index = roles_in_this_team_update.findIndex(element => element === removing_role);\r",
 							"        roles_in_this_team_update.splice(removing_role_index,1);\r",
 							"        number_of_roles_removed++;\r",
 							"    };\r",
@@ -411,7 +411,7 @@
 							"                                                            // and that repeated call could had taken a fraction of the normal processing time because it had already partly processed it beforehand.\r",
 							"        pm.variables.set(\"ContinuousErrors\",0);\r",
 							"        \r",
-							"        if (expected_user_count == actual_user_count)\r",
+							"        if (expected_user_count === actual_user_count)\r",
 							"        {\r",
 							"            console.log(pm.info.requestName+' '+pm.info.eventName+': '+ actual_user_count+' users in team as expected');\r",
 							"        }\r",
@@ -515,7 +515,7 @@
 							"                // it means that a chunk update may not have been 'full' of users, this in turn means the last update could had been very quick and we need to\r",
 							"                // only adjust the chunk size when the last update was 'full'.\r",
 							"\r",
-							"                if ( (number_of_user_changes_in_the_last_update == this_team.users_chunk_size) && (previouserrors ===0 ) )\r",
+							"                if ( (number_of_user_changes_in_the_last_update === this_team.users_chunk_size) && (previouserrors ===0 ) )\r",
 							"                {\r",
 							"                    let newchuncksize = this_team.users_chunk_size;\r",
 							"                    if (pm.response.responseTime>270000)\r",
@@ -553,7 +553,7 @@
 							"            {\r",
 							"                // our last update was for adding or removing roles, so we need to change the chunk size accordingly \r",
 							"                // however we may only remove roles before adding them, so we need to check the chunk was 'full'\r",
-							"                if ( (number_of_roles_changes_in_the_last_update == this_team.roles_chunk_size) && (previouserrors === 0) )\r",
+							"                if ( (number_of_roles_changes_in_the_last_update === this_team.roles_chunk_size) && (previouserrors === 0) )\r",
 							"                {\r",
 							"                    let newchuncksize = this_team.roles_chunk_size;\r",
 							"                    if ( (pm.response.responseTime>270000)  && ( newchuncksize>1) )\r",
@@ -666,12 +666,6 @@
 						"name": "Content-Type",
 						"type": "text",
 						"value": "application/json"
-					},
-					{
-						"key": "x-ignore-roles-if-missing",
-						"value": "true",
-						"type": "text",
-						"disabled": true
 					}
 				],
 				"body": {

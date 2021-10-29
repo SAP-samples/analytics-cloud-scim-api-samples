@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "0b0b836c-6fc3-49cc-aeb3-58b6e9f71c0a",
+		"_postman_id": "e27ff4f4-36c5-4a52-a1a5-9ba670606dfd",
 		"name": "406-U-U-Ulpddtn-Fj-Es-Update User DateTimeNumFormat DataAccessLang",
-		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/s/c/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.5\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
+		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/s/c/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.6\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -214,7 +214,7 @@
 							"// we need to read the current properties of the user,\r",
 							"// change the properties we want to and *then* we can PUT back all the user properties correctly having only changed the properties we need to change\r",
 							"const readbody            =pm.variables.get(\"readbody\"); // reading the response body of the previous call that read the user\r",
-							"const username            =readbody.userName; // changes to the username isn't allowed\r",
+							"const username            =readbody.userName; // changes to the username isn't allowed unless using custom SAML SSO mapping on email or custom mapping\r",
 							"\r",
 							"const preferredlanguage   =pm.iterationData.get(\"file_preferredlanguage\");  // possible values: 'ar', 'bg', 'zh-CN', 'zh-TW', 'hr', 'ca', 'cs', 'cy', 'nl', 'da', 'en', 'en-GB', 'fi', 'fr', 'fr-CA', 'de', 'de-CH', 'el', 'he', 'hi', 'hu', 'id', 'it', 'ja', 'ko', 'ms', 'no', 'pl', 'pt', 'pt-PT', 'ro', 'ru', 'sh', 'sk', 'sl', 'es', 'es-MX', 'sv', 'th', 'tr', 'uk', 'vi', 'en-US-sappsd' and possibly more will be added over time!\r",
 							"//    this script is updating the preferredLanguage property so we are setting it here to be the value from the file in the column file_preferredlanguage\r",
@@ -311,12 +311,12 @@
 							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
 							"        // so we don't end up in an endless loop.\r",
 							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
 							"        errors++;\r",
 							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
 							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
 							"        postman.setNextRequest(\"GET accesstoken\");        \r",
-							"        // as this is non-GET call, we shall set NeedGetToBeAuthorised to true and set the 'recovery' to the GET call, so the new session is authorised, once we've obtained a new accesstoken\r",
-							"        pm.variables.set(\"NeedGetToBeAuthorised\",true);\r",
+							"        // as this is non-GET call, we shall set the 'recovery' to the GET call, so the new session is authorised, once we've obtained a new accesstoken\r",
 							"        pm.variables.set(\"recovery\",\"READ user\");\r",
 							"    } // end if response is 401\r",
 							"else if (pm.response.code === 403)\r",
@@ -327,6 +327,7 @@
 							"        // We shall need to get a new access token, new csrf-token and request a GET to finialise the authorisation required on this non-GET calll\r",
 							"        // The 'recovery' variable is set to a GET call, when that GET call is issued, the session be fully authorised.\r",
 							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
 							"        errors++;\r",
 							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
 							"        pm.variables.set(\"recovery\",\"READ user\");\r",

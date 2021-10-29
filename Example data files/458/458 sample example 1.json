@@ -1,0 +1,22 @@
+[
+  {
+    "file_team": "Team1",
+    "file_JSON_roles": [{"value":"PROFILE:sap.epm:BI_Admin"},{"value":"Role2"}],
+	"file_roles_action": "replace"
+  },
+  {
+    "file_team": "Team2",
+    "file_JSON_roles": [{"value":"Role2"},{"value":"Role3"}],
+	"file_roles_action": "add"
+  },
+  {
+    "file_team": "Team3",
+    "file_JSON_roles": [],
+	"file_roles_action": "keep"
+  },
+  {
+    "file_team": "Team4",
+    "file_JSON_roles": [{"value":"Role3"},{"value":"Role4"}],
+	"file_roles_action": "add"
+  }
+]

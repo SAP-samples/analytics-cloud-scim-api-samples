@@ -1,0 +1,11 @@
+[
+  {
+    "file_team": "AdminToolKit_S01_Users_Created_Recently_With_Default_Settings",
+    "file_isconcurrent": true,
+	"file_preferredlanguage": "en-GB",
+    "file_dataaccesslanguage": "zz",
+    "file_dateformatting": "dd/MM/yyyy",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1,234.56"
+  }
+]

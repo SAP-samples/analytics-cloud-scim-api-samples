@@ -1,0 +1,8 @@
+[
+  {
+    "file_source_team": "R01_BIAdmin_Team_for_new_users_found",
+	"file_target_team": "R01_BIAdmin_Team",
+	"file_users_action": "add",
+	"file_roles_action": "keep"
+  }
+]

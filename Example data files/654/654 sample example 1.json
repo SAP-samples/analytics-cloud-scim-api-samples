@@ -1,0 +1,8 @@
+[
+  {
+    "file_source_team": "ManualTeam",
+	"file_target_team": "NewTeam",
+	"file_user_action": "keep",
+	"file_role_action": "keep"
+  }
+]
