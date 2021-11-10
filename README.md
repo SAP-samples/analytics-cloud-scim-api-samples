@@ -13,7 +13,7 @@ This is a collection of sample scripts, developed as collections in Postman. Thi
 3. Postman API Client application (available for free download and use on the [Postman API Client](https://www.postman.com/product/api-client/) website.
 
 ## Download and Installation
-Full step-by-step instructions are provided in the [User Guide](https://d.dam.sap.com/s/c/a/kv3cXuB) (PDF).
+Full step-by-step instructions are provided in the [User Guide](https://d.dam.sap.com/a/kv3cXuB) (PDF).
 
 ## Known Issues
 All known issues are described in the User Guide.
