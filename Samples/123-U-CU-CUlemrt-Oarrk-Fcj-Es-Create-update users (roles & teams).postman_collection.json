@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "49d6307d-cb27-4716-81cf-bf50087dc98f",
 		"name": "123-U-CU-CUlemrt-Oarrk-Fcj-Es-Create/update users (roles & teams)",
-		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.6\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
+		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.6.3\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -778,9 +778,6 @@
 							"                // requests, so that a team can be updated with potentially just 1 PUT rather than a PUT for each and every user update. Remember we can't (yet) update a user\r",
 							"                // to be a member of a team on a user basis, though this is planned in the roadmap.\r",
 							"\r",
-							"                let array_of_teams = pm.variables.get(\"array_of_teams\");\r",
-							"                if (!array_of_teams) { array_of_teams=[] };\r",
-							"\r",
 							"\r",
 							"                const file_teams_array =pm.iterationData.get(\"file_JSON_teams\");\r",
 							"                const username         = readbody.userName;\r",
@@ -1121,6 +1118,8 @@
 							"    {\r",
 							"        // the row in the file we are processing *is* the last row and so we must now update the teams.\r",
 							"        // lets first find a team that needs to be read and that also needs to be updated at all\r",
+							"        console.log(\"update_teams_now=\",update_teams_now);\r",
+							"\r",
 							"        const first_team_to_read_index = array_of_teams.findIndex(element => \r",
 							"                                (  element.need_to_read === true  )    \r",
 							"                                && (  ( element.arrayofusers_waiting_to_be_added_in_this_batch.length\r",
