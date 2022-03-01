@@ -1,0 +1,242 @@
+{
+	"info": {
+		"_postman_id": "4f5f12c6-8c20-4d51-aed7-44b20696a068",
+		"name": "Embedded 701-Test Tenant Environment Setup",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.6.5\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET tenantaccesstoken (Step 1 - obtain a valid token)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Getting tenant access token');\r",
+							"const SAC_platform = pm.variables.get(\"SACplatform\");\r",
+							"if (SAC_platform==='NEO')\r",
+							"{\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth2/api/v1/\");\r",
+							"}\r",
+							"else if (SAC_platform==='CF') // we are on a Cloud Foundary Platform\r",
+							"{\r",
+							"   pm.variables.set(\"oauthpath\",\"/oauth/\");\r",
+							"}\r",
+							"else\r",
+							"{\r",
+							"    console.warn(pm.info.requestName+' '+pm.info.eventName+': Invalid SACplatform setting, assuming CF. Supported values: NEO, CF. SACplatform: '+ SAC_platform);\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth/\");\r",
+							"}\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Embedded_endpoints_sac_embedded_edition_service_config_FQDN : '+pm.variables.get(\"Embedded_endpoints_sac_embedded_edition_service_config_FQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Embedded_uua_url_FQDN                                       : '+pm.variables.get(\"Embedded_uua_url_FQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACplatform                                                 : '+pm.variables.get(\"SACplatform\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Embedded_uua_clientid                                       : '+pm.variables.get(\"Embedded_uua_clientid\"));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET accesstoken\", function()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.equal(200)\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 200:\r",
+							"    {\r",
+							"        const jsonData = JSON.parse(responseBody);\r",
+							"        pm.environment.set(\"tenantaccesstoken\", jsonData.access_token);  // setting the tenantaccesstoken so its re-used for all subsequent requests\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid accesstoken was obtained. This means your Embedded_uua_url_FQDN, SACplatform, Embedded_uua_clientid and Embedded_uua_clientsecret are all valid. You can now test the Tenant endpoint. The accesstoken provided was '+jsonData.access_token+' and will be re-presented in the header of subsequent requests');\r",
+							"        break;\r",
+							"    }\r",
+							"    case 401:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid Embedded_uua_clientid or Embedded_uua_clientsecret: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"        break;\r",
+							"    }\r",
+							"    default:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Check your Embedded_uua_url_FQDN is set correctly. Response Body: '+ responseBody);\r",
+							"    }\r",
+							"}; // end swtich\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{Embedded_uua_clientsecret}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{Embedded_uua_clientid}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{Embedded_uua_url_FQDN}}{{oauthpath}}token?grant_type=client_credentials",
+					"protocol": "https",
+					"host": [
+						"{{Embedded_uua_url_FQDN}}{{oauthpath}}token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "READ System Configuration (Step 2 - read Tenant endpoint)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading System Configuration');\r",
+							"pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Tenant API endpoint. This will validate if the Embedded_endpoints_sac_embedded_edition_service_config_FQDN is valid or not');\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Embedded_endpoints_sac_embedded_edition_service_config_FQDN : '+pm.variables.get(\"Embedded_endpoints_sac_embedded_edition_service_config_FQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Embedded_uua_url_FQDN                                       : '+pm.variables.get(\"Embedded_uua_url_FQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACplatform                                                 : '+pm.variables.get(\"SACplatform\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Embedded_uua_clientid                                       : '+pm.variables.get(\"Embedded_uua_clientid\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': tenantaccesstoken                                           : '+pm.variables.get(\"tenantaccesstoken\")+' (obtained from the token URL endpoint and re-presented to this endpoint)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Now making a request to the Tenant endpoint...');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"READ System Configuration\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403])\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken  must be invalid. We shall get a new one\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401/403 status was returned. This means this session is not authorised, likely due to an invalid access token. Response Body: '+ responseBody);\r",
+							"       break;\r",
+							"    } // end if response is 401 or 403\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"    const readbody    = JSON.parse(responseBody);\r",
+							"    console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid response was obtained and means your Embedded_endpoints_sac_embedded_edition_service_config_FQDN is set correctly. This SAP Analytics Cloud Service has '+readbody.oauthClients.length+' OAuth Clients, '+readbody.liveConnections.length+' Live Connections, '+readbody.trustedOrigins.length+' Trusted Origins. Use Sample Script 711 to view the complete configuration');\r",
+							"    console.info(pm.info.requestName+' '+pm.info.eventName+': If you have previously configurated this SAP Analytics Cloud Service, use Sample Scripts 706, 707 or 708 to automatically configure the remaining variables correctly in this Postman Envrionment');\r",
+							"    console.info(pm.info.requestName+' '+pm.info.eventName+': If you have not yet configurated this SAP Analytics Cloud Service and you wish to use the SCIM API then use Sample Script 721 to easily add a new OAuthClient, set the Content Namespace to be the one defined in this Postman Environment and also to update the remaining variables correctly in this Postman Environment');\r",
+							"\r",
+							"        postman.setNextRequest(null);\r",
+							"        break;\r",
+							"    }\r",
+							"\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"    \r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"        postman.setNextRequest(pm.info.requestName);\r",
+							"        break;\r",
+							"    }\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tenantaccesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}/api/v1/tenant/{{Embedded_tenant_uuid}}",
+					"protocol": "https",
+					"host": [
+						"{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tenant",
+						"{{Embedded_tenant_uuid}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

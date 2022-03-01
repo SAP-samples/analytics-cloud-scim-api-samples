@@ -1,0 +1,34 @@
+[
+{
+	"file_liveconnection": [
+            {
+                "name": "type",
+                "value": "HANA"
+            },
+            {
+                "name": "name",
+				"value": "MyHanaDB"
+            },
+            {
+                "name": "description",
+				"value": "My Live HANA connection description"
+            },
+            {
+                "name": "host",
+				"value": "myhostname"
+            },
+            {
+                "name": "port",
+				"value": "443"
+            },
+            {
+                "name": "language",
+				"value": "EN"
+            },
+            {
+                "name": "authenticationMethod",
+				"value": "SAML"
+            }
+		]
+  }
+]

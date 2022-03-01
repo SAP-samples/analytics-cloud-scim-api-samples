@@ -1,0 +1,7 @@
+[
+  {
+    "file_name": "OAuthClient_Modeling",
+	"file_redirectUris": "",
+	"file_apiRoles": ["PROFILE:sap.epm:Modeling_Public_API"]
+  }
+]

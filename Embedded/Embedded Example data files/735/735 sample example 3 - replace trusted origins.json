@@ -1,0 +1,6 @@
+[
+  {
+	"file_action": "replace",
+	"file_trustedOrigins": ["https://sapanalytics.cloud","https://hcs.cloud.sap","https://*.live.com","https://*.sharepoint.com","https://*.online.office.de"]
+  }
+]

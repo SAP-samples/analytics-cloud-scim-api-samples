@@ -1,0 +1,118 @@
+[
+    {
+        "file_SystemConfig": [
+            {
+                "name": "COMMENT_EMBEDDED",
+                "value": "false"
+            },
+            {
+                "name": "COMMENTS_MODEL_DIM_MEMBERS",
+                "value": "50000"
+            },
+            {
+                "name": "USER_CONTENT_TRANSLATION",
+                "value": "false"
+            },
+            {
+                "name": "TENANT_CURRENCY_SUBTITLE",
+                "value": "false"
+            },
+            {
+                "name": "SAML_USER_PROFILE_URL",
+				"value": ""
+            },
+            {
+                "name": "SESSION_KEEP_ALIVE_SECONDS",
+                "value": "30"
+            },
+            {
+                "name": "DELETED_FILES_EXPIRY_DAYS",
+                "value": "30"
+            },
+            {
+                "name": "EXTERNAL_AVATAR_WHITELIST",
+				"value": ""
+            },
+            {
+                "name": "ENABLE_PERSONAL_DATA_PROMPT",
+                "value": "false"
+            },
+            {
+                "name": "ALLOW_SCHEDULE_PUBLICATION",
+                "value": "true"
+            },
+            {
+                "name": "AR_SESSION_TIMEOUT_V2",
+                "value": "3600"
+            },
+            {
+                "name": "DEFAULT_APP",
+                "value": "0"
+            },
+            {
+                "name": "COMMENTS_PER_MODEL_LIMIT",
+                "value": "3000"
+            },
+            {
+                "name": "TENANT_NO_DATA_FORMAT",
+				"value": ""
+            },
+            {
+                "name": "TENANT_CURRENCY_FORMAT",
+				"value": ""
+            },
+            {
+                "name": "BROWSER_CACHE_STORAGE_TIME",
+                "value": "8"
+            },
+            {
+                "name": "ALLOW_SHARING_TO_ALL_USERS",
+                "value": "true"
+            },
+            {
+                "name": "PREDICTIVE_BI_FORECAST_REMOTE",
+                "value": "false"
+            },
+            {
+                "name": "COULD_DEL_DISCUSSION",
+                "value": "true"
+            },
+            {
+                "name": "REMOVE_STORY_URL_FROM_APPENDIX",
+                "value": "false"
+            },
+            {
+                "name": "TRACE_LEVEL",
+                "value": "4"
+            },
+            {
+                "name": "CUSTOMIZE_COMMUNITY_URL",
+				"value": ""
+            },
+            {
+                "name": "GEO_LIVE_SYNONYM_SUPPORT",
+                "value": "false"
+            },
+            {
+                "name": "ALLOW_PUBLICATION_BURSTING",
+                "value": "false"
+            },
+            {
+                "name": "ALLOW_NON_SAC",
+                "value": "true"
+            },
+            {
+                "name": "TENANT_SHOW_CURRENCY_AS",
+				"value": ""
+            },
+            {
+                "name": "TENANT_SCALE_FORMAT",
+				"value": ""
+            },
+            {
+                "name": "CHART_PROGRESSIVE_RENDERING",
+                "value": "false"
+            }
+        ]
+    }
+]

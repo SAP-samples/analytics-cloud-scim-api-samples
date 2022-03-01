@@ -1,0 +1,130 @@
+[
+  {
+	"file_liveconnection": [
+            {
+                "name": "type",
+                "value": "EXTENDEDHANA"
+            },
+            {
+                "name": "name",
+				"value": "MyExtHana"
+            },
+            {
+                "name": "description",
+				"value": "My Extended Live HANA connection description"
+            },
+            {
+                "name": "host",
+				"value": "myhostname"
+            },
+            {
+                "name": "port",
+				"value": "443"
+            },
+            {
+                "name": "language",
+				"value": "EN"
+            },
+            {
+                "name": "authenticationMethod",
+				"value": "BASIC"
+            },
+            {
+                "name": "userName",
+				"value": "myusername"
+            },
+            {
+                "name": "password",
+				"value": "mypassword"
+            },
+            {
+                "name": "isSaveCredential",
+				"value": true
+            },
+            {
+                "name": "contextPath",
+				"value": ""
+            },
+            {
+                "name": "proxyType",
+				"value": "premise"
+            },
+            {
+                "name": "proxyHost",
+				"value": "myproxyhost"
+            },
+            {
+                "name": "proxyPort",
+				"value": "443"
+            },
+            {
+                "name": "locationId",
+				"value": "loc1"
+            }
+		]
+  },
+{
+	"file_liveconnection": [
+            {
+                "name": "type",
+                "value": "HANA"
+            },
+            {
+                "name": "name",
+				"value": "MyHanaDB"
+            },
+            {
+                "name": "description",
+				"value": "My Live HANA connection description"
+            },
+            {
+                "name": "host",
+				"value": "myhostname"
+            },
+            {
+                "name": "port",
+				"value": "443"
+            },
+            {
+                "name": "language",
+				"value": "EN"
+            },
+            {
+                "name": "authenticationMethod",
+				"value": "SAML"
+            },
+            {
+                "name": "userName",
+				"value": ""
+            },
+            {
+                "name": "password",
+				"value": ""
+            },
+            {
+                "name": "isSaveCredential",
+				"value": true
+            },
+            {
+                "name": "contextPath",
+				"value": ""
+            },
+            {
+                "name": "proxyType",
+				"value": ""
+            },
+            {
+                "name": "proxyHost",
+				"value": ""
+            },
+            {
+                "name": "proxyPort",
+				"value": "443"
+            },
+            {
+                "name": "locationId",
+				"value": ""
+            }
+		]
+  }
+]

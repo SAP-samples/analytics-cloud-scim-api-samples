@@ -1,0 +1,567 @@
+{
+	"info": {
+		"_postman_id": "da5725a1-b9fd-4b9f-b9b0-639842d1607d",
+		"name": "Embedded 731-E-Reset Inconsistent state",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.6.5\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "READ System Configuration",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading System Configuration');\r",
+							"pm.variables.set(\"recovery\",pm.info.requestName);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"READ System Configuration\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403])\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"pm.test(\"Has an inconsistent status\", function ()\r",
+							"    {\r",
+							"        if (pm.response.code === 200) { pm.expect(pm.response.json().inconsistent).to.equal(true) };\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken  must be invalid. We shall get a new one\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new tenant access token');\r",
+							"        postman.setNextRequest(\"GET tenantaccesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
+							"       break;\r",
+							"    } // end if response is 401 or 403\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"        pm.variables.set(\"ContinuousErrors\",0);\r",
+							"        pm.variables.set(\"NeedGetToBeAuthorised\",false);\r",
+							"        const readbody    = JSON.parse(responseBody);\r",
+							"\r",
+							"\r",
+							"        console.log(\"=================== System Inconsistent Status ===================\");\r",
+							"        const inconsistent=readbody.inconsistent;\r",
+							"        if (inconsistent)\r",
+							"        {\r",
+							"            console.info(\"Inconsistent : \"+inconsistent+'   Reason : '+readbody.inconsistentReason);\r",
+							"            postman.setNextRequest();\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.error(\"Inconsistent : \"+inconsistent);\r",
+							"            console.error(\"This SAP Analytics Cloud Service is consistent, it does not need resetting\");\r",
+							"            postman.setNextRequest(null);\r",
+							"        };\r",
+							"\r",
+							"        break;\r",
+							"    }\r",
+							"\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"        // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        break;\r",
+							"    }\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tenantaccesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}/api/v1/tenant/{{Embedded_tenant_uuid}}",
+					"protocol": "https",
+					"host": [
+						"{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tenant",
+						"{{Embedded_tenant_uuid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RESET tenant",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Resetting');\r",
+							"pm.variables.set(\"recovery\",pm.info.requestName);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Submit Reset Request\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([202,401,403]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken  must be invalid. We shall get a new one\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new tenant access token');\r",
+							"        postman.setNextRequest(\"GET tenantaccesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
+							"       break;\r",
+							"    } // end if response is 401 or 403\r",
+							"\r",
+							"    case 202:\r",
+							"    {\r",
+							"        pm.variables.set(\"ContinuousErrors\",0);\r",
+							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"        pm.variables.set(\"NeedGetToBeAuthorised\",false);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Reset request accepted');\r",
+							"        const readbody    = JSON.parse(responseBody);\r",
+							"        pm.variables.set(\"logId\",readbody.logId)\r",
+							"        postman.setNextRequest();\r",
+							"        break;\r",
+							"    }\r",
+							"\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        break;\r",
+							"    }\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tenantaccesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"inconsistent\": false\r\n}"
+				},
+				"url": {
+					"raw": "https://{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}/api/v1/tenant/{{Embedded_tenant_uuid}}",
+					"protocol": "https",
+					"host": [
+						"{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tenant",
+						"{{Embedded_tenant_uuid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm Reset",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Log');\r",
+							"pm.variables.set(\"recovery\",pm.info.requestName);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Reset\", function ()\r",
+							"    {\r",
+							"        if (pm.response.code === 200)  { pm.expect(pm.response.json().status).to.be.oneOf([\"IN PROGRESS\",\"SUCCESS\"]) };\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403]);\r",
+							"    } );\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken  must be invalid. We shall get a new one\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new tenant access token');\r",
+							"        postman.setNextRequest(\"GET tenantaccesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
+							"       break;\r",
+							"    } // end if response is 401 or 403\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"    pm.variables.set(\"ContinuousErrors\",0);\r",
+							"    // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"    const readbody    = JSON.parse(responseBody);\r",
+							"\r",
+							"    if (readbody.status === \"IN PROGRESS\")\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Request still in progress... waiting 30 seconds before next refresh');\r",
+							"        setTimeout(()=> {},30000);\r",
+							"        postman.setNextRequest(pm.info.requestName);\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+':  status: '+readbody.status);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+':   start: '+readbody.start);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+':  target: '+readbody.target);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': message: '+readbody.message);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+':    stop: '+readbody.stop);\r",
+							"        postman.setNextRequest(null);\r",
+							"    }\r",
+							"\r",
+							"    break;\r",
+							"\r",
+							"    }\r",
+							"\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        break;\r",
+							"    }\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tenantaccesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}/api/v1/tenant/{{Embedded_tenant_uuid}}/logs/{{logId}}",
+					"protocol": "https",
+					"host": [
+						"{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tenant",
+						"{{Embedded_tenant_uuid}}",
+						"logs",
+						"{{logId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET tenantaccesstoken",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Getting tenant access token');\r",
+							"const SAC_platform = pm.variables.get(\"SACplatform\");\r",
+							"if (SAC_platform==='NEO')\r",
+							"{\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth2/api/v1/\");\r",
+							"}\r",
+							"else  // we are on a Cloud Foundary Platform\r",
+							"{\r",
+							"   pm.variables.set(\"oauthpath\",\"/oauth/\");\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET accesstoken\", function()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.equal(200)\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 200:\r",
+							"    {\r",
+							"        const jsonData = JSON.parse(responseBody);\r",
+							"        pm.environment.set(\"tenantaccesstoken\", jsonData.access_token);  // setting the tenantaccesstoken so its re-used for all subsequent requests\r",
+							"        postman.setNextRequest(pm.variables.get(\"recovery\"));      // we will now return to the request that sent us here in the first place\r",
+							"        break;\r",
+							"    }\r",
+							"    case 401:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid Embedded_uua_clientid or Embedded_uua_clientsecret: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"        break;\r",
+							"    }\r",
+							"    default:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Response Body: '+ responseBody);\r",
+							"        if (pm.variables.get(\"recovery\") === pm.info.requestName)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Already attempted to get a valid request. Will now quit');\r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Will make one more attempt to get a new accesstoken');\r",
+							"            pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }; //end if \r",
+							"        break;\r",
+							"    }\r",
+							"}; // end swtich\r",
+							"\r",
+							"const errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"const maxerrors=3;  // maxerrors needs to be at least 2, otherwise valid workflows may be able to correctly recover from an invalid access tokens or invalid csrf-tokens\r",
+							"\r",
+							"if (errors >= maxerrors)\r",
+							"{\r",
+							"    console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting');\r",
+							"    pm.variables.set(\"ContinuousErrors\",0); \r",
+							"    postman.setNextRequest(null);\r",
+							"}\r",
+							"else if (errors >= 2)\r",
+							"{\r",
+							"    console.info(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected');\r",
+							"    // a valid accesstoken may have been obtained, but the request where it came from could have failed, hence the need to trap for a continous loop of errors here\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{Embedded_uua_clientsecret}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{Embedded_uua_clientid}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{Embedded_uua_url_FQDN}}{{oauthpath}}token?grant_type=client_credentials",
+					"protocol": "https",
+					"host": [
+						"{{Embedded_uua_url_FQDN}}{{oauthpath}}token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

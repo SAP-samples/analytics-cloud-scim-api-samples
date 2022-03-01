@@ -1,0 +1,6 @@
+[
+   {
+	"file_action": "add",
+	"file_trustedOrigins": ["https://*.sap.hana.ondemand.com"]
+  }
+]

@@ -1,0 +1,46 @@
+[
+    {
+        "file_SystemConfig": [
+            {
+                "name": "MOBILE_REFRESH_ON_OPEN",
+                "value": "false"
+            },
+            {
+                "name": "MOBILE_REMOTE_SAFARI_IDP_URL",
+                "value": "https://"
+            },
+            {
+                "name": "MOBILE_REMOTE_IDP_URL",
+                "value": "https://"
+            },
+            {
+                "name": "MOBILE_DEFAULT_FILTER",
+                "value": "0"
+            },
+            {
+                "name": "MOBILE_REMOTE_SAFARI_SAML",
+                "value": "false"
+            },
+            {
+                "name": "DISABLE_MOBILE_APP_PASSWORD",
+                "value": "false"
+            },
+            {
+                "name": "DISABLE_MOBILE_CACHING_IOS",
+                "value": "false"
+            },
+            {
+                "name": "CUSTOMIZE_COMMUNITY_URL",
+				"value": ""
+            },
+            {
+                "name": "MOBILE_DEFAULT_TAB",
+                "value": "false"
+            },
+            {
+                "name": "MOBILE_REMOTE_TOKEN",
+                "value": "HEADER_KEY_1=<<token>>"
+            },
+        ]
+    }
+]

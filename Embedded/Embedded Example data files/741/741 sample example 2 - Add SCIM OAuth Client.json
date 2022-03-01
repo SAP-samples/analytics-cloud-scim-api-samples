@@ -1,0 +1,7 @@
+[
+  {
+    "file_name": "OAuthClient_SCIM",
+	"file_redirectUris": "",
+	"file_apiRoles": ["PROFILE:sap.epm:SCIM_Public_API"]
+  }
+]

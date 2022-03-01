@@ -1,0 +1,7 @@
+[
+  {
+    "file_name": "OAuthClient_Story",
+	"file_redirectUris": "",
+	"file_apiRoles": ["PROFILE:sap.epm:Story_Listing_Public_API"]
+  }
+]

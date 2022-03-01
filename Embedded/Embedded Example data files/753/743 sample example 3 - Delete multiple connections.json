@@ -1,0 +1,18 @@
+[
+  {
+	"file_liveconnection": [
+            {
+                "name": "name",
+				"value": "MyExtHana"
+            }
+		]
+  },
+{
+	"file_liveconnection": [
+            {
+                "name": "name",
+				"value": "MyHanaDB"
+            }
+		]
+  }
+]

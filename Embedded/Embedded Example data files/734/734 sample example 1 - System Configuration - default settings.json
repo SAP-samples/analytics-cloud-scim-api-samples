@@ -1,0 +1,210 @@
+[
+    {
+        "file_SystemConfig": [
+            {
+                "name": "MOBILE_REFRESH_ON_OPEN",
+                "value": "false"
+            },
+            {
+                "name": "PM_URL_TP_IDP",
+				"value": ""
+            },
+            {
+                "name": "COMMENT_EMBEDDED",
+                "value": "false"
+            },
+            {
+                "name": "MOBILE_REMOTE_SAFARI_IDP_URL",
+                "value": "https://"
+            },
+            {
+                "name": "COMMENTS_MODEL_DIM_MEMBERS",
+                "value": "50000"
+            },
+            {
+                "name": "USER_CONTENT_TRANSLATION",
+                "value": "false"
+            },
+            {
+                "name": "TENANT_CURRENCY_SUBTITLE",
+                "value": "false"
+            },
+            {
+                "name": "SAML_USER_PROFILE_URL",
+				"value": ""
+            },
+            {
+                "name": "SESSION_KEEP_ALIVE_SECONDS",
+                "value": "30"
+            },
+            {
+                "name": "DELETED_FILES_EXPIRY_DAYS",
+                "value": "30"
+            },
+            {
+                "name": "REVERSE_PROXY_HOST",
+				"value": ""
+            },
+            {
+                "name": "EXTERNAL_AVATAR_WHITELIST",
+				"value": ""
+            },
+            {
+                "name": "MAX_BW_DRILL_LEVEL",
+                "value": "5"
+            },
+            {
+                "name": "FDE_BATCH_WAITING_TIME",
+                "value": "1000"
+            },
+            {
+                "name": "ENABLE_PERSONAL_DATA_PROMPT",
+                "value": "false"
+            },
+            {
+                "name": "NR_PARALLEL_SESSION_FOR_BW",
+                "value": "0"
+            },
+            {
+                "name": "MOBILE_REMOTE_IDP_URL",
+                "value": "https://"
+            },
+            {
+                "name": "ENABLE_ON_PREMISE_FILE_EXPORT",
+                "value": "false"
+            },
+            {
+                "name": "TENANT_METRIC_NO_DATA_FORMAT",
+				"value": ""
+            },
+            {
+                "name": "ALLOW_SCHEDULE_PUBLICATION",
+                "value": "true"
+            },
+            {
+                "name": "AR_SESSION_TIMEOUT_V2",
+                "value": "3600"
+            },
+            {
+                "name": "MOBILE_DEFAULT_FILTER",
+                "value": "0"
+            },
+            {
+                "name": "DEFAULT_APP",
+                "value": "0"
+            },
+            {
+                "name": "COMMENTS_PER_MODEL_LIMIT",
+                "value": "3000"
+            },
+            {
+                "name": "MOBILE_REMOTE_SAFARI_SAML",
+                "value": "false"
+            },
+            {
+                "name": "TENANT_NO_DATA_FORMAT",
+				"value": ""
+            },
+            {
+                "name": "BW_RESPECT_VIZ_DEFAULTING",
+                "value": "false"
+            },
+            {
+                "name": "TENANT_CURRENCY_FORMAT",
+				"value": ""
+            },
+            {
+                "name": "BROWSER_CACHE_STORAGE_TIME",
+                "value": "8"
+            },
+            {
+                "name": "EXPORT_PACKAGE_SIZE",
+                "value": "50000"
+            },
+            {
+                "name": "DISABLE_MOBILE_APP_PASSWORD",
+                "value": "false"
+            },
+            {
+                "name": "ENABLE_ON_PREMISE_FILE",
+                "value": "false"
+            },
+            {
+                "name": "ALLOW_SHARING_TO_ALL_USERS",
+                "value": "true"
+            },
+            {
+                "name": "PREDICTIVE_BI_FORECAST_REMOTE",
+                "value": "false"
+            },
+            {
+                "name": "DISABLE_MOBILE_CACHING_IOS",
+                "value": "false"
+            },
+            {
+                "name": "ENABLE_EXPORT_IMPORT_JOB",
+                "value": "false"
+            },
+            {
+                "name": "COULD_DEL_DISCUSSION",
+                "value": "true"
+            },
+            {
+                "name": "REMOVE_STORY_URL_FROM_APPENDIX",
+                "value": "false"
+            },
+            {
+                "name": "TRACE_LEVEL",
+                "value": "4"
+            },
+            {
+                "name": "CUSTOMIZE_COMMUNITY_URL",
+				"value": ""
+            },
+            {
+                "name": "X509_ISSUER_NAME",
+                "value": "CN=SSO_CA, O=SAP-AG, C=DE"
+            },
+            {
+                "name": "GEO_LIVE_SYNONYM_SUPPORT",
+                "value": "false"
+            },
+            {
+                "name": "ALLOW_PUBLICATION_BURSTING",
+                "value": "false"
+            },
+            {
+                "name": "ALLOW_NON_SAC",
+                "value": "true"
+            },
+            {
+                "name": "MOBILE_DEFAULT_TAB",
+                "value": "false"
+            },
+            {
+                "name": "TENANT_SHOW_CURRENCY_AS",
+				"value": ""
+            },
+            {
+                "name": "MOBILE_REMOTE_TOKEN",
+                "value": "HEADER_KEY_1=<<token>>"
+            },
+            {
+                "name": "TENANT_SCALE_FORMAT",
+				"value": ""
+            },
+            {
+                "name": "CHART_PROGRESSIVE_RENDERING",
+                "value": "false"
+            },
+            {
+                "name": "ALLOW_ACN_COPY_CONTENT",
+                "value": "false"
+            },
+            {
+                "name": "ALLOW_ACN_PACKAGE_SHARING_OEM",
+                "value": "false"
+            }
+        ]
+    }
+]
