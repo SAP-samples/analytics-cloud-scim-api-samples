@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "fa829f78-3404-4a40-a39c-846d7b5e520b",
 		"name": "Embedded 733-Fj-Configure Custom IdP",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.6.5\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.6.5.1\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -193,8 +193,8 @@
 							"// Then this sample script will read that json and then perform another json encoding.\r",
 							"let idPMetadata=pm.iterationData.get(\"file_idPMetadata\");\r",
 							"idPMetadata = idPMetadata.replace(new RegExp(\"\\u003d\", \"g\"), \"\\\\u003d\");\r",
-							"idPMetadata = idPMetadata.replace(new RegExp(\"\\u003d\", \"g\"), \"\\\\u003c\");\r",
-							"idPMetadata = idPMetadata.replace(new RegExp(\"\\u003d\", \"g\"), \"\\\\u003e\");\r",
+							"idPMetadata = idPMetadata.replace(new RegExp(\"\\u003c\", \"g\"), \"\\\\u003c\");\r",
+							"idPMetadata = idPMetadata.replace(new RegExp(\"\\u003e\", \"g\"), \"\\\\u003e\");\r",
 							"idPMetadata = idPMetadata.replace(new RegExp(\"\\\"\", \"g\"), \"\\\\\\\"\");\r",
 							"pm.variables.set(\"CustomIdPMetadata\",idPMetadata);"
 						],
