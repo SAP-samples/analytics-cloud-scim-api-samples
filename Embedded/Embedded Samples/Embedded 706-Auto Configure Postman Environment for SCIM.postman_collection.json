@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "1a5f7851-f00c-438f-abab-de3af1592206",
 		"name": "Embedded 706-Auto Configure Postman Environment for SCIM",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.6.5\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/Wg2pPhA/](https://d.dam.sap.com/a/Wg2pPhA/)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -106,14 +106,14 @@
 							"\r",
 							"        pm.environment.set(\"Embedded_OAuthClientName\",ThisOAuthClient.name);\r",
 							"\r",
-							"        console.info(pm.info.requestName+' '+pm.info.eventName+': This Postman Environment has been updated (SACserviceFQDN, SACtokenFQDN, ContentNamespace,Embedded_OAuthClientName, Username, Password, SAMLSSO). You are now ready to use the other sample scripts that create users and teams etc.');\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': This Postman Environment has been updated (SACserviceFQDN, SACtokenFQDN, ContentNamespace, Embedded_OAuthClientName, Username, Password, SAMLSSO). You are now ready to use the other sample scripts that create users and teams etc.');\r",
 							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Run sample script \\'001-Test-Es-Tests Single Environment Setup\\' to validate the SCIM API is working correctly');\r",
 							"        \r",
 							"    }\r",
 							"    else\r",
 							"    {\r",
 							"        console.error(pm.info.requestName+' '+pm.info.eventName+': This Postman Environment has only partly been updated (SACserviceFQDN, SACtokenFQDN, ContentNamespace). You will not be able to run other sample scripts to create users and teams etc.');\r",
-							"        console.error(pm.info.requestName+' '+pm.info.eventName+': No valid OAuth Client exists. Unable to fully update this Postman Environment! Create a new OAuth Client with sample script 711');\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': No valid OAuth Client exists. Unable to fully update this Postman Environment! Create a new OAuth Client with sample script 721 or 741');\r",
 							"    }; // end if \r",
 							"    postman.setNextRequest(null);\r",
 							"    \r",

@@ -1,0 +1,37 @@
+[
+  {
+    "file_team": "Admins",
+    "file_users_action": "keep",
+    "file_roles_action": "add",
+    "file_JSON_users": [],
+    "file_JSON_roles": [{"value":"PROFILE:sap.epm:Embedded_BI_Admin"}]
+  },
+    {
+    "file_team": "Users",
+    "file_users_action": "keep",
+    "file_roles_action": "add",
+    "file_JSON_users": [],
+    "file_JSON_roles": [{"value":"PROFILE:sap.epm:Embedded_BI_User"}]
+  },
+    {
+    "file_team": "Content_Admins",
+    "file_users_action": "keep",
+    "file_roles_action": "add",
+    "file_JSON_users": [],
+    "file_JSON_roles": [{"value":"PROFILE:sap.epm:Embedded_BI_Content_Admin"}]
+  },
+    {
+    "file_team": "Content_Viewers",
+    "file_users_action": "keep",
+    "file_roles_action": "add",
+    "file_JSON_users": [],
+    "file_JSON_roles": [{"value":"PROFILE:sap.epm:Embedded_BI_Content_Viewer"}]
+  },
+    {
+    "file_team": "Content_Editors",
+    "file_users_action": "keep",
+    "file_roles_action": "add",
+    "file_JSON_users": [],
+    "file_JSON_roles": [{"value":"PROFILE:sap.epm:Embedded_BI_Content_Editor"}]
+  }
+]

@@ -1,0 +1,18 @@
+Log a Support Incident with SAP Product Support and ask for the business toggle IMPLEMENT_WORKAROUND_FOR_SCIM_GROUPS to be turned on. Mention SAP KBA 2857395 and the SAP Analytics Cloud Service URL in the incident.
+
+Once SAP Product Support have confirmed the business toggle IMPLEMENT_WORKAROUND_FOR_SCIM_GROUPS is ON, then and only then create 5 teams but importantly withOUT creating the team folder when you create the team. 
+You must deselect the 'Create a Folder' option.
+
+
+Create 5 teams with the names:
+
+
+Admins
+Users
+Content_Admins
+Content_Viewers
+Content_Editors
+
+
+
+The team names are used in the next steps, so if you give them different names you must change their names in the subsequent steps too

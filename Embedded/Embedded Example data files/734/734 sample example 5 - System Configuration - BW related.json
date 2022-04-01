@@ -1,0 +1,19 @@
+[
+    {
+        "file_SystemConfig": [
+            
+            {
+                "name": "MAX_BW_DRILL_LEVEL",
+                "value": "5"
+            },
+            {
+                "name": "NR_PARALLEL_SESSION_FOR_BW",
+                "value": "0"
+            },
+            {
+                "name": "BW_RESPECT_VIZ_DEFAULTING",
+                "value": "false"
+            }
+        ]
+    }
+]

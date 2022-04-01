@@ -1,0 +1,15 @@
+[
+  {
+    "file_userid": "MATTHEW",
+    "file_isconcurrent": false,
+    "file_givenname": "Matthew",
+    "file_familyname": "Shaw",
+    "file_displayname": "Matthew Shaw",
+    "file_email": "matthew@sap.com",
+    "file_managerid": "",
+    "file_JSON_roles": [{"value":"PROFILE:sap.epm:Embedded_BI_Admin"}],
+    "file_JSON_teams": [],
+	"file_roles_action": "add",
+	"file_teams_action": "keep"
+  }
+]
