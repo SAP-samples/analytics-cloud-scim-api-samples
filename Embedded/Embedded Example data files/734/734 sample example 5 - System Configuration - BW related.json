@@ -1,7 +1,6 @@
 [
     {
         "file_SystemConfig": [
-            
             {
                 "name": "MAX_BW_DRILL_LEVEL",
                 "value": "5"
