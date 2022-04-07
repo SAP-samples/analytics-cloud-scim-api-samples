@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "b4dd5fdd-b8a4-43aa-89cd-bf224a027f60",
-		"name": "Embedded 742-Fcj-Add Trusted IdP",
+		"_postman_id": "24e19efe-b633-4999-a55b-898aa46c5313",
+		"name": "Embedded 723-E-Delete OAuth Client (based on this Environment)",
 		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/Wg2pPhA/](https://d.dam.sap.com/a/Wg2pPhA/)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/](https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -47,7 +47,6 @@
 							"       break;\r",
 							"    } // end if response is 401 or 403\r",
 							"\r",
-							"\r",
 							"    case 200:\r",
 							"    {\r",
 							"        pm.variables.set(\"ContinuousErrors\",0);\r",
@@ -63,20 +62,36 @@
 							"        }\r",
 							"        else\r",
 							"        {\r",
-							"            const TrustedIdps=readbody.trustedIdps;\r",
-							"            const TrustedIdpName=pm.iterationData.get(\"file_name\");\r",
+							"            const oauthClients=readbody.oauthClients;\r",
 							"\r",
-							"            if (TrustedIdps.find( TrustedIdp => TrustedIdp.name === TrustedIdpName))\r",
+							"            const OAuthClientToDelete=oauthClients.find( OAuthClient => OAuthClient.name === pm.variables.get(\"Embedded_OAuthClientName\"));\r",
+							"            if (OAuthClientToDelete)\r",
 							"            {\r",
-							"                console.info(pm.info.requestName+' '+pm.info.eventName+': Aborting! Trusted IdP '+TrustedIdpName+' already exists');\r",
-							"                postman.setNextRequest(null);\r",
+							"                console.log(pm.info.requestName+' '+pm.info.eventName+': Found OAuth Client '+pm.variables.get(\"Embedded_OAuthClientName\")+', as defined in this Postman environment. This client will now be deleted');\r",
+							"                pm.variables.set(\"OAuthClientID\",OAuthClientToDelete.id);\r",
+							"                postman.setNextRequest();\r",
 							"            }\r",
 							"            else\r",
 							"            {\r",
-							"                console.log(pm.info.requestName+' '+pm.info.eventName+': Trusted IdP with name '+TrustedIdpName+\" does not yet exist. Proceeding to request Trusted IdP addition\");\r",
-							"                postman.setNextRequest();\r",
+							"                function myfunction_DisplayOAuthClients( entry, index )\r",
+							"                {\r",
+							"                    console.log('==================== : OAuth Client configuration index: '+ index);\r",
+							"                    console.log('                  id : '+entry.id);\r",
+							"                    console.log('                name : '+entry.name);\r",
+							"                    console.log('    apiAccessEnabled : '+entry.apiAccessEnabled);\r",
+							"                    console.log('            apiRoles : '+entry.apiRoles);\r",
+							"                    console.log('        redirectUris : '+entry.redirectUris);\r",
+							"                    console.log('          grantTypes : '+entry.grantTypes);\r",
+							"                    console.log('            clientId : '+entry.clientId);\r",
+							"                    console.log('        clientSecret : '+entry.clientSecret);\r",
+							"                    console.log('====================');\r",
+							"                };\r",
+							"                console.error(pm.info.requestName+' '+pm.info.eventName+': Aborting! OAuth Client with name '+pm.variables.get(\"Embedded_OAuthClientName\")+\" does not exist\");\r",
+							"                console.log(\"Existing OAuth Clients : \"+oauthClients.length);\r",
+							"                oauthClients.forEach( myfunction_DisplayOAuthClients);\r",
+							"                postman.setNextRequest(null);\r",
 							"            }; // end if \r",
-							"        }; // end if\r",
+							"        };\r",
 							"        break;\r",
 							"    }\r",
 							"\r",
@@ -159,18 +174,14 @@
 			"response": []
 		},
 		{
-			"name": "ADD Trusted IdP",
+			"name": "DELETE OAuth Client",
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"console.log(pm.info.requestName+' '+pm.info.eventName+': Adding Trusted IdP with name: '+ pm.iterationData.get(\"file_name\") );\r",
-							"pm.variables.set(\"recovery\",pm.info.requestName);\r",
-							"pm.variables.set(\"TrustedIdPname\",pm.iterationData.get(\"file_name\"));\r",
-							"pm.variables.set(\"TrustedIdPidpName\",pm.iterationData.get(\"file_idpName\"));\r",
-							"pm.variables.set(\"TrustedIdPidpCertificate\",pm.iterationData.get(\"file_idpCertificate\"));\r",
-							""
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Deleting OAuth client with id: '+ pm.variables.get(\"OAuthClientID\") );\r",
+							"pm.variables.set(\"recovery\",pm.info.requestName);"
 						],
 						"type": "text/javascript"
 					}
@@ -179,7 +190,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Submit Trusted IdP Addition\", function ()\r",
+							"pm.test(\"Submit OAuth Client Deletion\", function ()\r",
 							"    {\r",
 							"        pm.expect(pm.response.code).to.be.oneOf([202,401,403]);\r",
 							"    }\r",
@@ -206,8 +217,7 @@
 							"    {\r",
 							"        pm.variables.set(\"ContinuousErrors\",0);\r",
 							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
-							"        pm.variables.set(\"NeedGetToBeAuthorised\",false);\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Trusted IdP addition request accepted');\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': OAuth client deletion request accepted');\r",
 							"        const readbody    = JSON.parse(responseBody);\r",
 							"        pm.variables.set(\"logId\",readbody.logId)\r",
 							"        postman.setNextRequest();\r",
@@ -269,7 +279,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"AddTrustedIdP\": [\r\n        {\r\n            \"name\": \"{{TrustedIdPname}}\",\r\n            \"idpName\": \"{{TrustedIdPidpName}}\",\r\n            \"idpCertificate\": \"{{TrustedIdPidpCertificate}}\"\r\n        }\r\n    ]\r\n}"
+					"raw": "{\r\n    \"DeleteOAuthClient\": [\r\n        {\r\n            \"id\": \"{{OAuthClientID}}\"\r\n        }\r\n    ]\r\n}"
 				},
 				"url": {
 					"raw": "https://{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}/api/v1/tenant/{{Embedded_tenant_uuid}}/config",
@@ -289,7 +299,7 @@
 			"response": []
 		},
 		{
-			"name": "Confirm Trusted IdP addition",
+			"name": "Confirm OAuth Client deletion",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -305,11 +315,12 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Trusted IdP Added\", function ()\r",
+							"pm.test(\"OAuth Client Deleted\", function ()\r",
 							"    {\r",
 							"        if (pm.response.code === 200)  { pm.expect(pm.response.json().status).to.be.oneOf([\"IN PROGRESS\",\"SUCCESS\"]) };\r",
 							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403]);\r",
-							"    } );\r",
+							"    }\r",
+							");\r",
 							"\r",
 							"switch (pm.response.code)\r",
 							"{\r",
@@ -333,7 +344,7 @@
 							"    pm.variables.set(\"ContinuousErrors\",0);\r",
 							"    // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
 							"    const readbody    = JSON.parse(responseBody);\r",
-							"\r",
+							"    \r",
 							"    if (readbody.status === \"IN PROGRESS\")\r",
 							"    {\r",
 							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Request still in progress... waiting 30 seconds before next refresh');\r",
@@ -348,14 +359,13 @@
 							"        console.log(pm.info.requestName+' '+pm.info.eventName+': message: '+readbody.message);\r",
 							"        console.log(pm.info.requestName+' '+pm.info.eventName+':    stop: '+readbody.stop);\r",
 							"        \r",
-							"\r",
 							"        if (readbody.status===\"SUCCESS\")\r",
 							"        {\r",
-							"            console.info(pm.info.requestName+' '+pm.info.eventName+': Trusted IdP addition was successful');\r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+': OAuth deletion was successful');\r",
 							"        }\r",
 							"        else\r",
 							"        {\r",
-							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Trusted IdP addition was not successful. Try again later and contact SAP Product Support if the issue persists. Use component LOD-ANA-OEM-CP when logging your SAP Product Support incident');\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': OAuth deletion was not successful. Try again later and contact SAP Product Support if the issue persists. Use component LOD-ANA-OEM-CP when logging your SAP Product Support incident');\r",
 							"        };\r",
 							"        postman.setNextRequest(null);\r",
 							"    }\r",
