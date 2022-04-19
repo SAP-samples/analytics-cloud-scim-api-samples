@@ -1,0 +1,337 @@
+{
+	"info": {
+		"_postman_id": "675a8ba8-bd19-482b-9625-10a60adf7b22",
+		"name": "Export Data 769-Fcj-Master Data",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/yettobewritten](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "READ Master Data",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Master Data');\r",
+							"pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"\r",
+							"// we have a variable called 'nextlink'. This variable contains the URL parameters for the next page of results, should the last page contains a 'next link'\r",
+							"// a 'next link' will be included in the responseBody of the request when there are more results to be returned in other pages.\r",
+							"// you can optionally set the page size in the params with parameter pageszie if you would like to control the number of results per page\r",
+							"if (pm.variables.get(\"nextlink\"))\r",
+							"{\r",
+							"    pm.request.url.query.add(pm.variables.get(\"nextlink\"))\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"READ Master Data\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken  must be invalid. We shall get a new one\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
+							"        postman.setNextRequest(\"GET accesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
+							"       break;\r",
+							"    } // end if response is 401 or 403\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"    pm.variables.set(\"ContinuousErrors\",0);\r",
+							"    // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"    pm.variables.set(\"NeedGetToBeAuthorised\",false);\r",
+							"    const readbody    = JSON.parse(responseBody);\r",
+							"\r",
+							"\r",
+							"    const totalresultcountacrossallpages=readbody['@odata.count'];\r",
+							"    if (totalresultcountacrossallpages!==undefined)\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Entities across all pages (odata count): '+totalresultcountacrossallpages);\r",
+							"    };\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Entities in Page: '+readbody['@des.entitiesInPage']);\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Processing Time : '+readbody['@des.processingTimeInMilliseconds']+' ms');\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Master Data Response Body = ',readbody.value);\r",
+							"    \r",
+							"    const nextlink=readbody['@odata.nextLink'];\r",
+							"    //console.log(pm.info.requestName+' '+pm.info.eventName+': Next Link       : '+nextlink);\r",
+							"    // we need to see if the responseBody contains a 'nextlink'.\r",
+							"    // if a 'nextlink' is found then we must repeat this call, and include that nextlink parameters\r",
+							"    // if no nextlink is found, we should stop as all results have been returned\r",
+							"    if (nextlink===undefined)\r",
+							"    {\r",
+							"        pm.variables.unset(\"nextlink\");\r",
+							"        postman.setNextRequest(null);\r",
+							"    }\r",
+							"    else\r",
+							"    { \r",
+							"        pm.variables.set(\"nextlink\",nextlink.substr(nextlink.search(\"\\\\?\")+1));\r",
+							"        postman.setNextRequest(pm.info.requestName);\r",
+							"    };\r",
+							"\r",
+							"\r",
+							"    break;\r",
+							"\r",
+							"    }\r",
+							"\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        break;\r",
+							"    }\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/dataexport/providers/{{ExportData_NamespaceID}}/{{file_ProviderID}}/MasterData?$count=true",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"dataexport",
+						"providers",
+						"{{ExportData_NamespaceID}}",
+						"{{file_ProviderID}}",
+						"MasterData"
+					],
+					"query": [
+						{
+							"key": "pagesize",
+							"value": "50",
+							"description": "If enabled it limits the number of records (rows) returned in each page. Automatic paging is always enabled which ensures the response is always less than 20Mb. You can, though, further limit the number rows if you wish to do so.",
+							"disabled": true
+						},
+						{
+							"key": "$count",
+							"value": "true",
+							"description": "if enabled, each response contains the @odata.count property which holds the total number of rows, even though each 'page' will be limited to the number of rows such that the data is less than 20Mb."
+						},
+						{
+							"key": "$top",
+							"value": "5",
+							"description": "Returns top N values.",
+							"disabled": true
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache",
+							"description": "if enabled, the data is 'fetched' again from the model which has a performance impact, but it dies mean any changes made will be reflected\n",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET accesstoken",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Getting access token');\r",
+							"const SAC_platform = pm.variables.get(\"SACplatform\");\r",
+							"if (SAC_platform==='NEO')\r",
+							"{\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth2/api/v1/\");\r",
+							"}\r",
+							"else  // we are on a Cloud Foundary Platform\r",
+							"{\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth/\");\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET accesstoken\", function()\r",
+							"    {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"if (pm.response.code === 200)\r",
+							"    {\r",
+							"        const jsonData = JSON.parse(responseBody);\r",
+							"        pm.environment.set(\"accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
+							"        pm.environment.set(\"x-csrf-token\", \"fetch\");               // we will need to request a new csrf-token as we have a new session\r",
+							"        postman.setNextRequest(pm.variables.get(\"recovery\"));      // we will now return to the request that sent us here in the first place\r",
+							"    }\r",
+							"else if (pm.response.code === 401)\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"    }\r",
+							"else\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Response Body: '+ responseBody);\r",
+							"        if (pm.variables.get(\"recovery\") === pm.info.requestName)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Already attempted to get a valid request. Will now quit');\r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Will make one more attempt to get a new accesstoken');\r",
+							"            pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        ; //end if \r",
+							"    }\r",
+							"; // end if\r",
+							"\r",
+							"const errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"const maxerrors=3;  // maxerrors needs to be at least 2, otherwise valid workflows may be able to correctly recover from an invalid access tokens or invalid csrf-tokens\r",
+							"\r",
+							"if (errors >= maxerrors)\r",
+							"{\r",
+							"    console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting');\r",
+							"    pm.variables.set(\"ContinuousErrors\",0); \r",
+							"    postman.setNextRequest(null);\r",
+							"}\r",
+							"else if (errors >= 2)\r",
+							"{\r",
+							"    console.info(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected');\r",
+							"    // a valid accesstoken may have been obtained, but the request where it came from could have failed, hence the need to trap for a continous loop of errors here\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{Username}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{Password}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{SACtokenFQDN}}{{oauthpath}}token?grant_type=client_credentials",
+					"protocol": "https",
+					"host": [
+						"{{SACtokenFQDN}}{{oauthpath}}token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
