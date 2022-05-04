@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "03b2af09-d4b8-4cf3-a1c6-e8ea839563d6",
 		"name": "Export Data 768-Fcj-Fact Data",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/yettobewritten](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/A69ssVS](https://d.dam.sap.com/a/A69ssVS)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/](https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -71,7 +71,7 @@
 							"    };\r",
 							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Entities in Page: '+readbody['@des.entitiesInPage']);\r",
 							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Processing Time : '+readbody['@des.processingTimeInMilliseconds']+' ms');  // this is the processing time on the SAP Analytics Cloud backend to get and prepare the data\r",
-							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Fact Data: ',readbody.value);\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Fact Data Response Body = ',readbody.value);\r",
 							"  \r",
 							"    const nextlink=readbody['@odata.nextLink'];\r",
 							"    //console.log(pm.info.requestName+' '+pm.info.eventName+': Next Link       : '+nextlink);\r",
@@ -181,7 +181,7 @@
 						{
 							"key": "$select",
 							"value": "keycolumn1,keycolumn2,keycolumn3",
-							"description": "Make sure must it contains all key columns. You can get the key columns from the provider metadata endpoint. If unspecifed, then all key columns are returned",
+							"description": "Contains all key columns you would like to be returned. You can get the key columns from the provider metadata endpoint. If unspecifed, then all key columns are returned",
 							"disabled": true
 						},
 						{

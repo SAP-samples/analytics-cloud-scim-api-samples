@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "8329e19d-03fd-4ad3-872a-b1c69bc5a026",
 		"name": "Export Data 771-Fcj-Dimension Master Data",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/yettobewritten](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/A69ssVS](https://d.dam.sap.com/a/A69ssVS)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/](https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -167,7 +167,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "https://{{SACserviceFQDN}}/api/v1/dataexport/providers/{{ExportData_NamespaceID}}/{{file_ProviderID}}/{{file_DimensionName}}Master",
+					"raw": "https://{{SACserviceFQDN}}/api/v1/dataexport/providers/{{ExportData_NamespaceID}}/{{file_ProviderID}}/{{file_DimensionName}}Master?$count=true",
 					"protocol": "https",
 					"host": [
 						"{{SACserviceFQDN}}"
@@ -185,21 +185,24 @@
 						{
 							"key": "pagesize",
 							"value": "10000",
+							"description": "If enabled it limits the number of records (rows) returned in each page. Automatic paging is always enabled which ensures the response is always less than 20Mb. You can, though, further limit the number rows if you wish to do so.",
 							"disabled": true
 						},
 						{
 							"key": "$count",
 							"value": "true",
-							"disabled": true
+							"description": "if enabled, each response contains the @odata.count property which holds the total number of rows, even though each 'page' will be limited to the number of rows such that the data is less than 20Mb."
 						},
 						{
 							"key": "$top",
 							"value": "5",
+							"description": "Returns top N values.",
 							"disabled": true
 						},
 						{
 							"key": "Cache-Control",
 							"value": "no-cache",
+							"description": "if enabled, the data is 'fetched' again from the model which has a performance impact, but it dies mean any changes made will be reflected\n",
 							"disabled": true
 						}
 					]
