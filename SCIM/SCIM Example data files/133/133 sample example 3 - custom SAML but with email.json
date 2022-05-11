@@ -1,0 +1,58 @@
+[
+  {
+    "file_userid": "MATTHEW1",
+    "file_isconcurrent": true,
+    "file_givenname": "Matthew",
+    "file_familyname": "Shaw",
+    "file_displayname": "Matthew Shaw 1",
+    "file_email": "matthew+100001@sap.com",
+    "file_managerid": "",
+	"file_samlmapping": "Matthew+100001@sap.com",
+    "file_JSON_roles": [{"value":"PROFILE:sap.epm:BI_Admin"},{"value":"Role2"}],
+	"file_JSON_teams": [{"value":"Team1"},{"value":"Team2"}],
+	"file_roles_action": "replace",
+	"file_teams_action": "add"
+  },
+  {
+    "file_userid": "MATTHEW1",
+    "file_isconcurrent": false,
+    "file_givenname": "Matthew",
+    "file_familyname": "Shaw",
+    "file_displayname": "Matthew Shaw 1",
+    "file_email": "matthew+100001@sap.com",
+    "file_managerid": "",
+	"file_samlmapping": "Matthew+100001@sap.com",
+    "file_JSON_roles": [{"value":"Role2"},{"value":"Role3"}],
+	"file_JSON_teams": [{"value":"Team2"},{"value":"Team3"}],
+	"file_roles_action": "replace",
+	"file_teams_action": "replace"
+  },
+  {
+    "file_userid": "MATTHEW1",
+    "file_isconcurrent": false,
+    "file_givenname": "Matthew",
+    "file_familyname": "Shaw",
+    "file_displayname": "Matthew Shaw 1",
+    "file_email": "matthew+100001@sap.com",
+    "file_managerid": "",
+	"file_samlmapping": "Matthew+100001@sap.com",
+    "file_JSON_roles": [{"value":"Role1"},{"value":"Role2"}],
+	"file_JSON_teams": [{"value":"Team3"},{"value":"Team4"}],
+	"file_roles_action": "remove",
+	"file_teams_action": "keep"
+  },
+  {
+    "file_userid": "MATTHEW2",
+    "file_isconcurrent": true,
+    "file_givenname": "Matthew",
+    "file_familyname": "Shaw",
+    "file_displayname": "Matthew Shaw 2",
+    "file_email": "matthew+100002@sap.com",
+    "file_managerid": "MATTHEW1",
+	"file_samlmapping": "Matthew+100002@sap.com",
+    "file_JSON_roles": [{"value":"Role1"},{"value":"Role2"}],
+	"file_JSON_teams": [{"value":"Team1"},{"value":"Team2"}],
+	"file_roles_action": "replace",
+	"file_teams_action": "add"
+  }
+]

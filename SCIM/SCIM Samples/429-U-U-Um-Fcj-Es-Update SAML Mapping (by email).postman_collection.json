@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "986912e4-eb6b-4b1e-878b-7a8d549245ab",
 		"name": "429-U-U-Um-Fcj-Es-Update SAML Mapping (by email)",
-		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.6\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
+		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -28,7 +28,7 @@
 							"pm.test(\"READ user by email\", function ()\r",
 							"    {\r",
 							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403]);\r",
-							"        pm.expect(pm.response.json().totalResults).to.eql(1);\r",
+							"        if (pm.response.code === 200) {pm.expect(pm.response.json().totalResults).to.eql(1)};\r",
 							"    }\r",
 							");\r",
 							"\r",
@@ -78,7 +78,6 @@
 							"            const user_found_by_email = readbody.Resources[0];\r",
 							"            if  (user_found_by_email.userName != desired_username)\r",
 							"            {\r",
-							"                pm.variables.set(\"readbody\", readbody);\r",
 							"                pm.variables.set(\"userid\",user_found_by_email.id);\r",
 							"                pm.variables.set(\"readbody\",user_found_by_email);\r",
 							"                console.log(pm.info.requestName+' '+pm.info.eventName+': Updating User with ID: '+ user_found_by_email.id +' having existing SAML Mapping: '+user_found_by_email.userName);\r",
@@ -165,7 +164,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:SearchRequest\"],\r\n     \"filter\": \r\n     \"email eq \\\"{{file_email}}\\\"\", \r\n     \"startIndex\": 1,\r\n     \"count\": 1\r\n}"
+					"raw": "{\r\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:SearchRequest\"],\r\n     \"filter\": \r\n     \"email eq \\\"{{email}}\\\"\", \r\n     \"startIndex\": 1,\r\n     \"count\": 1\r\n}"
 				},
 				"url": {
 					"raw": "https://{{SACserviceFQDN}}/api/v1/scim/Users/.search",

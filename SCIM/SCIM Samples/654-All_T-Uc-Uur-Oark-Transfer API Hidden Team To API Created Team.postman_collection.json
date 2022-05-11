@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "cf458d83-98ee-4543-9f04-e60eee765a9a",
 		"name": "654-All_T-Uc-Uur-Oark-Transfer API Hidden Team To API Created Team",
-		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.6.2\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
+		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.7.2\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -404,7 +404,7 @@
 							"const source_team           = pm.iterationData.get(\"file_source_team\");\r",
 							"const target_team_name      = pm.iterationData.get(\"file_target_team\");\r",
 							"const Users_Action          = pm.iterationData.get(\"file_user_action\");\r",
-							"const Roles_Action          =   pm.iterationData.get(\"file_role_action\");\r",
+							"const Roles_Action          = pm.iterationData.get(\"file_role_action\");\r",
 							"let   wrong_source_team_was_created = pm.variables.get(\"wrong_source_team_was_created\");\r",
 							"if (!wrong_source_team_was_created) { wrong_source_team_was_created=null};\r",
 							"let array_of_teams = pm.variables.get(\"array_of_teams\");\r",

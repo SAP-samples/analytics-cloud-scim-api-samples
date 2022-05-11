@@ -1,0 +1,4 @@
+file_userid,file_isconcurrent,file_givenname,file_familyname,file_displayname,file_email,file_managerid,file_samlmapping
+MATTHEW1,false,Matthew,Shaw,Matthew Shaw 1,Matthew+100001@sap.com,,Matthew+100001@sap.com
+MATTHEW1,true,Matthew,Shaw,Matthew Shaw 1,Matthew+100001@sap.com,,Matthew+100001@sap.com
+MATTHEW2,true,Matthew,Shaw,Matthew Shaw 2,Matthew+100002@sap.com,MATTHEW1,Matthew+100002@sap.com
