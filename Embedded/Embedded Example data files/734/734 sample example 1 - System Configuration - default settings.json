@@ -54,6 +54,10 @@
                 "value": "5"
             },
             {
+                "name": "STORY_PAGE_CACHE_WIDGET_LIMIT",
+                "value": "150"
+            },
+            {
                 "name": "FDE_BATCH_WAITING_TIME",
                 "value": "1000"
             },
