@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "f4e37100-fd8d-4d3f-8303-47fe9516dd8e",
 		"name": "122-U-CU-CUlemr-Oarrk-Fcj-Es-Create/update users (roles, no teams)",
-		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.7.1\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -537,7 +537,7 @@
 							"                // .. then we can get the current value and turn it to a String to allow a comparision with the desired setting\r",
 							"                const SACvalueisconcurrent     = customparams.isConcurrent.toString(); // we need to change this boolean value to a string so the compare works\r",
 							"                const SACenterpriseproperties  = readbody[\"urn:scim:schemas:extension:enterprise:1.0\"];\r",
-							"                const SACvaluemanager        = SACenterpriseproperties.manager.managerId;\r",
+							"                const SACvaluemanagerid        = SACenterpriseproperties.manager.managerId;\r",
 							"                \r",
 							"                // read the desired values\r",
 							"                // we can not update the givenname, familyname or displayname\r",
