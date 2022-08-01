@@ -2,8 +2,9 @@
 	"info": {
 		"_postman_id": "75caf319-be03-4ceb-8798-357ad799bf02",
 		"name": "983-TU-UC-TOarrk-UOarrkie-Fcj-Em-SAML Transport teams and users",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.7.2\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9591952"
 	},
 	"item": [
 		{
@@ -3781,7 +3782,7 @@
 							"        const source_team=pm.variables.get(\"source_team\");\r",
 							"        let displayname_requires_updating = false;\r",
 							"\r",
-							"        if ( (pm.iterationData.get(\"file_transport_primary_team_displayname\") === true)\r",
+							"        if ( pm.iterationData.get(\"file_transport_primary_team_displayname\")\r",
 							"            && (target_team.displayname != source_team.displayname) )\r",
 							"        {\r",
 							"            target_team.displayname = source_team.displayname;\r",
@@ -3803,7 +3804,7 @@
 							"        if (!roles_waiting_to_be_removed_in_this_batch) { roles_waiting_to_be_removed_in_this_batch = [] };\r",
 							"\r",
 							"\r",
-							"        if (pm.iterationData.get(\"file_transport_primary_team_user_membership\") === true)\r",
+							"        if (pm.iterationData.get(\"file_transport_primary_team_user_membership\"))\r",
 							"        {\r",
 							"            const users_to_add_from_source_team = source_team.members;\r",
 							"            users_to_add_from_source_team.forEach( myfunction_add_user_from_source_team_to_batch );\r",
@@ -4376,10 +4377,10 @@
 							"        errors++;\r",
 							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
 							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
-							"        postman.setNextRequest(\"GET accesstoken\");        \r",
+							"        postman.setNextRequest(\"GET target accesstoken\");        \r",
 							"        // as this is non-GET call, we shall set NeedGetToBeAuthorised to true and set the 'recovery' to the GET call, so the new session is authorised, once we've obtained a new accesstoken\r",
 							"        pm.variables.set(\"NeedGetToBeAuthorised\",true);\r",
-							"        pm.variables.set(\"recovery\",\"READ target team\");\r",
+							"        pm.variables.set(\"recovery\",\"READ primary target team (role & membership)\");\r",
 							"    } // end if response is 401\r",
 							"else if (pm.response.code === 403)\r",
 							"    {\r",
@@ -4395,8 +4396,8 @@
 							"        errors++;\r",
 							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
 							"        pm.variables.set(\"NeedGetToBeAuthorised\",true);\r",
-							"        pm.variables.set(\"recovery\",\"READ target team\");\r",
-							"        postman.setNextRequest(\"GET accesstoken\");\r",
+							"        pm.variables.set(\"recovery\",\"READ primary target team (role & membership)\");\r",
+							"        postman.setNextRequest(\"GET target accesstoken\");\r",
 							"    }  //end if response is 403\r",
 							"else if (pm.response.code === 200)\r",
 							"    {\r",
