@@ -3650,7 +3650,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"READ team\", function ()\r",
+							"pm.test(\"READ target team\", function ()\r",
 							"    {\r",
 							"        pm.expect(pm.response.code).to.be.oneOf([200,401,404]);\r",
 							"        pm.expect(validschema);\r",
@@ -4350,7 +4350,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"UPDATE team\", () => {\r",
+							"pm.test(\"UPDATE target team\", () => {\r",
 							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403])\r",
 							"});\r",
 							"\r",
