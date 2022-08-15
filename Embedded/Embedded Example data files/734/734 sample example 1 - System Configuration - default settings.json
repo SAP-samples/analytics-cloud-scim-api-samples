@@ -46,6 +46,10 @@
 				"value": ""
             },
             {
+                "name": "BW_UNCOMPOUNDED_DISPLAY_SYSADM",
+				"value": "false"
+            },
+            {
                 "name": "EXTERNAL_AVATAR_WHITELIST",
 				"value": ""
             },
@@ -56,6 +60,14 @@
             {
                 "name": "STORY_PAGE_CACHE_WIDGET_LIMIT",
                 "value": "150"
+            },
+			{
+                "name": "REFRESH_MEMBER_FOR_FILTERS",
+                "value": "true"
+            },
+			{
+                "name": "SIMPLIFY_VARIABLE_CHANGE",
+                "value": "false"
             },
             {
                 "name": "FDE_BATCH_WAITING_TIME",
@@ -113,6 +125,10 @@
                 "name": "BW_RESPECT_VIZ_DEFAULTING",
                 "value": "false"
             },
+			{
+                "name": "ALLOW_CAM_SUPPORT_USER",
+				"value": "false"
+            },
             {
                 "name": "TENANT_CURRENCY_FORMAT",
 				"value": ""
@@ -124,6 +140,14 @@
             {
                 "name": "EXPORT_PACKAGE_SIZE",
                 "value": "50000"
+            },
+			{
+                "name": "MOBILE_HIDE_RECENT_STORY",
+                "value": "false"
+            },
+			{
+                "name": "MOBILE_HIDE_RECENT_BOARDROOM",
+                "value": "false"
             },
             {
                 "name": "DISABLE_MOBILE_APP_PASSWORD",
@@ -141,6 +165,14 @@
                 "name": "PREDICTIVE_BI_FORECAST_REMOTE",
                 "value": "false"
             },
+			{
+                "name": "TENANT_ACQUIRED_MODEL_INDEXING",
+                "value": "false"
+            },
+			{
+				"name": "IGNORE_TEAM_NAMESPACE",
+				"value": "false"
+			},
             {
                 "name": "DISABLE_MOBILE_CACHING_IOS",
                 "value": "false"

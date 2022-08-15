@@ -41,6 +41,14 @@
                 "name": "MOBILE_REMOTE_TOKEN",
                 "value": "HEADER_KEY_1=<<token>>"
             },
+			{
+                "name": "MOBILE_HIDE_RECENT_STORY",
+                "value": "false"
+            },
+			{
+                "name": "MOBILE_HIDE_RECENT_BOARDROOM",
+                "value": "false"
+            }
         ]
     }
 ]

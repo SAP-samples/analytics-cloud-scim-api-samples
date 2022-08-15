@@ -2,8 +2,9 @@
 	"info": {
 		"_postman_id": "4736337e-ef01-4394-91a8-d82cb8379cbf",
 		"name": "Embedded 711-E-Display & Check System Configuration",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/Wg2pPhA](https://d.dam.sap.com/a/Wg2pPhA/)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/](https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/)\n\n# About\n\nScript version 0.7.3\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/Wg2pPhA](https://d.dam.sap.com/a/Wg2pPhA/)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/](https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/)\n\n# About\n\nScript version 0.7.4\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9591952"
 	},
 	"item": [
 		{
@@ -170,6 +171,18 @@
 							"        default_system_configuration.push({name:\"CHART_PROGRESSIVE_RENDERING\",value:\"false\"});\r",
 							"        default_system_configuration.push({name:\"ALLOW_ACN_COPY_CONTENT\",value:\"false\"});\r",
 							"        default_system_configuration.push({name:\"ALLOW_ACN_PACKAGE_SHARING_OEM\",value:\"false\"});\r",
+							"        // added August 2022:\r",
+							"        default_system_configuration.push({name:\"DEFAULT_CAM_ROLE\",value:undefined});\r",
+							"        default_system_configuration.push({name:\"MOBILE_HIDE_RECENT_BOARDROOM\",value:\"false\"});\r",
+							"        default_system_configuration.push({name:\"TENANT_ACQUIRED_MODEL_INDEXING\",value:\"false\"});\r",
+							"        default_system_configuration.push({name:\"IGNORE_TEAM_NAMESPACE\",value:\"false\"});\r",
+							"        default_system_configuration.push({name:\"MOBILE_HIDE_RECENT_ANALYTICAL\",value:\"false\"});\r",
+							"        default_system_configuration.push({name:\"BW_UNCOMPOUNDED_DISPLAY_SYSADM\",value:\"false\"});\r",
+							"        default_system_configuration.push({name:\"SIMPLIFY_VARIABLE_CHANGE\",value:\"false\"});\r",
+							"        default_system_configuration.push({name:\"REFRESH_MEMBER_FOR_FILTERS\",value:\"true\"});\r",
+							"        default_system_configuration.push({name:\"ALLOW_CAM_SUPPORT_USER\",value:\"false\"});\r",
+							"        default_system_configuration.push({name:\"MOBILE_HIDE_RECENT_STORY\",value:\"false\"});\r",
+							"        default_system_configuration.push({name:\"LINK_TENANT_URL_DWC\",value:undefined});\r",
 							"    \r",
 							"        const readbody    = JSON.parse(responseBody);\r",
 							"\r",
