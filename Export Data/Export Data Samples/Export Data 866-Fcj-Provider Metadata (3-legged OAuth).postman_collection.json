@@ -1,0 +1,279 @@
+{
+	"info": {
+		"_postman_id": "763c78c6-f19e-4b9b-bbd5-9c40bdbbf507",
+		"name": "Export Data 866-Fcj-Provider Metadata (3-legged OAuth)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/A69ssVS](https://d.dam.sap.com/a/A69ssVS)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/](https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9591952"
+	},
+	"item": [
+		{
+			"name": "READ Provider Metadata",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Provider Metadata');\r",
+							"pm.variables.set(\"recovery\",pm.info.requestName);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"READ Provider Metadata\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Your access token is no longer valid. Please get a new access token');\r",
+							"       break;\r",
+							"    } // end if response is 401 or 403\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"    pm.variables.set(\"ContinuousErrors\",0);\r",
+							"    // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"    pm.variables.set(\"NeedGetToBeAuthorised\",false);\r",
+							"    const readbody    = JSON.parse(responseBody);\r",
+							"    \r",
+							"    //const Providers=readbody.value;\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Provider Metadata Response Body =',readbody);\r",
+							"\r",
+							"\r",
+							"    function myfunction_Display_Data( entry, index )\r",
+							"    {\r",
+							"         console.log('   '+index+':'+entry);\r",
+							"    };\r",
+							"\r",
+							"\r",
+							"    if (readbody['com.sap.cloudDataIntegration'].FactData===undefined)\r",
+							"    {\r",
+							"        console.warn('Fact Data Keys: There are no Fact Data keys');\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        const FactData=readbody['com.sap.cloudDataIntegration'].FactData['$Key'];\r",
+							"        console.log('Fact Data Keys: ',FactData.length);\r",
+							"        FactData.forEach( myfunction_Display_Data );\r",
+							"    };\r",
+							"\r",
+							"    if (readbody['com.sap.cloudDataIntegration'].MasterData===undefined)\r",
+							"    {\r",
+							"        console.warn('Master Data Keys: There are no Master Data keys');\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        const MasterData=readbody['com.sap.cloudDataIntegration'].MasterData['$Key'];\r",
+							"        console.log('Master Data Keys: ',MasterData.length);\r",
+							"        MasterData.forEach( myfunction_Display_Data );\r",
+							"    };\r",
+							"\r",
+							"    if (readbody['com.sap.cloudDataIntegration'].AccountMaster===undefined)\r",
+							"    {\r",
+							"        console.warn('Account Master Keys: There are no Account Master keys');\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        const AccountMasterData=readbody['com.sap.cloudDataIntegration'].AccountMaster['$Key'];\r",
+							"        console.log('Account Master Keys: ',AccountMasterData.length);\r",
+							"        AccountMasterData.forEach( myfunction_Display_Data );\r",
+							"    };\r",
+							"\r",
+							"    if (readbody['com.sap.cloudDataIntegration'].VersionMaster===undefined)\r",
+							"    {\r",
+							"        console.warn('Version Master Keys: There are no Version Master keys');\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        const VersionMaster=readbody['com.sap.cloudDataIntegration'].VersionMaster['$Key'];\r",
+							"        console.log('Version Master Keys: ',VersionMaster.length);\r",
+							"        VersionMaster.forEach( myfunction_Display_Data );\r",
+							"    };\r",
+							"\r",
+							"    if (readbody['com.sap.cloudDataIntegration'].TimeMaster===undefined)\r",
+							"    {\r",
+							"        console.warn('Time Master Keys: There are no Time Master keys');\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        const TimeMaster=readbody['com.sap.cloudDataIntegration'].TimeMaster['$Key'];\r",
+							"        console.log('Version Master Keys: ',TimeMaster.length);\r",
+							"        TimeMaster.forEach( myfunction_Display_Data );\r",
+							"    };\r",
+							"\r",
+							"    postman.setNextRequest(null);\r",
+							"    \r",
+							"    break;\r",
+							"\r",
+							"    }\r",
+							"\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        break;\r",
+							"    }\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "clientSecret",
+							"value": "{{Password}}",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "{{Username}}",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://{{SACtokenFQDN}}/oauth/authorize",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://{{SACtokenFQDN}}/oauth/token",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
+						},
+						{
+							"key": "tokenType",
+							"value": "bearer",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "accesstoken",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/dataexport/providers/{{ExportData_NamespaceID}}/{{file_ProviderID}}/$metadata?$format=JSON",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"dataexport",
+						"providers",
+						"{{ExportData_NamespaceID}}",
+						"{{file_ProviderID}}",
+						"$metadata"
+					],
+					"query": [
+						{
+							"key": "$format",
+							"value": "JSON"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

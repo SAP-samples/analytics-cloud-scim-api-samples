@@ -1,0 +1,14 @@
+[
+  {
+    "file_ProviderID": "sap.epm:BestRunJuice_SampleModel",
+    "file_DimensionName": "Store_3z2g5g06m4Master"
+  },
+  {
+    "file_ProviderID": "sap.epm:BestRunJuice_SampleModel",
+    "file_DimensionName": "Product_3e315003anMaster"
+  },
+  {
+    "file_ProviderID": "sap.epm:BestRunJuice_SampleModel",
+    "file_DimensionName": "Sales_Manager__5w3m5d06b5Master"
+  }
+]

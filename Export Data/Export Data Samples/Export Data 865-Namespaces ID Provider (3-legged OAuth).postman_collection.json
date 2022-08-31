@@ -1,0 +1,237 @@
+{
+	"info": {
+		"_postman_id": "cf0633ba-fc19-4a91-90d6-6bb42785885b",
+		"name": "Export Data 865-Namespaces ID Provider (3-legged OAuth)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/A69ssVS](https://d.dam.sap.com/a/A69ssVS)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/](https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9591952"
+	},
+	"item": [
+		{
+			"name": "READ Namespaces ID Provider",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Namespaces ID Provider');\r",
+							"pm.variables.set(\"recovery\",pm.info.requestName);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"READ Namespaces ID Provider\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Your access token is no longer valid. Please get a new access token');\r",
+							"       break;\r",
+							"    } // end if response is 401 or 403\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"    pm.variables.set(\"ContinuousErrors\",0);\r",
+							"    // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"    pm.variables.set(\"NeedGetToBeAuthorised\",false);\r",
+							"    const readbody    = JSON.parse(responseBody);\r",
+							"    \r",
+							"    const Providers=readbody.value;\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Namespace ID Provider Response Body =',readbody);\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Providers Found: ',Providers.length);\r",
+							"    console.log(' #:  Provider ID:                                                               Provider Name:                                    Description:');\r",
+							"\r",
+							"    Providers.forEach( myfunction_display_provider);\r",
+							"\r",
+							"    function myfunction_display_provider( entry, index)\r",
+							"    {\r",
+							"        let consolelog=index;\r",
+							"        let spaces_needed_to_providerid=5-consolelog.toString().length;\r",
+							"        if (spaces_needed_to_providerid<1) {spaces_needed_to_providerid=1}\r",
+							"        consolelog=consolelog+(\" \".repeat(spaces_needed_to_providerid))+entry.ProviderID;\r",
+							"\r",
+							"        let spaces_needed_to_providername=80-consolelog.toString().length;\r",
+							"        if (spaces_needed_to_providername<1) {spaces_needed_to_providername=1}\r",
+							"        consolelog=consolelog+(\" \".repeat(spaces_needed_to_providername))+entry.ProviderName;\r",
+							"\r",
+							"        let spaces_needed_to_description=130-consolelog.toString().length;\r",
+							"        if (spaces_needed_to_description<1) {spaces_needed_to_description=1}\r",
+							"        consolelog=consolelog+(\" \".repeat(spaces_needed_to_description))+entry.Description;\r",
+							"\r",
+							"        console.log(consolelog);\r",
+							"    }\r",
+							"    \r",
+							"    postman.setNextRequest(null);\r",
+							"    \r",
+							"    break;\r",
+							"\r",
+							"    }\r",
+							"\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        break;\r",
+							"    }\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "clientSecret",
+							"value": "{{Password}}",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "{{Username}}",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://{{SACtokenFQDN}}/oauth/authorize",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://{{SACtokenFQDN}}/oauth/token",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
+						},
+						{
+							"key": "tokenType",
+							"value": "bearer",
+							"type": "string"
+						},
+						{
+							"key": "accessToken",
+							"value": "eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vY3gtd3MtY2YuYXV0aGVudGljYXRpb24uZXUxMC5oYW5hLm9uZGVtYW5kLmNvbS90b2tlbl9rZXlzIiwia2lkIjoia2V5LWlkLTEiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiIzOTdjMGJkZTAwN2Q0MzQ3YmNhMDRmMjFlMWM2MTlkZSIsImV4dF9hdHRyIjp7ImVuaGFuY2VyIjoiWFNVQUEiLCJzdWJhY2NvdW50aWQiOiJkY2NkMzFjZi02NGI0LTRjZjktOWU4Zi1lMDkzYWNhMTEyYjMiLCJ6ZG4iOiJjeC13cy1jZiIsInNlcnZpY2VpbnN0YW5jZWlkIjoiMGIyOWFmZGEtYzliZC00OTM3LWI4ZGEtOTg5NGUzOTc4MTFkIn0sInhzLnN5c3RlbS5hdHRyaWJ1dGVzIjp7InhzLnNhbWwuZ3JvdXBzIjpbInNhYyJdLCJ4cy5yb2xlY29sbGVjdGlvbnMiOlsic2FjLnVzZXJzIl19LCJnaXZlbl9uYW1lIjoibWF0dGhldy5zaGF3IiwieHMudXNlci5hdHRyaWJ1dGVzIjp7fSwiZmFtaWx5X25hbWUiOiJzYXAuY29tIiwic3ViIjoiZGQwMmVjNGItOWEwMi00N2VjLThmOGQtZjljZWE4YzcxOTRlIiwic2NvcGUiOlsib3BlbmlkIiwiYXBwcm91dGVyLXNhYy1zYWNldTEwIXQzNjUwLnNhcC5mcGEudXNlciIsInVhYS51c2VyIl0sImNsaWVudF9pZCI6InNiLTY4YzgwZmFmLWE1ZjMtNDcyMC1iNjg5LWIxN2VmMTcxYjUwMSFiODUwMHxjbGllbnQhYjM2NTAiLCJjaWQiOiJzYi02OGM4MGZhZi1hNWYzLTQ3MjAtYjY4OS1iMTdlZjE3MWI1MDEhYjg1MDB8Y2xpZW50IWIzNjUwIiwiYXpwIjoic2ItNjhjODBmYWYtYTVmMy00NzIwLWI2ODktYjE3ZWYxNzFiNTAxIWI4NTAwfGNsaWVudCFiMzY1MCIsImdyYW50X3R5cGUiOiJhdXRob3JpemF0aW9uX2NvZGUiLCJ1c2VyX2lkIjoiZGQwMmVjNGItOWEwMi00N2VjLThmOGQtZjljZWE4YzcxOTRlIiwib3JpZ2luIjoiY2xvdWRhbmFseXRpY3MuYWNjb3VudHMub25kZW1hbmQuY29tIiwidXNlcl9uYW1lIjoibWF0dGhldy5zaGF3QHNhcC5jb20iLCJlbWFpbCI6Im1hdHRoZXcuc2hhd0BzYXAuY29tIiwiYXV0aF90aW1lIjoxNjYxOTM5NjA5LCJyZXZfc2lnIjoiZmUyNGU3NTYiLCJpYXQiOjE2NjE5NDI2NjgsImV4cCI6MTY2MTk0NjI2OCwiaXNzIjoiaHR0cDovL2N4LXdzLWNmLmxvY2FsaG9zdDo4MDgwL3VhYS9vYXV0aC90b2tlbiIsInppZCI6ImRjY2QzMWNmLTY0YjQtNGNmOS05ZThmLWUwOTNhY2ExMTJiMyIsImF1ZCI6WyJhcHByb3V0ZXItc2FjLXNhY2V1MTAhdDM2NTAuc2FwLmZwYSIsInVhYSIsIm9wZW5pZCIsInNiLTY4YzgwZmFmLWE1ZjMtNDcyMC1iNjg5LWIxN2VmMTcxYjUwMSFiODUwMHxjbGllbnQhYjM2NTAiXX0.Pu67sWy5bZFAheNx78h1GZUCCtgtlElUzL9dSD9t8vLNT0cjnsF9IvkIIbznSRTNxoTWkoqfvN_8xZT7N9Sj6bxDuGEzT64uERt8FzPdBGFz1kofI7lUO--T4Oblb9w1LblsHA1fVSmNi-U0OPZTjK-QKhlx-180kKecGhB291gkTzaNN3DD2Dm29r2CAMnsx42ep-jvDJiFOzYcm6uSC3zIsfpCW7yTrxKcFwUy7tcTijV5YJdcO1T0WOFCpmAJzZoR-Mba3VqZSNwnfNyO7sZiwvQrFUXcvQPXJdnLvMpxxK5z1suooQibRij_90Rmg0qOcnwW_CrOEif3qXq5PPMrduhNDWozelkBNgMhHat2fy7IzwGCHRtKsaeyD-uLFIA_TGVMiwgjH6_p90N6Gel-hTRiYzxWPaNJXjCQy23eomn19EQuOJS_mPdD2wmWN-XLhUQPsv6zPl0n2gz41s7kDwSYRciUS_YR1YgNIRdI292g2TPrkSmCJzv5zmAnSHlP4P9nRjmQm0ZIcMaHNqitGUZo6asmlx4XeFN9AulEp-8Hq4hbBd6KvVk5UYRhvFChd5b2oeTbW0hnBDYW7bRxsidfKclHss-78vrF533FhLs9S2RPMTyGPjhqK_vUv6x1K4xE2IGg8jYtUQODunchMTsvtRrpWjDQEQPyiSY",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "accesstoken",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/dataexport/administration/Namespaces(NamespaceID='{{ExportData_NamespaceID}}')/Providers",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"dataexport",
+						"administration",
+						"Namespaces(NamespaceID='{{ExportData_NamespaceID}}')",
+						"Providers"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

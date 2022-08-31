@@ -1,0 +1,195 @@
+{
+	"info": {
+		"_postman_id": "a5103196-2878-4f76-89e1-d4d0fe5fc199",
+		"name": "Export Data 861-Test-Environment Setup (3-legged OAuth)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/A69ssVS](https://d.dam.sap.com/a/A69ssVS)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/](https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/)\n\n# About\n\nScript version 0.7.1\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9591952"
+	},
+	"item": [
+		{
+			"name": "READ Namespaces (Step 1 - read export data endpoint)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Export Data endpoint. This will validate if the SACserviceFQDN is valid or not');\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACserviceFQDN : '+pm.variables.get(\"SACserviceFQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACtokenFQDN   : '+pm.variables.get(\"SACtokenFQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACplatform    : '+pm.variables.get(\"SACplatform\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Username       : '+pm.variables.get(\"Username\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Now making a request to the Export Data endpoint...');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Environment Setup OK\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"if ( (pm.response.code === 200) )\r",
+							"{\r",
+							"        // we are authorised and the csrf-tokem is also valid. We need to set the x-csrf-token so the call is quicker.\r",
+							"        // Performing a 'fetch' of the x-csrf-token makes the call longer and its unnecessary. Setting the x-csrf-token to a valid value\r",
+							"        // will speed things up by a small fraction (which can be a lot of time if making thousands of calls!)\r",
+							"        const csrftoken=pm.environment.get(\"x-csrf-token\");\r",
+							"        if (csrftoken===\"fetch\")\r",
+							"        {\r",
+							"            pm.environment.set(\"x-csrf-token\",postman.getResponseHeader(\"x-csrf-token\"));\r",
+							"        }\r",
+							"};\r",
+							"\r",
+							"if (pm.response.code === 401)\r",
+							"{\r",
+							"    console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401 status was returned. This means this session is not authorised, likely due to an invalid access token. Response Body: '+ responseBody);\r",
+							"}\r",
+							"else if (pm.response.code === 200)\r",
+							"{\r",
+							"    const readbody    = JSON.parse(responseBody);\r",
+							"    const Namespaces_Array = readbody.value;\r",
+							"    const ExportData_NamespaceID = Namespaces_Array[0].NamespaceID;\r",
+							"    const current_ExportData_NamespaceID = pm.environment.get(\"ExportData_NamespaceID\");   \r",
+							"    console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid response was obtained and means your SACserviceFQDN is set correctly. This SAP Analytics Cloud Service has '+Namespaces_Array.length+' Namespace. The x-csrf-token is '+pm.environment.get(\"x-csrf-token\")+' and this will be re-presented in the header of subsequent requests');\r",
+							"    if (ExportData_NamespaceID != current_ExportData_NamespaceID)\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': The Postman Environment variable ExportData_NamespaceID is not set correctly! It does not match the NamespaceID found. Current value: '+current_ExportData_NamespaceID+' and value found: '+ExportData_NamespaceID+'.  Run sample script \\'Export Data 763-Namespaces (sets Environment ExportData_NamespaceID)\\' so this variable is updated correctly');\r",
+							"    }\r",
+							"    \r",
+							"}\r",
+							"else // response code is unexpected\r",
+							"{\r",
+							"    // we got an unexpected response from the SAC API\r",
+							"    console.error(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response Body: '+ responseBody);\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "clientSecret",
+							"value": "{{Password}}",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "{{Username}}",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://{{SACtokenFQDN}}/oauth/authorize",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://{{SACtokenFQDN}}/oauth/token",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
+						},
+						{
+							"key": "tokenType",
+							"value": "bearer",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "accesstoken",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"type": "text",
+						"value": "{{x-csrf-token}}"
+					},
+					{
+						"key": "x-sap-sac-custom-auth",
+						"type": "text",
+						"value": "true"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/dataexport/administration/Namespaces",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"dataexport",
+						"administration",
+						"Namespaces"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
