@@ -4,7 +4,7 @@
     "file_users_action": "keep",
     "file_roles_action": "add",
     "file_JSON_users": [],
-    "file_JSON_roles": [{"value":"PROFILE:sap.epm:Embedded_BI_Admin"}]
+    "file_JSON_roles": [{"value":"PROFILE:sap.epm:Embedded_BI_Admin"},{"value":"PROFILE:sap.epm:Embedded_BI_Content_Admin"}]
   },
     {
     "file_team": "Users",
