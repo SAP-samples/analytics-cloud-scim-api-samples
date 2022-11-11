@@ -1,7 +1,7 @@
 [
   {
     "file_team": "Admins",
-    "file_displayname": "Users with the role Embedded_BI_Admin"
+    "file_displayname": "Users with the roles Embedded_BI_Admin and Embedded_BI_Content_Admin"
   },
   {
     "file_team": "Users",

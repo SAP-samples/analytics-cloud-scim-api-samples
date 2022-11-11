@@ -2,8 +2,9 @@
 	"info": {
 		"_postman_id": "4f5f12c6-8c20-4d51-aed7-44b20696a068",
 		"name": "Embedded 701-Test Tenant Environment Setup",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/Wg2pPhA/](https://d.dam.sap.com/a/Wg2pPhA/)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/](https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/Wg2pPhA/](https://d.dam.sap.com/a/Wg2pPhA/)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/](https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/)\n\n# About\n\nScript version 0.7.5\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9591952"
 	},
 	"item": [
 		{
@@ -148,7 +149,7 @@
 							"        // we are not authorised, so our accesstoken  must be invalid. We shall get a new one\r",
 							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
 							"        // so we don't end up in an endless loop.\r",
-							"        console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401/403 status was returned. This means this session is not authorised, likely due to an invalid access token or your Postman Environment variable your Embedded_endpoints_sac_embedded_edition_service_config_FQDN is set correctly is not set correctly. Response Body: '+ responseBody);\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401/403 status was returned. This means this session is not authorised, likely due to an invalid access token or your Postman Environment variable your Embedded_endpoints_sac_embedded_edition_service_config_FQDN is not set correctly. You most likely copied the wrong value, make sure you use sac_embedded_edition_service_config (notice the _config at the end) and also make sure you enter only the Fully Qualified Domain Name (FQDN) and not the http://, and not the ending /api/v1 either!   Response Body: '+ responseBody);\r",
 							"        postman.setNextRequest(null);\r",
 							"       break;\r",
 							"    } // end if response is 401 or 403\r",

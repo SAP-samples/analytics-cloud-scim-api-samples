@@ -240,6 +240,78 @@
             {
                 "name": "ALLOW_ACN_PACKAGE_SHARING_OEM",
                 "value": "false"
+            },
+            {
+                "name": "MOBILE_HIDE_RECENT_BOARDROOM",
+                "value": "false"
+            },
+            {
+                "name": "TENANT_ACQUIRED_MODEL_INDEXING",
+                "value": "false"
+            },
+            {
+                "name": "IGNORE_TEAM_NAMESPACE",
+                "value": "false"
+            },
+            {
+                "name": "MOBILE_HIDE_RECENT_ANALYTICAL",
+                "value": "false"
+            },
+            {
+                "name": "BW_UNCOMPOUNDED_DISPLAY_SYSADM",
+                "value": "false"
+            },
+            {
+                "name": "SIMPLIFY_VARIABLE_CHANGE",
+                "value": "false"
+            },
+            {
+                "name": "REFRESH_MEMBER_FOR_FILTERS",
+                "value": "true"
+            },
+            {
+                "name": "ALLOW_CAM_SUPPORT_USER",
+                "value": "false"
+            },
+            {
+                "name": "MOBILE_HIDE_RECENT_STORY",
+                "value": "false"
+            },
+            {
+                "name": "BLENDING_SUBQUERY_LIMIT_ROW",
+                "value": "10000"
+            },
+            {
+                "name": "BLENDING_SUBQUERY_LIMIT_COLUMN",
+                "value": "60"
+            },
+            {
+                "name": "DISABLE_CIDP_SCIM_UPDATE_EMAIL",
+                "value": "false"
+            },
+            {
+                "name": "ALLOW_DOWNLOAD_UPLOAD_PACKAGES",
+                "value": "true"
+            },
+            {
+                "name": "DEV_FF_XVERSION",
+                "value": "127"
+            },
+            {
+                "name": "ALLOW_PRIVATE_OBJECTS_EXPORT",
+                "value": "false"
+            },
+            {
+                "name": "PUB_MAX_CONCURRENT_JOB_LIMIT",
+                "value": ""
+            },
+            {
+                "name": "LINK_TENANT_URL_DWC",
+                "value": ""
+            },
+            {
+                "name": "DEFAULT_CAM_ROLE",
+                "value": ""
             }
         ]
     }

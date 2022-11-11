@@ -7,9 +7,9 @@
     "file_displayname": "Matthew Shaw",
     "file_email": "matthew@sap.com",
     "file_managerid": "",
-    "file_JSON_roles": [{"value":"PROFILE:sap.epm:Embedded_BI_Admin"},{"value":"PROFILE:sap.epm:Embedded_BI_Content_Admin"}],
+    "file_JSON_roles": [],
     "file_JSON_teams": [{"value":"Admins"}],
-	"file_roles_action": "remove",
+	"file_roles_action": "replace",
 	"file_teams_action": "add"
   }
 ]

@@ -1,0 +1,10 @@
+[
+    {
+        "file_SystemConfig": [
+            {
+            "name": "IGNORE_TEAM_NAMESPACE",
+            "value": "true"
+			}
+        ]
+    }
+]
