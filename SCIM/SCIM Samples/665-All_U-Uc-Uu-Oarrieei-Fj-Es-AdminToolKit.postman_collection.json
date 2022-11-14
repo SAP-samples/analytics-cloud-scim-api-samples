@@ -2,8 +2,9 @@
 	"info": {
 		"_postman_id": "77910c92-cbc9-4c2f-80ce-217948f7b4aa",
 		"name": "665-All_U-Uc-Uu-Oarrieei-Fj-Es-AdminToolKit",
-		"description": "Provided 'as is'\n================\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\nUser guide\n==========\n\nhttps://d.dam.sap.com/a/kv3cXuB\n\nBlog (for Q&A)\n==============\nhttps://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/\n\nAbout\n=====\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. <https://people.sap.com/matthew.shaw/#content:blogposts>",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.7.4\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9591952"
 	},
 	"item": [
 		{
@@ -236,7 +237,7 @@
 							"\r",
 							"\r",
 							"                const valid_actions=[\"add\",\"remove\",\"replace\",\"intersect\",\"exclude\",\"excludeall\",\"invert\"];\r",
-							"                if (valid_actions.find(element => element === Users_Action))\r",
+							"                if (valid_actions.includes(Users_Action))\r",
 							"                {\r",
 							"                    // action is valid, so we can progress to READ all users\r",
 							"                    // lets see if we can add a filter to the GET /Users request so to speed things up.\r",
@@ -247,8 +248,8 @@
 							"\r",
 							"                    let filterenabled=false;\r",
 							"\r",
-							"                    const actions_supported_to_enable_filer=[\"add\",\"remove\",\"replace\",\"intersect\"];\r",
-							"                    if (actions_supported_to_enable_filer)\r",
+							"                    const actions_supported_to_enable_filter=[\"add\",\"remove\",\"replace\",\"intersect\"];\r",
+							"                    if (actions_supported_to_enable_filter.includes(Users_Action))\r",
 							"                    {\r",
 							"                        let filtervalue = \"\"; // this variable will be used to store the filter value\r",
 							"                        if ( (Users_With_Email_Domain_Matching) &&    !(Users_Match_All_Users\r",
@@ -2090,7 +2091,7 @@
 							"    pm.variables.set(\"number_of_roles_in_this_chunk\",number_of_roles_actually_changed);\r",
 							"    pm.variables.set(\"array_of_teams\",array_of_teams);\r",
 							"\r",
-							"    // displayname is already set in the prevent event 'READ all users page by page' and so we don't need to do anything with it here\r",
+							"    // displayname is already set in the previous event 'READ all users page by page' and so we don't need to do anything with it here\r",
 							"    pm.variables.set(\"meta\",   JSON.stringify(meta));\r",
 							"    pm.variables.set(\"members\",JSON.stringify(users_in_this_team_update));\r",
 							"    pm.variables.set(\"roles\",  JSON.stringify(roles_in_this_team_update));\r",
