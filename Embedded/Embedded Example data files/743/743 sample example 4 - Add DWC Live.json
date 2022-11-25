@@ -1,0 +1,38 @@
+[
+{
+	"file_liveconnection": [
+            {
+                "name": "type",
+                "value": "DWC"
+            },
+            {
+                "name": "name",
+				"value": "MyDWC_DB"
+            },
+            {
+                "name": "description",
+				"value": "My DWC connection description"
+            },
+            {
+                "name": "host",
+				"value": "myhostname"
+            },
+            {
+                "name": "port",
+				"value": "443"
+            },
+            {
+                "name": "language",
+				"value": "EN"
+            },
+            {
+                "name": "authenticationMethod",
+				"value": "SAML"
+            },
+			{
+                "name": "contextPath",
+				"value": "/dwaas-core"
+            }
+		]
+  }
+]
