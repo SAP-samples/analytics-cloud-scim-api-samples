@@ -405,7 +405,7 @@ if (valid_options.includes(option))
 				// the time order is critical to the function of this script
 				// all dates have already been processed for any timezone changes
 				// we shall not make any changes to these dates as that will confuse things and makes troubleshooting even more problematic
-				let oldest_date = new Date(activities_array[1].split('","')[7]);
+				let oldest_date = new Date(activities_array[0].split('","')[7]);
 				let latest_date = new Date(activities_array[activities_array.length-1].split('","')[7]);
 				
 				oldest_date=new Date(oldest_date.getFullYear().toString().concat(".",("0"+(oldest_date.getMonth()+1)).slice(-2),".",("0"+oldest_date.getDate()).slice(-2),
