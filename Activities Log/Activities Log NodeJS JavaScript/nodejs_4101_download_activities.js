@@ -41,8 +41,7 @@ const default_periods = 1;
 //  Be sure to press the 'Persist All' button BEFORE you export this environment, otherwise the variables you've configured may not be exported
 //  It is this environment that points to an OAuth client in a SAP Analytics Cloud Service. If you have multiple SAP Analytics Cloud Services, you'll need to
 //  duplicate this script, one for each environment. Each script will have a different environment and a different friendly_service_name (set above)
-const environment 	= "./SAC FPA47 Activities Download.postman_environment.json";
-//const environment 	= "./Production SAP Analytics Cloud Service.postman_environment.json";
+const environment 	= "./Production SAP Analytics Cloud Service.postman_environment.json";
 //
 //
 //  The folder to store the .csv log files
