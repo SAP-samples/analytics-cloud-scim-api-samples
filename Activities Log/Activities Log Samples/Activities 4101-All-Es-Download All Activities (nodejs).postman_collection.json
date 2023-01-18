@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "c9fa458d-9536-40a8-9613-0c1b93f4e7d9",
 		"name": "Activities 4101-All-Es-Download All Activities (nodejs)",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/A69ssVS](https://d.dam.sap.com/a/A69ssVS)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/](https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/)\n\n# About\n\nScript version 0.7\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/L1SUAhp/SAP%20SAC%20Activities%20Log%20Sample%20Scripts%20User%20Guide.pdf?rc=10](https://d.dam.sap.com/a/L1SUAhp/SAP%20SAC%20Activities%20Log%20Sample%20Scripts%20User%20Guide.pdf?rc=10)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2023/01/18/sap-analytics-cloud-activities-log-command-line-interface-cli-to-automate-downloads-associated-best-practices/](https://blogs.sap.com/2023/01/18/sap-analytics-cloud-activities-log-command-line-interface-cli-to-automate-downloads-associated-best-practices/)\n\n# About\n\nScript version 0.8\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "9591952"
 	},
@@ -23,7 +23,13 @@
 							"else  // we are on a Cloud Foundary Platform\r",
 							"{\r",
 							"    pm.variables.set(\"oauthpath\",\"/oauth/\");\r",
-							"};"
+							"};\r",
+							"\r",
+							"// on the NEO platform a 200 response code is returned even when you are not authorised and the accesstoken is empty.\r",
+							"// on th CF platform, we would observe a 401. It means the accesstoken, when on NEO, must be something\r",
+							"// otherwise these sample scripts won't work as they should. \r",
+							"// if you are using NEO and your accesstoken is empty you'll need to either set your accesstoken to 'something' or uncomment the following line to do this programatically\r",
+							"//     if (pm.variables.get(\"accesstoken\")==='') {pm.variables.set(\"accesstoken\",\"invalidaccesstoken\")};"
 						],
 						"type": "text/javascript"
 					}
