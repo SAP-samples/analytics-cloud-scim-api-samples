@@ -13,8 +13,8 @@
 //
 //  For full step-by-step instructions please visit the blog and download the user guide
 //
-//  Blog: 
-//  User Guide: 
+//  Blog: https://blogs.sap.com/2023/01/18/sap-analytics-cloud-activities-log-command-line-interface-cli-to-automate-downloads-associated-best-practices/
+//  User Guide: https://d.dam.sap.com/a/L1SUAhp/SAP%20SAC%20Activities%20Log%20Sample%20Scripts%20User%20Guide.pdf?rc=10
 
 //
 //
