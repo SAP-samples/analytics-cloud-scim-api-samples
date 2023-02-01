@@ -7,8 +7,8 @@
 //
 //  Developed by Matthew Shaw, SAP https://people.sap.com/matthew.shaw/#content:blogposts
 //
-//	Version 0.8
-//  January 2023
+//	Version 0.8.1
+//  February 2023
 //
 //
 //  For full step-by-step instructions please visit the blog and download the user guide
@@ -444,8 +444,14 @@ if (valid_options.includes(option))
 						const entries_in_data_file=activities_array.length;
 						// add the header row to the top of the array
 						activities_array.splice(0,0,header_row);
-						filesystem.writeFileSync(folder.concat(data_filename), activities_array.join("\r\n"));
-						console.log('Written file '+data_filename+' with '+(entries_in_data_file)+' entries');
+						
+						filesystem.writeFile(folder.concat(data_filename), activities_array.join("\r\n"), error =>
+						{
+							if (error) { console.error('Unable to write file '+data_filename+'. error:'+error);
+							process.exitCode = 1;											}
+						});
+						console.log('Written file '+data_filename+' with '+entries_in_data_file+' entries');
+						
 						a_file_has_been_written=true;
 						
 						
@@ -613,8 +619,14 @@ if (valid_options.includes(option))
 									const entries_in_data_file=current_day_logs_array.length;
 									current_day_logs_array.splice(0,0,header_row);
 									if (use_fixed_filename && periods===1) { data_filename=fixed_filename };
-									filesystem.writeFileSync(folder.concat(data_filename), current_day_logs_array.join("\r\n"));
+									
+									filesystem.writeFile(folder.concat(data_filename), current_day_logs_array.join("\r\n"), error =>
+									{
+										if (error) { console.error('Unable to write file '+data_filename+'. error:'+error);
+										process.exitCode = 1;											}
+									});
 									console.log('Written file '+data_filename+' with '+entries_in_data_file+' entries');
+									
 									a_file_has_been_written=true;
 								}
 								// we need to empty the current_day_logs_array to start to process the next days logs
@@ -782,8 +794,14 @@ if (valid_options.includes(option))
 									const entries_in_data_file=current_week_logs_array.length;
 									current_week_logs_array.splice(0,0,header_row);
 									if (use_fixed_filename && periods===1) { data_filename=fixed_filename };
-									filesystem.writeFileSync(folder.concat(data_filename), current_week_logs_array.join("\r\n"));
+									
+									filesystem.writeFile(folder.concat(data_filename), current_week_logs_array.join("\r\n"), error =>
+									{
+										if (error) { console.error('Unable to write file '+data_filename+'. error:'+error);
+										process.exitCode = 1;											}
+									});
 									console.log('Written file '+data_filename+' with '+entries_in_data_file+' entries');
+									
 									a_file_has_been_written=true;
 								};
 								
@@ -944,8 +962,14 @@ if (valid_options.includes(option))
 									const entries_in_data_file=current_month_logs_array.length;
 									current_month_logs_array.splice(0,0,header_row);
 									if (use_fixed_filename && periods===1) { data_filename=fixed_filename };
-									filesystem.writeFileSync(folder.concat(data_filename), current_month_logs_array.join("\r\n"));
+									
+									filesystem.writeFile(folder.concat(data_filename), current_month_logs_array.join("\r\n"), error =>
+									{
+										if (error) { console.error('Unable to write file '+data_filename+'. error:'+error);
+										process.exitCode = 1;											}
+									});
 									console.log('Written file '+data_filename+' with '+entries_in_data_file+' entries');
+									
 									a_file_has_been_written=true;
 								}
 								current_month_logs_array=[];
