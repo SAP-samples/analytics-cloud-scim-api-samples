@@ -1,0 +1,493 @@
+{
+	"info": {
+		"_postman_id": "1535d20c-228e-42e7-938e-c16827db6fa4",
+		"name": "BTP Audit 4202-All-Es-Download All Audit Logs (nodejs)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/vfjnhzM/](https://d.dam.sap.com/a/vfjnhzM/)\n\n# Blog (for Q&A)\n\n# About\n\nScript version 0.8\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9591952"
+	},
+	"item": [
+		{
+			"name": "GET accesstoken",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.info(pm.info.requestName+' '+pm.info.eventName+': Getting access token');\r",
+							"const BTP_platform = pm.variables.get(\"BTPplatform\");\r",
+							"if (BTP_platform==='NEO')\r",
+							"{\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth2/apitoken/v1\");\r",
+							"    if (pm.variables.get(\"accesstoken\")==='') {pm.variables.set(\"accesstoken\",\"invalidaccesstoken\")};\r",
+							"}\r",
+							"else  // we are on a Cloud Foundary Platform\r",
+							"{\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth/token\");\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET accesstoken\", function()\r",
+							"    {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 200:\r",
+							"    {\r",
+							"        const jsonData = JSON.parse(responseBody);\r",
+							"        pm.environment.set(\"accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
+							"        switch (pm.variables.get(\"BTPplatform\") )\r",
+							"        {\r",
+							"            case 'NEO': { postman.setNextRequest(\"All Audit Logs (NEO)\"); break; }\r",
+							"            default :   { postman.setNextRequest(); }\r",
+							"        }\r",
+							"        break;\r",
+							"    }\r",
+							"    case 401:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"        break;\r",
+							"    }\r",
+							"    default:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Response Body: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"\r",
+							"    }\r",
+							" }; // end switch"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{Username}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{Password}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{BTPtokenFQDN}}{{oauthpath}}?grant_type=client_credentials",
+					"protocol": "https",
+					"host": [
+						"{{BTPtokenFQDN}}{{oauthpath}}"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Audit Logs",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let pageIndex   = pm.variables.get(\"pageIndex\");\r",
+							"let paging      = pm.variables.get(\"paging\");\r",
+							"let filter_from = pm.variables.get(\"filter_from\");\r",
+							"\r",
+							"if ((filter_from===undefined) || (filter_from===\"\")){ filter_from=\"2021-02-11T00:00:00\" };\r",
+							"if (paging===undefined)\r",
+							"{\r",
+							"    pageIndex=1;\r",
+							"    pm.variables.set(\"pageIndex\",pageIndex);\r",
+							"    pm.request.url.query.add({key: 'time_from', value: filter_from})\r",
+							"}\r",
+							"else\r",
+							"{\r",
+							"    pm.request.url.query.add((pm.variables.get(\"paging\")))\r",
+							"}\r",
+							"\r",
+							"console.info(pm.info.requestName+' '+pm.info.eventName+': Downloading audit log page '+pageIndex);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Download audit log\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 401, 403, 429, 500])\r",
+							"}\r",
+							");\r",
+							"\r",
+							"switch (pm.response.code) {\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"        {\r",
+							"            // we are not authorised, so our accesstoken or the csrf-token must be invalid. We shall get new ones of each!\r",
+							"            // A 401 error might be because something is wrong with the call or even the SAP BTP API, so we need to start counting errors,\r",
+							"            // so we don't end up in an endless loop.\r",
+							"            let errors = pm.variables.get(\"ContinuousErrors\");\r",
+							"            if (!errors) { errors = 0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"            errors++;\r",
+							"            pm.variables.set(\"ContinuousErrors\", errors);\r",
+							"            console.info(pm.info.requestName + ' ' + pm.info.eventName + ': Fetching a new accesstoken');\r",
+							"            postman.setNextRequest(\"GET accesstoken\");\r",
+							"            pm.variables.set(\"recovery\", pm.info.requestName);\r",
+							"            break;\r",
+							"        } // end case 401 \r",
+							"\r",
+							"    case 429:\r",
+							"        // in the event SAP Business Technology Platform is receiving too many requests, a HTTP response 429 will be issued.\r",
+							"        // in such a case, we shall wait for the 'Retry-After' value and simply re-attempt the same request.\r",
+							"        {\r",
+							"            const retryafter = pm.response.headers.get('Retry-After') ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
+							"            console.info(pm.info.requestName + ' ' + pm.info.eventName + ': SAP Business Technology Platform is receiving too many requests. Retrying in ' + retryafter + 'ms');\r",
+							"            setTimeout(() => { }, retryafter);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"            break;\r",
+							"        }  // end case 429\r",
+							"\r",
+							"    case 200:\r",
+							"    case 204:\r",
+							"        {\r",
+							"            // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"            pm.variables.set(\"ContinuousErrors\", 0);\r",
+							"            const paging = pm.response.headers.get(\"paging\"); // the total number of pages there are for this query\r",
+							"            let pageIndex = pm.variables.get(\"pageIndex\");  // the pageIndex that was last read\r",
+							"\r",
+							"            if (paging!=undefined)  // decide if we've read all the pages possible \r",
+							"            {\r",
+							"                // we need to read more pages to get all the data back. So we repeat this request, just with the next pageIndex increased by 1\r",
+							"                pageIndex++;\r",
+							"                pm.variables.set(\"pageIndex\", pageIndex);\r",
+							"                pm.variables.set(\"paging\", paging);\r",
+							"                postman.setNextRequest(pm.info.requestName);\r",
+							"            }\r",
+							"            else {\r",
+							"                // we've read all the pages\r",
+							"                pm.variables.unset(\"pageIndex\");\r",
+							"                pm.variables.unset(\"paging\");\r",
+							"                postman.setNextRequest(null);\r",
+							"            }\r",
+							"            break;\r",
+							"        }  // end case 200\r",
+							"\r",
+							"    default: // response code is unexpected\r",
+							"        {\r",
+							"            // we got an unexpected response from the BTP API\r",
+							"            let errors = pm.variables.get(\"ContinuousErrors\");\r",
+							"            if (!errors) { errors = 0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"            errors++;\r",
+							"            pm.variables.set(\"ContinuousErrors\", errors);\r",
+							"            const maxerrors = 7;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"            if (errors >= maxerrors) {\r",
+							"                console.error(pm.info.requestName + ' ' + pm.info.eventName + ': Too many continuous errors. Aborting. Response: Code '+pm.response.code+' ' + responseBody);\r",
+							"                pm.variables.set(\"ContinuousErrors\", 0);\r",
+							"                postman.setNextRequest(null);\r",
+							"            }\r",
+							"            else if (errors >= 2) {\r",
+							"                console.warn(pm.info.requestName + ' ' + pm.info.eventName + ': Continuous errors detected. Response: Code '+pm.response.code+' ' + responseBody);\r",
+							"                postman.setNextRequest(pm.info.requestName);\r",
+							"            }\r",
+							"            else {\r",
+							"                console.warn(pm.info.requestName + ' ' + pm.info.eventName + ': Unexpected error. Response: Code '+pm.response.code+' ' + responseBody);\r",
+							"                postman.setNextRequest(pm.info.requestName);\r",
+							"            };\r",
+							"            if ( (errors<maxerrors ) && (pm.response.code===500) )\r",
+							"            {\r",
+							"                console.warn(pm.info.requestName + ' ' + pm.info.eventName + ': Unexpected API response. Waiting 20 seconds to allow the API to self-heal');\r",
+							"                setTimeout(()=> {},20000);\r",
+							"            }\r",
+							"        }\r",
+							"        ;\r",
+							"}; // end switch pm.response.code"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{BTPserviceFQDN}}/auditlog/v2/auditlogrecords",
+					"protocol": "https",
+					"host": [
+						"{{BTPserviceFQDN}}"
+					],
+					"path": [
+						"auditlog",
+						"v2",
+						"auditlogrecords"
+					],
+					"query": [
+						{
+							"key": "Cache-Control",
+							"value": "no-cache",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Audit Logs (NEO)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let pageIndex   = pm.variables.get(\"pageIndex\");\r",
+							"let nextlink    = pm.variables.get(\"nextlink\");\r",
+							"let filter_from = pm.variables.get(\"filter_from\");\r",
+							"\r",
+							"if ((filter_from===undefined) || (filter_from===\"\")){ filter_from=\"2021-02-11T00.00.00\" };\r",
+							"if (pageIndex===undefined)\r",
+							"{\r",
+							"    pageIndex=1;\r",
+							"    pm.variables.set(\"pageIndex\",pageIndex);\r",
+							"    pm.request.url.query.add({key: '$count',  value: (\"true\") });\r",
+							"    pm.request.url.query.add({key: '$filter', value: (\"(Time gt \\'\"+filter_from+\"\\')\") });\r",
+							"    // if you would like to filter the logs by Category, comment the line above and uncomment one of the following lines\r",
+							"    // pm.request.url.query.add({key: '$filter', value: (\"(Time gt \\'\"+filter_from+\"\\') and Category eq \\'audit.security-events\\'\") });\r",
+							"    // pm.request.url.query.add({key: '$filter', value: (\"(Time gt \\'\"+filter_from+\"\\') and Category eq \\'audit.data-modification\\'\") });\r",
+							"    // pm.request.url.query.add({key: '$filter', value: (\"(Time gt \\'\"+filter_from+\"\\') and Category eq \\'audit.data-access\\'\") });\r",
+							"    // pm.request.url.query.add({key: '$filter', value: (\"(Time gt \\'\"+filter_from+\"\\') and Category eq \\'audit.configuration\\'\") });\r",
+							"\r",
+							"}\r",
+							"else\r",
+							"{\r",
+							"    pm.request.url.query.clear();\r",
+							"    nextlink.split('&').forEach( parameter => { pm.request.url.query.add({key: parameter.substr(0,parameter.search(\"=\")), value: parameter.substr(parameter.search(\"=\")+1)}); })\r",
+							"}\r",
+							"\r",
+							"console.info(pm.info.requestName+' '+pm.info.eventName+': Downloading audit log page '+pageIndex);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Download audit log\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 401, 403, 429, 500])\r",
+							"}\r",
+							");\r",
+							"\r",
+							"switch (pm.response.code) {\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"        {\r",
+							"            // we are not authorised, so our accesstoken or the csrf-token must be invalid. We shall get new ones of each!\r",
+							"            // A 401 error might be because something is wrong with the call or even the SAP BTP API, so we need to start counting errors,\r",
+							"            // so we don't end up in an endless loop.\r",
+							"            let errors = pm.variables.get(\"ContinuousErrors\");\r",
+							"            if (!errors) { errors = 0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"            errors++;\r",
+							"            pm.variables.set(\"ContinuousErrors\", errors);\r",
+							"            console.info(pm.info.requestName + ' ' + pm.info.eventName + ': Fetching a new accesstoken');\r",
+							"            postman.setNextRequest(\"GET accesstoken\");\r",
+							"            pm.variables.set(\"recovery\", pm.info.requestName);\r",
+							"            break;\r",
+							"        } // end case 401 \r",
+							"\r",
+							"    case 429:\r",
+							"        // in the event SAP Business Technology Platform is receiving too many requests, a HTTP response 429 will be issued.\r",
+							"        // in such a case, we shall wait for the 'Retry-After' value and simply re-attempt the same request.\r",
+							"        {\r",
+							"            const retryafter = pm.response.headers.get('Retry-After') ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
+							"            console.info(pm.info.requestName + ' ' + pm.info.eventName + ': SAP Business Technology Platform is receiving too many requests. Retrying in ' + retryafter + 'ms');\r",
+							"            setTimeout(() => { }, retryafter);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"            break;\r",
+							"        }  // end case 429\r",
+							"\r",
+							"    case 200:\r",
+							"    case 204:\r",
+							"        {\r",
+							"            // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"            pm.variables.set(\"ContinuousErrors\", 0);\r",
+							"            const readbody    = JSON.parse(responseBody);\r",
+							"            const nextlink    = readbody['@odata.nextLink'];\r",
+							"            let  total_logs   = readbody['@odata.count'];\r",
+							"            if (total_logs)  { pm.variables.set(\"total_logs\",total_logs);  }\r",
+							"            else {total_logs = pm.variables.get(\"total_logs\")}\r",
+							"\r",
+							"            \r",
+							"            if (nextlink===undefined)  // decide if we've read all the pages possible \r",
+							"            {\r",
+							"                pm.variables.unset(\"nextlink\");\r",
+							"                 pm.variables.unset(\"pageIndex\");\r",
+							"                postman.setNextRequest(null);  // Postman will quit this iteration and move to the next value in the data file, if there is one.\r",
+							"            }\r",
+							"            else\r",
+							"            {\r",
+							"                pm.variables.set(\"nextlink\",nextlink.substr(nextlink.search(\"\\\\?\")+1));\r",
+							"                let pageIndex = pm.variables.get(\"pageIndex\");  // the pageIndex that was last read\r",
+							"                pageIndex++;\r",
+							"                pm.variables.set(\"pageIndex\", pageIndex);\r",
+							"                postman.setNextRequest(pm.info.requestName);\r",
+							"            }\r",
+							"            break;\r",
+							"        }  // end case 200\r",
+							"\r",
+							"    default: // response code is unexpected\r",
+							"        {\r",
+							"            // we got an unexpected response from the BTP API\r",
+							"            let errors = pm.variables.get(\"ContinuousErrors\");\r",
+							"            if (!errors) { errors = 0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"            errors++;\r",
+							"            pm.variables.set(\"ContinuousErrors\", errors);\r",
+							"\r",
+							"            const maxerrors = 3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"            if (errors >= maxerrors) {\r",
+							"                console.error(pm.info.requestName + ' ' + pm.info.eventName + ': Too many continuous errors. Aborting. Response: Code '+pm.response.code+' ' + responseBody);\r",
+							"                pm.variables.set(\"ContinuousErrors\", 0);\r",
+							"                postman.setNextRequest(null);\r",
+							"            }\r",
+							"            else if (errors >= 2) {\r",
+							"                console.warn(pm.info.requestName + ' ' + pm.info.eventName + ': Continuous errors detected. Response: Code '+pm.response.code+' ' + responseBody);\r",
+							"                postman.setNextRequest(pm.info.requestName);\r",
+							"            }\r",
+							"            else {\r",
+							"                console.warn(pm.info.requestName + ' ' + pm.info.eventName + ': Unexpected error. Response: Code '+pm.response.code+' ' + responseBody);\r",
+							"                postman.setNextRequest(pm.info.requestName);\r",
+							"            };\r",
+							"            if ( (errors<maxerrors ) && (pm.response.code===500) )\r",
+							"            {\r",
+							"                console.warn(pm.info.requestName + ' ' + pm.info.eventName + ': Unexpected API response. Waiting 20 seconds to allow the API to self-heal');\r",
+							"                setTimeout(()=> {},20000);\r",
+							"            }\r",
+							"        }\r",
+							"        ;\r",
+							"}; // end switch pm.response.code"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{BTPserviceFQDN}}/auditlog/v1/accounts/{{BTPNeoAccount}}/AuditLogRecords",
+					"protocol": "https",
+					"host": [
+						"{{BTPserviceFQDN}}"
+					],
+					"path": [
+						"auditlog",
+						"v1",
+						"accounts",
+						"{{BTPNeoAccount}}",
+						"AuditLogRecords"
+					],
+					"query": [
+						{
+							"key": "Cache-Control",
+							"value": "no-cache",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,320 @@
+{
+	"info": {
+		"_postman_id": "400801f2-2165-4e14-bac2-a7014adf3235",
+		"name": "BTP Audit 4201-Test-Es-Tests Single Environment Setup",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/vfjnhzM/](https://d.dam.sap.com/a/vfjnhzM/)\n\n# Blog (for Q&A)\n\n# About\n\nScript version 0.8\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9591952"
+	},
+	"item": [
+		{
+			"name": "GET accesstoken (Step 1 - obtain a valid token)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.info(pm.info.requestName+' '+pm.info.eventName+': Getting an access token using the BTPtokenFQDN as part of the access token URL');\r",
+							"const BTP_platform = pm.variables.get(\"BTPplatform\");\r",
+							"if (BTP_platform==='NEO')\r",
+							"{\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth2/apitoken/v1\");\r",
+							"    if (pm.variables.get(\"accesstoken\")==='') {pm.variables.set(\"accesstoken\",\"invalidaccesstoken\")};\r",
+							"}\r",
+							"else  // we are on a Cloud Foundary Platform\r",
+							"{\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth/token\");\r",
+							"};\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': BTPserviceFQDN : '+pm.variables.get(\"BTPserviceFQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': BTPtokenFQDN   : '+pm.variables.get(\"BTPtokenFQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': BTPplatform    : '+pm.variables.get(\"BTPplatform\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Username       : '+pm.variables.get(\"Username\"));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET accesstoken\", function()\r",
+							"    {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 200:\r",
+							"    {\r",
+							"        const jsonData = JSON.parse(responseBody);\r",
+							"        pm.environment.set(\"accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid accesstoken was obtained. This means your BTPtokenFQDN, BTPplatform, Username and Password are all valid. You can now test the AuditLog endpoint. The accesstoken provided was '+jsonData.access_token+' and will be re-presented in the header of subsequent requests');\r",
+							"        switch (pm.variables.get(\"BTPplatform\") )\r",
+							"        {\r",
+							"            case 'NEO': { postman.setNextRequest(\"READ audit log NEO (Step 2 - read Audit Log endpoint)\"); break; }\r",
+							"            default :   { postman.setNextRequest(); }\r",
+							"        }\r",
+							"        break;\r",
+							"    }\r",
+							"    case 401:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"        break;\r",
+							"    }\r",
+							"    default:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Check your BTPtokenFQDN is set correctly. Response Body: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"    }\r",
+							"}; // end switch"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{Username}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{Password}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{BTPtokenFQDN}}{{oauthpath}}?grant_type=client_credentials",
+					"protocol": "https",
+					"host": [
+						"{{BTPtokenFQDN}}{{oauthpath}}"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "READ audit log Cloud Foundry (Step 2 - read Audit Log endpoint)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Single Environment Setup OK\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': This session is not authorised, likely due to an invalid access token. Response Body: '+ responseBody);\r",
+							"        break;\r",
+							"    }\r",
+							"    case 200:\r",
+							"    {\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid response was obtained and means your BTPserviceFQDN is set correctly.');\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': A total of ' + JSON.parse(responseBody).length + ' logs were downloaded as part of this test.');\r",
+							"        break;\r",
+							"    }\r",
+							"    default:\r",
+							"    {\r",
+							"        // we got an unexpected response from the SAC API\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response Body: '+ responseBody);\r",
+							"    }\r",
+							"    \r",
+							"};\r",
+							"postman.setNextRequest(null);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Audit Log API endpoint. This will validate if the Audit Log endpoint is valid or not');\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': BTPserviceFQDN : '+pm.variables.get(\"BTPserviceFQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': BTPtokenFQDN   : '+pm.variables.get(\"BTPtokenFQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': BTPplatform    : '+pm.variables.get(\"BTPplatform\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Username       : '+pm.variables.get(\"Username\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': accesstoken    : '+pm.variables.get(\"accesstoken\")+' (obtained from the token URL endpoint and re-presented to this endpoint)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Now making a request to the BTP Audit Log endpoint...');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://{{BTPserviceFQDN}}/auditlog/v2/auditlogrecords",
+					"protocol": "https",
+					"host": [
+						"{{BTPserviceFQDN}}"
+					],
+					"path": [
+						"auditlog",
+						"v2",
+						"auditlogrecords"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "READ audit log NEO (Step 2 - read Audit Log endpoint)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Single Environment Setup OK\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': This session is not authorised, likely due to an invalid access token. Response Body: '+ responseBody);\r",
+							"        break;\r",
+							"    }\r",
+							"    case 200:\r",
+							"    {\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid response was obtained and means your BTPserviceFQDN and BTPNeoAccount are set correctly.');\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': A total of ' + JSON.parse(responseBody).value.length + ' logs were downloaded as part of this test.');\r",
+							"        break;\r",
+							"    }\r",
+							"    default:\r",
+							"    {\r",
+							"        // we got an unexpected response from the SAC API\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response Body: '+ responseBody);\r",
+							"    }\r",
+							"    \r",
+							"};\r",
+							"postman.setNextRequest(null);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Audit Log API endpoint. This will validate if the Audit Log endpoint is valid or not');\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': BTPserviceFQDN : '+pm.variables.get(\"BTPserviceFQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': BTPtokenFQDN   : '+pm.variables.get(\"BTPtokenFQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': BTPplatform    : '+pm.variables.get(\"BTPplatform\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': BTPNeoAccount  : '+pm.variables.get(\"BTPNeoAccount\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Username       : '+pm.variables.get(\"Username\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': accesstoken    : '+pm.variables.get(\"accesstoken\")+' (obtained from the token URL endpoint and re-presented to this endpoint)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Now making a request to the BTP Audit Log endpoint...');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://{{BTPserviceFQDN}}/auditlog/v1/accounts/{{BTPNeoAccount}}/AuditLogRecords",
+					"protocol": "https",
+					"host": [
+						"{{BTPserviceFQDN}}"
+					],
+					"path": [
+						"auditlog",
+						"v1",
+						"accounts",
+						"{{BTPNeoAccount}}",
+						"AuditLogRecords"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
