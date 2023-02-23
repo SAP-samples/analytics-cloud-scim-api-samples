@@ -13,7 +13,7 @@
 //
 //  For full step-by-step instructions please visit the blog and download the user guide
 //
-//  Blog: https://blogs.sap.com/2023/
+//  Blog: https://blogs.sap.com/2023/02/23/sap-business-technology-platform-audit-logs-command-line-interface-cli-to-automate-downloads-plus-associated-best-practices-and-faqs/
 //  User Guide: https://d.dam.sap.com/a/vfjnhzM/ 
 
 //
