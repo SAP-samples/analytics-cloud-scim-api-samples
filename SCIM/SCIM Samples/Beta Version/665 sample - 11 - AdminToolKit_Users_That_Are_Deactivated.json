@@ -1,0 +1,8 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_That_Are_Deactivated",
+	"file_team_displayname": "All users that have been deactivated. These users will no longer consume any license or be able to log in again until re-activated. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_not_active": true
+  }
+ ]

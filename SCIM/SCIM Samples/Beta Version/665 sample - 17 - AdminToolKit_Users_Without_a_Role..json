@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_Without_a_Role",
+	"file_team_displayname": "All users that do not have a role directly assigned to them (this is good, as it's best practice for users to inherit roles via teams). Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_no_roles": true,
+	"file_JSON_roles_to_exclude": []
+  }
+ ]

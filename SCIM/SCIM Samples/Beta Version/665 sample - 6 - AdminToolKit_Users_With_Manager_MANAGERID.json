@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_With_Manager_MANAGERID",
+	"file_team_displayname": "All users that have a manager. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_named_managerids": true,
+	"file_JSON_named_managerids": [{"value":"MANAGERID"}]
+  }
+ ]

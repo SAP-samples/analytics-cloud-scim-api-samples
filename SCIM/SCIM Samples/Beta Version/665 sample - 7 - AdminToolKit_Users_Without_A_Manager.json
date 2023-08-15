@@ -1,0 +1,8 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_Without_A_Manager",
+	"file_team_displayname": "All users that do not have a manager. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_without_manager": true
+  }
+ ]

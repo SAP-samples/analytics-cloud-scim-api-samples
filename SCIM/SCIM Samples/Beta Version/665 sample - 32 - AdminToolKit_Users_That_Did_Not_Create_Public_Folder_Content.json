@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_That_Did_Not_Create_Public_Folder_Content",
+	"file_team_displayname": "Users that have no content in a Public Folder that is shown they created. Such users will not have special rights over any public content. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_that_did_not_create_public_content": true
+  }
+  ]
+  

@@ -1,0 +1,8 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_With_BI_Concurrent_Setting",
+	"file_team_displayname": "All users that have a Business Intelligence concurrent session setting. Such users may not necessarily consume a Business Intelligence concurrent session license. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_bi_concurrent_license": true
+  }
+ ]

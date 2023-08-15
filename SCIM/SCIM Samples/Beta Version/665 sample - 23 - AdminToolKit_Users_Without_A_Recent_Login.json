@@ -1,0 +1,10 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_Without_A_Recent_Login",
+	"file_team_displayname": "Users that have not logged in within the last 30 days. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_most_recent_login_at_least_days_ago": true,
+	"file_users_with_with_most_recent_login_at_least_days": 30
+  }
+  ]
+  

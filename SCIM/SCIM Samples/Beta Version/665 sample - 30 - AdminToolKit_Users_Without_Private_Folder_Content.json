@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_Without_Private_Folder_Content",
+	"file_team_displayname": "Users that do not have content in their private folder. Content identified is limited to Stories, Applications, insights, Digital Boardrooms, Templates and Folders. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_without_private_folder_content": true
+  }
+  ]
+  

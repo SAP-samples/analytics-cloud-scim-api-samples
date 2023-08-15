@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "AdminToolKit_All_Users",
+	"file_team_displayname": "All users registered in this SAP Analytics Cloud Service (except for SAP Support users). Updated TIMESTAMP",
+	"file_users_action": "add",
+	"file_JSON_users_to_exclude": [{"value":"SAP_SUPPORTXXXXXXXXX"}],
+	"file_action_users_match_all_users": true
+  }
+ ]

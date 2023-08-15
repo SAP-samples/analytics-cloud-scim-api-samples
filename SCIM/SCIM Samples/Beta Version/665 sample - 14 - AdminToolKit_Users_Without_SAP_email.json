@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_Without_SAP_email",
+	"file_team_displayname": "All users that have an email address different from @sap.com. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_email_domain_not_matching": true,
+	"file_email_domain": "sap.com"
+  }
+ ]

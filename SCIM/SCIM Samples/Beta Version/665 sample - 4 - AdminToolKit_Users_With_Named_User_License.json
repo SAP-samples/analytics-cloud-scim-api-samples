@@ -1,0 +1,8 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_With_Named_User_License",
+	"file_team_displayname": "All users that have a named-user license. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_bi_named_user_license": true
+  }
+ ]

@@ -1,0 +1,12 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_With_Few_Logins_This_Last_Month",
+	"file_team_displayname": "Users with only 2 or fewer logins in the last 31 days. This includes users without any login. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_fewer_logins_than": true,
+	"file_users_with_fewer_logins_than": 3,
+	"file_action_users_with_fewer_logins_within_last_days": true,
+	"file_users_with_logins_within_last_days": 31
+  }
+  ]
+  

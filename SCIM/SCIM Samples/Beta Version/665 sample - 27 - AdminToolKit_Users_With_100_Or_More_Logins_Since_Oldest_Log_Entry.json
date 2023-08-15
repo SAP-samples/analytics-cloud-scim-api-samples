@@ -1,0 +1,10 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_With_100_Or_More_Logins_Since_Oldest_Log_Entry",
+	"file_team_displayname": "Users with 100 or more logins since the oldest log entry. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_greater_logins_than": true,
+	"file_users_with_greater_logins_than": 99
+  }
+  ]
+  

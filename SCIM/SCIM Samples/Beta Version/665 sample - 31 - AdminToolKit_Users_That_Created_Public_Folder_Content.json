@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_That_Created_Public_Folder_Content",
+	"file_team_displayname": "Users that created content in a Public Folder. Such users may have special rights over this content that other users may not enjoy. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_that_created_public_content": true
+  }
+  ]
+  

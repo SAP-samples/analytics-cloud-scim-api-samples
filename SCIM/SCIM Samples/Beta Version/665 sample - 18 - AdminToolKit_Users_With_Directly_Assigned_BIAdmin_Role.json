@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_With_Directly_Assigned_BIAdmin_Role",
+	"file_team_displayname": "All users directly assigned the BIAdmin Role. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_all_named_roles": true,
+	"file_JSON_named_roles": [{"value":"PROFILE:sap.epm:BI_Admin"}]
+  }
+ ]
