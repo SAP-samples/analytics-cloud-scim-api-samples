@@ -1518,7 +1518,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://{{SACserviceFQDN}}/api/v1/Repositories?$format=json&select=createdBy,ancestorPath",
+					"raw": "https://{{SACserviceFQDN}}/api/v1/Repositories?$format=json&$select=createdBy,ancestorPath",
 					"protocol": "https",
 					"host": [
 						"{{SACserviceFQDN}}"
@@ -1534,7 +1534,7 @@
 							"value": "json"
 						},
 						{
-							"key": "select",
+							"key": "$select",
 							"value": "createdBy,ancestorPath"
 						}
 					]
