@@ -1,0 +1,152 @@
+[
+  {
+    "file_delete_team": "AdminToolKit_All_Users"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Created_Recently"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_BI_Concurrent_Setting"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_BI_Named_User_License"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_A_Manager"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_Manager_MANAGERID"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_A_Manager"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_That_Are_Managers"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_That_Are_Not_Managers"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_That_Are_Activated"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_That_Are_Deactivated"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_UserID_Ending__1"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_SAP_email"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_SAP_email"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_a_Role_and_Without_a_Team"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_a_Team"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_a_Role"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_Directly_Assigned_BIAdmin_Role"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_Default_Settings"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Created_More_Than_A_Year_Ago"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Created_Recently"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_A_Recent_Login"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_A_Recent_Login"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_Few_Logins_Since_Oldest_Log_Entry"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_Few_Logins_This_Last_Month"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_A_Recent_Login_And_Fewer_Than_3_Logins_Last_3_Months"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_100_Or_More_Logins_Since_Oldest_Log_Entry"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_100_Or_More_Logins_Within_Last_3_Months"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_Private_Folder_Content"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_Private_Folder_Content"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_That_Created_Public_Folder_Content"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_That_Did_Not_Create_Public_Folder_Content"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Dormant_A__Created_3_Months_No_Recent_Login_Fewer_Than_3_Logins_Last_3_Months"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Dormant_B__Dormant_A_Plus_No_Private_Folder_Content"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Dormant_C__Dormant_B_Plus_No_Public_Folder_Content"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Dormant_D__Dormant_C_Plus_Are_Not_Managers"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Dormant_E__Dormant_D_Plus_Are_Activated"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Dormant_F__Dormant_E_Plus_Are_Named_Licensed"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_That_Are_Managers_With_BI_Concurrent_Setting"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_In_Managment_Structure"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Not_In_Managment_Structure"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_Default_Settings"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_American_Settings"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_American_Settings"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_British_Settings"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_British_Settings"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_French_Settings"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_French_Settings"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_With_German_Settings"
+  },
+  {
+    "file_delete_team": "AdminToolKit_Users_Without_German_Settings"
+  }
+]

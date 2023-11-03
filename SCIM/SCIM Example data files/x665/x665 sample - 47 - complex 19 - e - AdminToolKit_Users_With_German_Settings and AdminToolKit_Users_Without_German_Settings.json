@@ -1,0 +1,24 @@
+ [
+  {
+	"file_team": "AdminToolKit_Users_With_German_Settings",
+	"file_team_displayname": "All users that have a German settings for language, date/time and number format. Updated TIMESTAMP",
+	"file_users_action": "invert",
+	"file_actions_users_with_LangDateTimeNumberFormats_different_from": true,
+	"file_preferredlanguage": "de",
+    "file_dataaccesslanguage": "zz",
+    "file_dateformatting": "yyyy.MM.dd",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1 234,56"
+  },
+   {
+	"file_team": "AdminToolKit_Users_Without_German_Settings",
+	"file_team_displayname": "All users that do not have a German settings for language, date/time and number format. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_actions_users_with_LangDateTimeNumberFormats_different_from": true,
+	"file_preferredlanguage": "de",
+    "file_dataaccesslanguage": "zz",
+    "file_dateformatting": "yyyy.MM.dd",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1 234,56"
+  }
+  ]

@@ -1,0 +1,8 @@
+[
+  {
+	"file_team": "AdminToolKit_T01_Users_That_Are_Not_Managers",
+	"file_team_displayname": "Users to be transported without any of those being a manager",
+	"file_users_action": "remove",
+	"file_action_users_that_are_managers": true
+  }
+ ]

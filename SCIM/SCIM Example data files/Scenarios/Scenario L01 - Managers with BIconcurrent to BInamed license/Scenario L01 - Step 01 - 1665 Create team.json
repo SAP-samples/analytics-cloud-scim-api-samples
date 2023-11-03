@@ -1,0 +1,14 @@
+[
+  {
+	"file_team": "AdminToolKit_L01_Users_That_Are_Managers_With_BI_Concurrent_License",
+	"file_team_displayname": "Team members currently being updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_that_are_managers": true
+  },
+  {
+	"file_team": "AdminToolKit_L01_Users_That_Are_Managers_With_BI_Concurrent_License",
+	"file_team_displayname": "All users that are managers with a BI Concurrent user license. Updated TIMESTAMP",
+	"file_users_action": "intersect",
+	"file_action_users_with_bi_concurrent_license": true
+  }
+ ]

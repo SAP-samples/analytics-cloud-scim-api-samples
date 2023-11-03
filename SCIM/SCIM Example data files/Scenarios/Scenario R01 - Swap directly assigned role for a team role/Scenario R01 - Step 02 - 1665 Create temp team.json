@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "R01_BIAdmin_Team_for_new_users_found",
+	"file_team_displayname": "Users that currently have the BI_Admin role directly assigned to them",
+	"file_users_action": "replace",
+	"file_action_users_with_all_named_roles": true,
+	"file_JSON_named_roles": [{"value":"PROFILE:sap.epm:BI_Admin"}]
+  }
+ ]

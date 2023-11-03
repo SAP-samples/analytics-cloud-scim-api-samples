@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_Not_In_Managment_Structure",
+	"file_team_displayname": "Users that do not have a manager and are not managers. Updated TIMESTAMP",
+	"file_users_action": "invert",
+	"file_action_users_with_a_manager": true,
+	"file_action_users_that_are_managers": true
+  }
+ ]

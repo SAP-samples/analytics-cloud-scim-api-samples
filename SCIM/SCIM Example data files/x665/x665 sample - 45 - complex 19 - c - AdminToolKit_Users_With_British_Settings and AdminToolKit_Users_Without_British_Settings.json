@@ -1,0 +1,24 @@
+ [
+  {
+	"file_team": "AdminToolKit_Users_With_British_Settings",
+	"file_team_displayname": "All users that have a British settings for language, date/time and number format. Updated TIMESTAMP",
+	"file_users_action": "invert",
+	"file_actions_users_with_LangDateTimeNumberFormats_different_from": true,
+	"file_preferredlanguage": "en",
+    "file_dataaccesslanguage": "zz",
+    "file_dateformatting": "dd/MM/yyyy",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1,234.56"
+  },
+   {
+	"file_team": "AdminToolKit_Users_Without_British_Settings",
+	"file_team_displayname": "All users that do not have a British settings for language, date/time and number format. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_actions_users_with_LangDateTimeNumberFormats_different_from": true,
+	"file_preferredlanguage": "en",
+    "file_dataaccesslanguage": "zz",
+    "file_dateformatting": "dd/MM/yyyy",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1,234.56"
+  }
+  ]

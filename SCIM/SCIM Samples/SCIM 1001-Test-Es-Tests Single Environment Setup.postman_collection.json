@@ -1,0 +1,408 @@
+{
+	"info": {
+		"_postman_id": "9e1120ba-7be2-43d9-9dc3-8631e476c607",
+		"name": "SCIM 1001-Test-Es-Tests Single Environment Setup",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.8\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9591952",
+		"_collection_link": "https://matthewshaw.postman.co/workspace/SAP-Analytics-Cloud-Sample-Deve~26a222ea-7810-4431-88c7-df4be9f95a83/collection/9591952-9e1120ba-7be2-43d9-9dc3-8631e476c607?action=share&source=collection_link&creator=9591952"
+	},
+	"item": [
+		{
+			"name": "GET accesstoken (Step 1 - obtain a valid token)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Getting an access token using the SACtokenFQND as part of the access token URL');\r",
+							"const SAC_platform = pm.variables.get(\"SACplatform\");\r",
+							"if (SAC_platform==='NEO')\r",
+							"{\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth2/api/v1/\");\r",
+							"}\r",
+							"else if (SAC_platform==='CF') // we are on a Cloud Foundary Platform\r",
+							"{\r",
+							"   pm.variables.set(\"oauthpath\",\"/oauth/\");\r",
+							"}\r",
+							"else\r",
+							"{\r",
+							"    console.warn(pm.info.requestName+' '+pm.info.eventName+': Invalid SACplatform setting, assuming CF. Supported values: NEO, CF. SACplatform: '+ SAC_platform);\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth/\");\r",
+							"}\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACserviceFQDN : '+pm.variables.get(\"SACserviceFQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACtokenFQDN   : '+pm.variables.get(\"SACtokenFQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACplatform    : '+pm.variables.get(\"SACplatform\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Username       : '+pm.variables.get(\"Username\"));\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET accesstoken\", function()\r",
+							"    {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"if (pm.response.code === 200)\r",
+							"    {\r",
+							"        const jsonData = JSON.parse(responseBody);\r",
+							"        pm.environment.set(\"accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
+							"        pm.environment.set(\"x-csrf-token\", \"fetch\");               // we will need to request a new csrf-token as we have a new session\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid accesstoken was obtained. This means your SACtokenFQDN, SACplatform, Username and Password are all valid. You can now test the SCIM endpoint. The accesstoken provided was '+jsonData.access_token+' and will be re-presented in the header of subsequent requests');\r",
+							"        postman.setNextRequest();                                  // let the next request run (if being run in the runner)\r",
+							"    }\r",
+							"else if (pm.response.code === 401)\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"    }\r",
+							"else\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Check your SACtokenFQDN is set correctly. Response Body: '+ responseBody);\r",
+							"        postman.setNextRequest(null);\r",
+							"    }\r",
+							"; // end if"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{Username}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{Password}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{SACtokenFQDN}}{{oauthpath}}token?grant_type=client_credentials",
+					"protocol": "https",
+					"host": [
+						"{{SACtokenFQDN}}{{oauthpath}}token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "READ users (Step 2 - read SCIM endpoint)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading SCIM API endpoint to obtain total user count. This will validate if the SACserviceFQDN is valid or not');\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACserviceFQDN : '+pm.variables.get(\"SACserviceFQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACtokenFQDN   : '+pm.variables.get(\"SACtokenFQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACplatform    : '+pm.variables.get(\"SACplatform\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Username       : '+pm.variables.get(\"Username\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': accesstoken    : '+pm.variables.get(\"accesstoken\")+' (obtained from the token URL endpoint and re-presented to this endpoint)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Now making a request to the SCIM endpoint...');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Single Environment Setup OK\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"\r",
+							"if (pm.response.code === 401)\r",
+							"{\r",
+							"    console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401 status was returned. This means this session is not authorised, likely due to an invalid access token. Response Body: '+ responseBody);\r",
+							"}\r",
+							"else if (pm.response.code === 200)\r",
+							"{\r",
+							"    const readbody    = JSON.parse(responseBody);\r",
+							"    const total_users_in_this_SAC_service= readbody.totalResults;\r",
+							"    console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid response was obtained and means your SACserviceFQDN is set correctly. This SAP Analytics Cloud Service has '+total_users_in_this_SAC_service+' users');\r",
+							"    \r",
+							"    \r",
+							"    // checking SAMLSSO Environment variable is set\r",
+							"    \r",
+							"    const samlsso=pm.variables.get(\"SAMLSSO\");\r",
+							"    switch (samlsso)\r",
+							"    {\r",
+							"        case 'email':\r",
+							"        case 'custom':\r",
+							"        case 'userid':\r",
+							"        case 'default':\r",
+							"        {\r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+': SAMLSSO               : '+samlsso);\r",
+							"            break;\r",
+							"        }\r",
+							"        case undefined:\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': SAMLSSO               : Undefined! Variable set as \\'default\\' for you. Please update the environment variable SAMLSSO if SSO is enabled. Supported values: default, userid, email and custom');\r",
+							"            pm.environment.set(\"SAMLSSO\",\"default\");\r",
+							"            break;\r",
+							"        }\r",
+							"        default:  \r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': SAMLSSO               : '+samlsso+'  (not set correctly. Please update the environment variable SAMLSSO to be: default, userid, email or custom)');\r",
+							"            break;\r",
+							"        }\r",
+							"    };\r",
+							"    \r",
+							"\r",
+							"    // checking TimeZone variables are set\r",
+							"\r",
+							"    let timezone_hours   = parseInt(pm.variables.get(\"TimeZoneHours\"));\r",
+							"    let timezone_minutes = parseInt(pm.variables.get(\"TimeZoneMinutes\"));\r",
+							"    let timezone_text    = pm.variables.get(\"TimeZoneDescription\");\r",
+							"\r",
+							"    if ((timezone_hours   === undefined)|| (!Number.isInteger(timezone_hours  )))\r",
+							"    {\r",
+							"        timezone_hours   =0;\r",
+							"        pm.environment.set(\"TimeZoneHours\",timezone_hours);\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': TimeZoneHours         : Undefined! Variable set as \\'0\\' for you. Please update the environment variable TimeZoneHours to be a number between -23 and 23');\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': TimeZoneHours         : '+timezone_hours);\r",
+							"    };\r",
+							"    \r",
+							"    if ((timezone_minutes === undefined)|| (!Number.isInteger(timezone_minutes)))  \r",
+							"    { \r",
+							"        timezone_minutes =0;\r",
+							"        pm.environment.set(\"TimeZoneMinutes\",timezone_minutes);\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': TimeZoneMinutes       : Undefined! Variable set as \\'0\\' for you. Please update the environment variable TimeZoneMinutes to be -30, 0 or 30');\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': TimeZoneMinutes       : '+timezone_minutes);\r",
+							"    };\r",
+							"\r",
+							"    if (timezone_text     === undefined) \r",
+							"    { \r",
+							"        timezone_text    ='UTC';\r",
+							"        pm.environment.set(\"TimeZoneDescription\",timezone_text);\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': TimeZoneDescription   : Undefined! Variable set as \\'UTC\\' for you. Please update the environment variable TimeZoneDescription to be the description of your timezone');\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': TimeZoneDescription   : '+timezone_text);\r",
+							"    };\r",
+							"\r",
+							"\r",
+							"    // checking SCIM_NewUserDefault varaibles are set\r",
+							"\r",
+							"    const preferredlanguage                 =pm.environment.get(\"SCIM_NewUserDefault_preferredlanguage\");  // possible values: 'ar', 'bg', 'zh-CN', 'zh-TW', 'hr', 'ca', 'cs', 'cy', 'nl', 'da', 'en', 'en-GB', 'fi', 'fr', 'fr-CA', 'de', 'de-CH', 'el', 'he', 'hi', 'hu', 'id', 'it', 'ja', 'ko', 'ms', 'no', 'pl', 'pt', 'pt-PT', 'ro', 'ru', 'sh', 'sk', 'sl', 'es', 'es-MX', 'sv', 'th', 'tr', 'uk', 'vi', 'en-US-sappsd' and possibly more will be added over time!\r",
+							"\r",
+							"    const dataaccesslanguage                =pm.environment.get(\"SCIM_NewUserDefault_dataaccesslanguage\"); // possible values: 'zz' (default), 'af', 'ar', 'bg',  ... many more as shown above in preferredlanguage.\r",
+							"    const dateformatting                    =pm.environment.get(\"SCIM_NewUserDefault_dateformatting\");     // possible values include: 'MMM d, yyyy', 'dd/MM/yyyy', 'MM.dd.yyyy', ... many more!\r",
+							"    const timeformatting                    =pm.environment.get(\"SCIM_NewUserDefault_timeformatting\");     // possible values include: 'H:mm:ss' (24H), 'h:mm:ss A' (12H)\r",
+							"    const numberformatting                  =pm.environment.get(\"SCIM_NewUserDefault_numberformatting\");   // possible values include: '1,234.56', '1.234,56', '1 234,56'\r",
+							"    const cleanupnotificationsnumberofdays  =pm.environment.get(\"SCIM_NewUserDefault_cleanupnotificationsnumberofdays\"); // possible values: 0, 1, 2, etc..\r",
+							"    const systemnotificationsemailoptin     =pm.environment.get(\"SCIM_NewUserDefault_systemnotificationsemailoptin\"); // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
+							"    const marketingemailoptin               =pm.environment.get(\"SCIM_NewUserDefault_marketingemailoptin\");                    // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
+							"\r",
+							"\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': New users will be created with the following values for their respective properties:');\r",
+							"    if (preferredlanguage)\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_preferredlanguage set as                  : '+ preferredlanguage);\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        pm.environment.set(\"SCIM_NewUserDefault_preferredlanguage\", \"en\");    // possible values: 'ar', 'bg', 'zh-CN', 'zh-TW', 'hr', 'ca', 'cs', 'cy', 'nl', 'da', 'en', 'en-GB', 'fi', 'fr', 'fr-CA', 'de', 'de-CH', 'el', 'he', 'hi', 'hu', 'id', 'it', 'ja', 'ko', 'ms', 'no', 'pl', 'pt', 'pt-PT', 'ro', 'ru', 'sh', 'sk', 'sl', 'es', 'es-MX', 'sv', 'th', 'tr', 'uk', 'vi', 'en-US-sappsd' and possibly more will be added over time!\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_preferredlanguage                        : Undefined! Variable set as \\''+ pm.environment.get(\"SCIM_NewUserDefault_preferredlanguage\")+'\\'');\r",
+							"\r",
+							"    };\r",
+							"\r",
+							"\r",
+							"    if (dataaccesslanguage)\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_dataaccesslanguage set as                 : '+ dataaccesslanguage);\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        pm.environment.set(\"SCIM_NewUserDefault_dataaccesslanguage\", \"en\");    // possible values: 'zz' (default), 'af', 'ar', 'bg',  ... many more as shown above in preferredlanguage.\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_dataaccesslanguage                       : Undefined! Variable set as \\''+ pm.environment.get(\"SCIM_NewUserDefault_dataaccesslanguage\")+'\\''); \r",
+							"    };\r",
+							"\r",
+							"\r",
+							"    if (dateformatting)\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_dateformatting set as                     : '+ dateformatting);\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        pm.environment.set(\"SCIM_NewUserDefault_dateformatting\", \"MMM d, yyyy\");    // possible values include: 'MMM d, yyyy', 'dd/MM/yyyy', 'MM.dd.yyyy', ... many more!\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_dateformatting                           : Undefined! Variable set as \\''+ pm.environment.get(\"SCIM_NewUserDefault_dateformatting\")+'\\''); \r",
+							"    };\r",
+							"\r",
+							"\r",
+							"    if (timeformatting)\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_timeformatting set as                     : '+ timeformatting);\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        pm.environment.set(\"SCIM_NewUserDefault_timeformatting\", \"H:mm:ss\");    // possible values include: 'H:mm:ss' (24H), 'h:mm:ss A' (12H)\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_timeformatting                           : Undefined! Variable set as \\''+ pm.environment.get(\"SCIM_NewUserDefault_timeformatting\")+'\\''); \r",
+							"    };\r",
+							"\r",
+							"\r",
+							"    if (numberformatting)\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_numberformatting set as                   : '+ numberformatting);\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        pm.environment.set(\"SCIM_NewUserDefault_numberformatting\", \"1,234.56\");    // possible values include: 'MMM d, yyyy', 'dd/MM/yyyy', 'MM.dd.yyyy', ... many more!\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_numberformatting                         : Undefined! Variable set as \\''+ pm.environment.get(\"SCIM_NewUserDefault_numberformatting\")+'\\''); \r",
+							"    };\r",
+							"\r",
+							"    if (cleanupnotificationsnumberofdays)\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_cleanupnotificationsnumberofdays set as   : '+ cleanupnotificationsnumberofdays);\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        pm.environment.set(\"SCIM_NewUserDefault_cleanupnotificationsnumberofdays\", \"0\");    // possible values include: 'MMM d, yyyy', 'dd/MM/yyyy', 'MM.dd.yyyy', ... many more!\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_cleanupnotificationsnumberofdays         : Undefined! Variable set as \\''+ pm.environment.get(\"SCIM_NewUserDefault_cleanupnotificationsnumberofdays\")+'\\''); \r",
+							"    };\r",
+							" \r",
+							"\r",
+							"    if (systemnotificationsemailoptin)\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_systemnotificationsemailoptin set as      : '+ systemnotificationsemailoptin);\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        pm.environment.set(\"SCIM_NewUserDefault_systemnotificationsemailoptin\", \"true\");    // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_systemnotificationsemailoptin            : Undefined! Variable set as \\''+ pm.environment.get(\"SCIM_NewUserDefault_systemnotificationsemailoptin\")+'\\''); \r",
+							"    };\r",
+							"\r",
+							"\r",
+							"    if (marketingemailoptin)\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_marketingemailoptin set as                : '+ marketingemailoptin);\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        pm.environment.set(\"SCIM_NewUserDefault_marketingemailoptin\", \"false\");    // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': SCIM_NewUserDefault_marketingemailoptin                      : Undefined! Variable set as \\''+ pm.environment.get(\"SCIM_NewUserDefault_marketingemailoptin\")+'\\''); \r",
+							"    };\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"}\r",
+							"else // response code is unexpected\r",
+							"{\r",
+							"    // we got an unexpected response from the SAC API\r",
+							"    console.error(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response Body: '+ responseBody);\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-sap-sac-custom-auth",
+						"type": "text",
+						"value": "true"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/scim/Users/?startIndex=1&count=1",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"scim",
+						"Users",
+						""
+					],
+					"query": [
+						{
+							"key": "startIndex",
+							"value": "1"
+						},
+						{
+							"key": "count",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

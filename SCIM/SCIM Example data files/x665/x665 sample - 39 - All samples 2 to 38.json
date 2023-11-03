@@ -1,0 +1,320 @@
+[
+  {
+	"file_team": "AdminToolKit_All_Users",
+	"file_team_displayname": "All users registered in this SAP Analytics Cloud Service (except for SAP Support users). Updated TIMESTAMP",
+	"file_users_action": "add",
+	"file_JSON_users_to_exclude": [{"value":"SAP_SUPPORTXXXXXXXXX"}],
+	"file_action_users_match_all_users": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_BI_Concurrent_Setting",
+	"file_team_displayname": "All users that have a Business Intelligence concurrent session setting. Such users may not necessarily consume a Business Intelligence concurrent session license. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_bi_concurrent_license": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_Named_User_License",
+	"file_team_displayname": "All users that have a named-user license. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_bi_named_user_license": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_A_Manager",
+	"file_team_displayname": "All users that have a manager. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_a_manager": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_Manager_MANAGERID",
+	"file_team_displayname": "All users that have a manager. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_named_managerids": true,
+	"file_JSON_named_managerids": [{"value":"MANAGERID"}]
+  },
+  {
+	"file_team": "AdminToolKit_Users_Without_A_Manager",
+	"file_team_displayname": "All users that do not have a manager. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_without_manager": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_That_Are_Managers",
+	"file_team_displayname": "All users that are managers. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_that_are_managers": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_That_Are_Not_Managers",
+	"file_team_displayname": "All users that are not managers. Updated TIMESTAMP",
+	"file_users_action": "invert",
+	"file_action_users_that_are_managers": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_That_Are_Activated",
+	"file_team_displayname": "All users that are activated. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_active": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_That_Are_Deactivated",
+	"file_team_displayname": "All users that have been deactivated. These users will no longer consume any license or be able to log in again until re-activated. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_not_active": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_UserID_Ending__1",
+	"file_team_displayname": "All users that have their UserID ending with _1. These may be duplicate users or users with an undesired UserID. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_userid_ending_underscore_1": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_SAP_email",
+	"file_team_displayname": "All users that have an email address of @sap.com. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_email_domain_matching": true,
+	"file_email_domain": "sap.com"
+  },
+  {
+	"file_team": "AdminToolKit_Users_Without_SAP_email",
+	"file_team_displayname": "All users that have an email address different from @sap.com. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_email_domain_not_matching": true,
+	"file_email_domain": "sap.com"
+  },
+  {
+	"file_team": "AdminToolKit_Users_Without_a_Role_and_Without_a_Team",
+	"file_team_displayname": "Users that have no role or team assigned to them. These users have no privileges. Updated TIMESTAMP",
+	"file_users_action": "invert",
+	"file_action_users_with_a_role_or_a_team": true,
+	"file_JSON_teams_to_exclude": [{"value":"AdminToolKit_Users_Without_a_Team"},{"value":"AdminToolKit_Users_Without_a_Role_and_Without_a_Team"}],
+	"file_JSON_teamnames_starts_with_to_exclude": [{"value":"AdminToolKit_"}]
+  },
+  {
+	"file_team": "AdminToolKit_Users_Without_a_Team",
+	"file_team_displayname": "All users that are not a member of any team, except for these AdminToolKit teams! Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_no_teams": true,
+	"file_JSON_teams_to_exclude": [{"value":"AdminToolKit_Users_Without_a_Team"},{"value":"AdminToolKit_Users_Without_a_Role_and_Without_a_Team"}],
+	"file_JSON_teamnames_starts_with_to_exclude": [{"value":"AdminToolKit_"}]
+  },
+  {
+	"file_team": "AdminToolKit_Users_Without_a_Role",
+	"file_team_displayname": "All users that do not have a role directly assigned to them (this is good, as it's best practice for users to inherit roles via teams). Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_no_roles": true,
+	"file_JSON_roles_to_exclude": []
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_Directly_Assigned_BIAdmin_Role",
+	"file_team_displayname": "All users directly assigned the BIAdmin Role. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_all_named_roles": true,
+	"file_JSON_named_roles": [{"value":"PROFILE:sap.epm:BI_Admin"}]
+  },
+ {
+	"file_team": "AdminToolKit_Users_With_Default_Settings",
+	"file_team_displayname": "All users that have a default settings for language, date/time and number format. Updated TIMESTAMP",
+	"file_users_action": "invert",
+	"file_actions_users_with_LangDateTimeNumberFormats_different_from": true,
+	"file_preferredlanguage": "en",
+    "file_dataaccesslanguage": "en",
+    "file_dateformatting": "MMM d, yyyy",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1,234.56"
+  },
+  {
+	"file_team": "AdminToolKit_Users_Created_More_Than_A_Year_Ago",
+	"file_team_displayname": "Users created more than a year ago. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_created_more_than_days_ago": true,
+	"file_users_created_more_than_days": 365
+  },
+  {
+	"file_team": "AdminToolKit_Users_Created_Recently",
+	"file_team_displayname": "Users created in the last week. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_created_recently": true,
+	"file_users_created_recently_in_days": 8
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_A_Recent_Login",
+	"file_team_displayname": "Users that have a logged in within the last 30 days. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_most_recent_login_within_last_days": true,
+	"file_users_with_with_most_recent_login_within_last_days": 30
+  },
+  {
+	"file_team": "AdminToolKit_Users_Without_A_Recent_Login",
+	"file_team_displayname": "Users that have not logged in within the last 30 days. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_most_recent_login_at_least_days_ago": true,
+	"file_users_with_with_most_recent_login_at_least_days": 30
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_Few_Logins_Since_Oldest_Log_Entry",
+	"file_team_displayname": "Users with 2 or fewer logins since the oldest log entry. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_fewer_logins_than": true,
+	"file_users_with_fewer_logins_than": 2
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_Few_Logins_This_Last_Month",
+	"file_team_displayname": "Users with only 2 or fewer logins in the last 31 days. This includes users without any login. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_fewer_logins_than": true,
+	"file_users_with_fewer_logins_than": 2,
+	"file_action_users_with_fewer_logins_within_last_days": true,
+	"file_users_with_logins_within_last_days": 31
+  },
+  {
+	"file_team": "AdminToolKit_Users_Without_A_Recent_Login_And_Fewer_Than_3_Logins_Last_3_Months",
+	"file_team_displayname": "Users that have not logged in within the last 30 days, and have 2 or fewer logins within the last 90 days. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_multiple_action_users_operator_is_AND": true,
+	"file_action_users_with_most_recent_login_at_least_days_ago": true,
+	"file_users_with_with_most_recent_login_at_least_days": 30,
+	"file_action_users_with_fewer_logins_than": true,
+	"file_users_with_fewer_logins_than": 2,
+	"file_action_users_with_fewer_logins_within_last_days": true,
+	"file_users_with_logins_within_last_days": 90
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_100_Or_More_Logins_Since_Oldest_Log_Entry",
+	"file_team_displayname": "Users with 100 or more logins since the oldest log entry. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_greater_logins_than": true,
+	"file_users_with_greater_logins_than": 99
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_100_Or_More_Logins_Within_Last_3_Months",
+	"file_team_displayname": "Users with 100 or more logins within the last 91 days. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_greater_logins_than": true,
+	"file_users_with_greater_logins_than": 99,
+	"file_action_users_with_greater_logins_within_last_days": true,
+	"file_users_with_logins_within_last_days": 91
+  },
+  {
+	"file_team": "AdminToolKit_Users_With_Private_Folder_Content",
+	"file_team_displayname": "Users that have content in their private folder. Content identified is limited to Stories, Applications, insights, Digital Boardrooms, Templates and Folders. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_private_folder_content": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_Without_Private_Folder_Content",
+	"file_team_displayname": "Users that do not have content in their private folder. Content identified is limited to Stories, Applications, insights, Digital Boardrooms, Templates and Folders. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_without_private_folder_content": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_That_Created_Public_Folder_Content",
+	"file_team_displayname": "Users that created content in a Public Folder. Such users may have special rights over this content that other users may not enjoy. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_that_created_public_content": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_That_Did_Not_Create_Public_Folder_Content",
+	"file_team_displayname": "Users that have no content in a Public Folder that is shown they created. Such users will not have special rights over any public content. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_that_did_not_create_public_content": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_Dormant_A__Created_3_Months_No_Recent_Login_Fewer_Than_3_Logins_Last_3_Months",
+	"file_team_displayname": "Users that were created over 3 months ago, have not logged in within the last 30 days, and have 2 or fewer logins within the last 90 days. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_multiple_action_users_operator_is_AND": true,
+	"file_action_users_created_more_than_days_ago": true,
+	"file_users_created_more_than_days": 90,
+	"file_action_users_with_most_recent_login_at_least_days_ago": true,
+	"file_users_with_with_most_recent_login_at_least_days": 30,
+	"file_action_users_with_fewer_logins_than": true,
+	"file_users_with_fewer_logins_than": 2,
+	"file_action_users_with_fewer_logins_within_last_days": true,
+	"file_users_with_logins_within_last_days": 90
+  },
+  {
+	"file_team": "AdminToolKit_Users_Dormant_B__Dormant_A_Plus_No_Private_Folder_Content",
+	"file_team_displayname": "Users that were created over 3 months ago, have not logged in within the last 30 days, have 2 or fewer logins within the last 90 days, and have no private folder content. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_multiple_action_users_operator_is_AND": true,
+	"file_action_users_created_more_than_days_ago": true,
+	"file_users_created_more_than_days": 90,
+	"file_action_users_with_most_recent_login_at_least_days_ago": true,
+	"file_users_with_with_most_recent_login_at_least_days": 30,
+	"file_action_users_with_fewer_logins_than": true,
+	"file_users_with_fewer_logins_than": 2,
+	"file_action_users_with_fewer_logins_within_last_days": true,
+	"file_users_with_logins_within_last_days": 90,
+	"file_action_users_without_private_folder_content": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_Dormant_C__Dormant_B_Plus_No_Public_Folder_Content",
+	"file_team_displayname": "Users that were created over 3 months ago, have not logged in within the last 30 days, have 2 or fewer logins within the last 90 days, have no private folder content, and did not create public folder content. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_multiple_action_users_operator_is_AND": true,
+	"file_action_users_created_more_than_days_ago": true,
+	"file_users_created_more_than_days": 90,
+	"file_action_users_with_most_recent_login_at_least_days_ago": true,
+	"file_users_with_with_most_recent_login_at_least_days": 30,
+	"file_action_users_with_fewer_logins_than": true,
+	"file_users_with_fewer_logins_than": 2,
+	"file_action_users_with_fewer_logins_within_last_days": true,
+	"file_users_with_logins_within_last_days": 90,
+	"file_action_users_without_private_folder_content": true,
+	"file_action_users_that_did_not_create_public_content": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_Dormant_D__Dormant_C_Plus_Are_Not_Managers",
+	"file_team_displayname": "Users that were created over 3 months ago, have not logged in within the last 30 days, have 2 or fewer logins within the last 90 days, have no private folder content, did not create public folder content and are not managers. Updated TIMESTAMP",
+	"file_users_action": "invert",
+	"file_multiple_action_users_operator_is_AND": false,
+	"file_action_users_that_are_managers": true,
+	"file_action_users_created_recently": true,
+	"file_users_created_recently_in_days": 90,
+	"file_action_users_with_most_recent_login_within_last_days": true,
+	"file_users_with_with_most_recent_login_within_last_days": 30,
+	"file_action_users_with_greater_logins_than": true,
+	"file_users_with_greater_logins_than": 2,
+	"file_action_users_with_greater_logins_within_last_days": true,
+	"file_users_with_logins_within_last_days": 90,
+	"file_action_users_with_private_folder_content": true,
+	"file_action_users_that_created_public_content": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_Dormant_E__Dormant_D_Plus_Are_Activated",
+	"file_team_displayname": "Users that were created over 3 months ago, have not logged in within the last 30 days, have 2 or fewer logins within the last 90 days, have no private folder content, did not create public folder content, are not managers and are activated. Updated TIMESTAMP",
+	"file_users_action": "invert",
+	"file_multiple_action_users_operator_is_AND": false,
+	"file_action_users_not_active": true,
+	"file_action_users_that_are_managers": true,
+	"file_action_users_created_recently": true,
+	"file_users_created_recently_in_days": 90,
+	"file_action_users_with_most_recent_login_within_last_days": true,
+	"file_users_with_with_most_recent_login_within_last_days": 30,
+	"file_action_users_with_greater_logins_than": true,
+	"file_users_with_greater_logins_than": 2,
+	"file_action_users_with_greater_logins_within_last_days": true,
+	"file_users_with_logins_within_last_days": 90,
+	"file_action_users_with_private_folder_content": true,
+	"file_action_users_that_created_public_content": true
+  },
+  {
+	"file_team": "AdminToolKit_Users_Dormant_F__Dormant_E_Plus_Are_Named_Licensed",
+	"file_team_displayname": "Users that were created over 3 months ago, have not logged in within the last 30 days, have 2 or fewer logins within the last 90 days, have no private folder content, did not create public folder content, are not managers, are activated and with a BI named license. Updated TIMESTAMP",
+	"file_users_action": "invert",
+	"file_multiple_action_users_operator_is_AND": false,
+	"file_action_users_with_bi_concurrent_license": true,
+	"file_action_users_not_active": true,
+	"file_action_users_that_are_managers": true,
+	"file_action_users_created_recently": true,
+	"file_users_created_recently_in_days": 90,
+	"file_action_users_with_most_recent_login_within_last_days": true,
+	"file_users_with_with_most_recent_login_within_last_days": 30,
+	"file_action_users_with_greater_logins_than": true,
+	"file_users_with_greater_logins_than": 2,
+	"file_action_users_with_greater_logins_within_last_days": true,
+	"file_users_with_logins_within_last_days": 90,
+	"file_action_users_with_private_folder_content": true,
+	"file_action_users_that_created_public_content": true
+  }  
+ ]

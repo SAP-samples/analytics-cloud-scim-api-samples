@@ -1,0 +1,17 @@
+ [
+   {
+	"file_team": "AdminToolKit_S02_Users_Created_Recently_With_Default_Settings",
+	"file_team_displayname": "Users created in the last week that still have default settings",
+	"file_users_action": "replace",
+	"file_JSON_users_to_exclude": [{"value":"SAP_SUPPORTXXXXXXXXX"}],
+	"file_multiple_action_users_operator_is_AND": true,
+	"file_action_users_created_recently": true,
+	"file_users_created_recently_in_days": 8,
+	"file_actions_users_with_LangDateTimeNumberFormats_different_from": true,
+	"file_preferredlanguage": "en",
+    "file_dataaccesslanguage": "en",
+    "file_dateformatting": "MMM d, yyyy",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1,234.56"
+  }
+  ]

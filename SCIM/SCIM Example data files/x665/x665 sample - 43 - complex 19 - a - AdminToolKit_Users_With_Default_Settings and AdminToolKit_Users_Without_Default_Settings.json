@@ -1,0 +1,24 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_With_Default_Settings",
+	"file_team_displayname": "All users that have a default settings for language, date/time and number format. Updated TIMESTAMP",
+	"file_users_action": "invert",
+	"file_actions_users_with_LangDateTimeNumberFormats_different_from": true,
+	"file_preferredlanguage": "en",
+    "file_dataaccesslanguage": "en",
+    "file_dateformatting": "MMM d, yyyy",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1,234.56"
+  },
+   {
+	"file_team": "AdminToolKit_Users_Without_Default_Settings",
+	"file_team_displayname": "All users that do not have a default settings for language, date/time and number format. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_actions_users_with_LangDateTimeNumberFormats_different_from": true,
+	"file_preferredlanguage": "en",
+    "file_dataaccesslanguage": "en",
+    "file_dateformatting": "MMM d, yyyy",
+    "file_timeformatting": "H:mm:ss",
+    "file_numberformatting": "1,234.56"
+  }
+ ]

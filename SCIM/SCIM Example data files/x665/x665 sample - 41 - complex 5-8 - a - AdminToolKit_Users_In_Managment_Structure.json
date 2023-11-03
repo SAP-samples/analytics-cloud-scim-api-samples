@@ -1,0 +1,9 @@
+[
+  {
+	"file_team": "AdminToolKit_Users_In_Managment_Structure",
+	"file_team_displayname": "All users that have a manager or are managers. Updated TIMESTAMP",
+	"file_users_action": "replace",
+	"file_action_users_with_a_manager": true,
+	"file_action_users_that_are_managers": true
+  }
+ ]
