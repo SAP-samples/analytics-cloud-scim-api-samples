@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "ef4f3583-de39-4a02-9597-26586eb91d35",
 		"name": "SCIM 1403-U-U-Ut-Fj-Es-Update user team membership",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.8\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.8.1\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "9591952",
 		"_collection_link": "https://matthewshaw.postman.co/workspace/SAP-Analytics-Cloud-Sample-Deve~26a222ea-7810-4431-88c7-df4be9f95a83/collection/9591952-ef4f3583-de39-4a02-9597-26586eb91d35?action=share&source=collection_link&creator=9591952"
@@ -526,7 +526,16 @@
 							"        const team_in_current_team_array= pm.variables.get(\"currentteam\");\r",
 							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Team not found. Creating new team '+ team_in_current_team_array);\r",
 							"        pm.variables.set(\"currentteam\",team_in_current_team_array);\r",
-							"        postman.setNextRequest('CREATE team');\r",
+							"        const SAC_platform = pm.variables.get(\"SACplatform\");\r",
+							"        if (SAC_platform==='NEO')\r",
+							"        {\r",
+							"            // NEO does not supoort the scim2 API, only the scim2 API allows teams to be created without a team folder\r",
+							"            postman.setNextRequest('CREATE team');\r",
+							"        }\r",
+							"        else  // we are on a Cloud Foundary Platform\r",
+							"        {\r",
+							"            postman.setNextRequest('CREATE team without folder');\r",
+							"        };\r",
 							"    }\r",
 							"else if ( (pm.response.code === 200) && (NeedGetToBeAuthorised) )\r",
 							"    {\r",
@@ -1366,6 +1375,182 @@
 						"api",
 						"v1",
 						"scim",
+						"Groups"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CREATE team without folder",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Creating team '+pm.variables.get(\"currentteam\") );\r",
+							"pm.variables.set(\"recovery\",pm.info.requestName);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"CREATE team\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([201,401,403,429])\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken or the csrf-token must be invalid. We shall get new ones of each!\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new accesstoken');\r",
+							"        postman.setNextRequest(\"GET accesstoken\"); \r",
+							"        // as this is non-GET call, we shall set NeedGetToBeAuthorised to true and set the 'recovery' to the GET call, so the new session is authorised, once we've obtained a new accesstoken\r",
+							"        pm.variables.set(\"NeedGetToBeAuthorised\",true);\r",
+							"        pm.variables.set(\"recovery\",\"READ team\");\r",
+							"        break;\r",
+							"    } // end case 401 \r",
+							"\r",
+							"    case 429:\r",
+							"    // in the event SAP Analytics Cloud is receiving too many requests, a HTTP response 429 will be issued.\r",
+							"    // in such a case, we shall wait for the 'Retry-After' value and simply re-attempt the same request.\r",
+							"    {\r",
+							"        const retryafter=pm.response.headers.get('Retry-After') ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SAP Analytics Cloud is receiving too many requests. Retrying in '+retryafter+'ms');\r",
+							"        setTimeout(()=> {},retryafter);\r",
+							"        postman.setNextRequest(pm.info.requestName);\r",
+							"        break;\r",
+							"    }  // end case 429\r",
+							"\r",
+							"    case 201: \r",
+							"    {\r",
+							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"        pm.variables.set(\"ContinuousErrors\",0);\r",
+							"\r",
+							"        // the team was created ok, so we can go to re-read the team.\r",
+							"        postman.setNextRequest('READ team');\r",
+							"        break;\r",
+							"    }  // end case 201\r",
+							"\r",
+							"    case 400: // same as 409\r",
+							"    case 409:\r",
+							"    {\r",
+							"        // although we obtained an unexpected result, this is handled so we shall set the errors to 0.\r",
+							"        pm.variables.set(\"ContinuousErrors\",0);\r",
+							"        try {\r",
+							"            if ( JSON.parse(responseBody).scimType ==='uniqueness')\r",
+							"            {\r",
+							"                console.error(pm.info.requestName+' '+pm.info.eventName+': Unable to create the team '+pm.variables.get(\"currentteam\")+' using the scim2 endpoint /api/v1/scim2/Groups. This is probably because a team with the same name already exists. Teams created with the scim2 endpoint /api/v1/scim2/Groups will not be readable or updatable using the scim1 /api/v1/scim/Groups/'+pm.variables.get(\"currentteam\")+' endpoint until the System Administration setting \\'Ignore Content Namespace for Teams\\' has been turned ON. Please turn this setting to ON now, and re-run this sample. If this setting is already enabled, but the scim1 /api/v1/scim/Groups/'+pm.variables.get(\"currentteam\")+' endpoint is unable to read the team (a GET request returns a 404), please contact SAP Support. Aborting this team.  Response: '+ responseBody);\r",
+							"            }\r",
+							"            else\r",
+							"            {\r",
+							"                console.error(pm.info.requestName+' '+pm.info.eventName+': Unable to create team.  Aborting this team.  Response: '+ responseBody);\r",
+							"            }\r",
+							"        }\r",
+							"\t\tcatch (error)\r",
+							"        { \r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Unable to create team.  Aborting this team.  Response: '+ responseBody);\r",
+							"        }\r",
+							"        postman.setNextRequest(null);\r",
+							"\r",
+							"        break;\r",
+							"    }\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        };\r",
+							"   }\r",
+							";\r",
+							"}; // end switch pm.response.code"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"type": "text",
+						"value": "{{x-csrf-token}}"
+					},
+					{
+						"key": "x-sap-sac-custom-auth",
+						"type": "text",
+						"value": "true"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "x-sap-sac-create-team-folder",
+						"value": "false",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"schemas\": [\r\n        \"urn:ietf:params:scim:schemas:core:2.0:Group\",\r\n        \"urn:sap:params:scim:schemas:extension:sac:2.0:group-custom-parameters\"\r\n    ],\r\n    \"displayName\": \"{{currentteam}}\",\r\n    \"members\": [],\r\n    \"urn:sap:params:scim:schemas:extension:sac:2.0:group-custom-parameters\": {\r\n        \"description\": \"{{currentteam}}\"\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/scim2/Groups",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"scim2",
 						"Groups"
 					]
 				}
