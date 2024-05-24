@@ -1,494 +1,13 @@
 {
 	"info": {
-		"_postman_id": "72c8c203-e39d-498a-98d8-5fbfd886b560",
+		"_postman_id": "f895c13f-3183-43f2-8685-755e0adcbf22",
 		"name": "SCIM 1002-Test-Es-Tests Single Environment Advanced Setup",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.8\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (& for other related content)\n\n[https://community.sap.com/t5/technology-blogs-by-sap/sap-analytics-cloud-user-and-team-provisioning-scim-api-best-practices-and/ba-p/13509352](https://community.sap.com/t5/technology-blogs-by-sap/sap-analytics-cloud-user-and-team-provisioning-scim-api-best-practices-and/ba-p/13509352)\n\n# Questions\n\nPlease create a new question [https://community.sap.com/t5/forums/postpage/choose-node/true/board-id/technology-questions](https://community.sap.com/t5/forums/postpage/choose-node/true/board-id/technology-questions) (rather than a comment to the blog post since blog posts do not support threads)\n\n# About\n\nScript version 0.9\n\nSample scripts created by Matthew Shaw, SAP. [https://community.sap.com/t5/user/viewprofilepage/user-id/70553](https://community.sap.com/t5/user/viewprofilepage/user-id/70553)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9591952",
-		"_collection_link": "https://matthewshaw.postman.co/workspace/SAP-Analytics-Cloud-Sample-Deve~26a222ea-7810-4431-88c7-df4be9f95a83/collection/9591952-72c8c203-e39d-498a-98d8-5fbfd886b560?action=share&source=collection_link&creator=9591952"
+		"_exporter_id": "31429660",
+		"_collection_link": "https://sap-se.postman.co/workspace/SAP-Analytics-Cloud~8ac5e5ee-c61c-4eda-99cb-9af804973bee/collection/31429660-f895c13f-3183-43f2-8685-755e0adcbf22?action=share&source=collection_link&creator=31429660"
 	},
 	"item": [
-		{
-			"name": "FETCH csrf token (Step 2 - read general API endpoint)",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"console.info(pm.info.requestName+' '+pm.info.eventName+': Reading general API endpoint to obtain a new x-csrf-token. This will validate if the SACserviceFQDN is valid or not. It will also validate the general API endpoint');\r",
-							"\r",
-							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACserviceFQDN : '+pm.variables.get(\"SACserviceFQDN\"));\r",
-							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACtokenFQDN   : '+pm.variables.get(\"SACtokenFQDN\")+' (not used in this request)');\r",
-							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACplatform    : '+pm.variables.get(\"SACplatform\")+' (not used in this request)');\r",
-							"console.log(pm.info.requestName+' '+pm.info.eventName+': Username       : '+pm.variables.get(\"Username\")+' (not used in this request)');\r",
-							"console.log(pm.info.requestName+' '+pm.info.eventName+': accesstoken    : '+pm.variables.get(\"accesstoken\")+' (obtained from the token URL endpoint and re-presented to this endpoint)');\r",
-							"console.log(pm.info.requestName+' '+pm.info.eventName+': Now making a request to the general API endpoint...');"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Fetch x-csrf-token\", function ()\r",
-							"    {\r",
-							"        pm.expect(pm.response.code).to.be.oneOf([200,401,429]);\r",
-							"    }\r",
-							");\r",
-							"\r",
-							"\r",
-							"switch (pm.response.code)\r",
-							"{\r",
-							"    case 401:\r",
-							"    {\r",
-							"        // we are not authorised, so our accesstoken or the csrf-token must be invalid. We shall get new ones of each!\r",
-							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
-							"        // so we don't end up in an endless loop.\r",
-							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
-							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
-							"        errors++;\r",
-							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
-							"        postman.setNextRequest(\"GET accesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
-							"        break;\r",
-							"    } // end if response is 401\r",
-							"\r",
-							"    case 429:\r",
-							"    {\r",
-							"        const retryafter=pm.response.headers.get('Retry-After') ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SAP Analytics Cloud is receiving too many requests. Retrying in '+retryafter+'ms');\r",
-							"        setTimeout(()=> {},retryafter);\r",
-							"        postman.setNextRequest(pm.info.requestName);\r",
-							"        break;\r",
-							"    }\r",
-							"    \r",
-							"    case 200:\r",
-							"    {\r",
-							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid x-csrf-token was fetched from the /csrf endpoint. This means the general API of SAP Analytics Cloud is available');\r",
-							"        pm.environment.set(\"x-csrf-token\",postman.getResponseHeader(\"x-csrf-token\"));\r",
-							"        postman.setNextRequest();\r",
-							"        break;\r",
-							"    }\r",
-							"    default: // response code is unexpected\r",
-							"    {\r",
-							"        // we got an unexpected response from the SAC API\r",
-							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
-							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
-							"        errors++;\r",
-							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
-							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
-							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
-							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
-							"        if (errors >= maxerrors)\r",
-							"        {\r",
-							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
-							"            pm.variables.set(\"ContinuousErrors\",0); \r",
-							"            postman.setNextRequest(null);\r",
-							"        }\r",
-							"        else if (errors >= 2)\r",
-							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
-							"            postman.setNextRequest(pm.info.requestName);\r",
-							"        }\r",
-							"        else\r",
-							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
-							"            postman.setNextRequest(pm.info.requestName);\r",
-							"        };\r",
-							"    } // end switch pm.response.code\r",
-							"};\r",
-							"\r",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{accesstoken}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "x-csrf-token",
-						"type": "text",
-						"value": "fetch"
-					},
-					{
-						"key": "x-sap-sac-custom-auth",
-						"type": "text",
-						"value": "true"
-					},
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"url": {
-					"raw": "https://{{SACserviceFQDN}}/api/v1/csrf",
-					"protocol": "https",
-					"host": [
-						"{{SACserviceFQDN}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"csrf"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "READ repository content (Step 4 - read Repositories endpoint)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"READ repository content\", function ()\r",
-							"    {\r",
-							"        pm.expect(pm.response.code).to.be.oneOf([200,401]);\r",
-							"    }\r",
-							");\r",
-							"\r",
-							"switch (pm.response.code)\r",
-							"{\r",
-							"    case 401:\r",
-							"    {\r",
-							"        console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401 status was returned. This means this session is not authorised, likely due to an invalid access token. Response Body: '+ responseBody);\r",
-							"        break;\r",
-							"    } // end case response is 401\r",
-							"    case 200:\r",
-							"    {\r",
-							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
-							"        pm.variables.set(\"ContinuousErrors\",0);\r",
-							"        // load the response into a variable 'resources'\r",
-							"        const resources = JSON.parse(responseBody)[\"d\"].results;\r",
-							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A vadid response was obtained. There are '+resources.length+ ' resources in the Repository')\r",
-							"\r",
-							"        \r",
-							"        break;\r",
-							"    }\r",
-							"    default:  // response code is unexpected\r",
-							"    {\r",
-							"       // we got an unexpected response from the SAC API\r",
-							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
-							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
-							"        errors++;\r",
-							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
-							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
-							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
-							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
-							"        if (errors >= maxerrors)\r",
-							"        {\r",
-							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
-							"            pm.variables.set(\"ContinuousErrors\",0); \r",
-							"            postman.setNextRequest(null);\r",
-							"        }\r",
-							"        else if (errors >= 2)\r",
-							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
-							"            postman.setNextRequest(pm.info.requestName);\r",
-							"        }\r",
-							"        else\r",
-							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
-							"            postman.setNextRequest(pm.info.requestName);\r",
-							"        };\r",
-							"        break;\r",
-							"    };\r",
-							"\r",
-							"} // end switch response code"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"pm.variables.set(\"recovery\",pm.info.requestName);\r",
-							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Repositories API endpoint to obtain total resources count. This will validate if the SACserviceFQDN is valid or not.');"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{accesstoken}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "x-sap-sac-custom-auth",
-						"type": "text",
-						"value": "true"
-					},
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "$format",
-						"value": "json",
-						"type": "text"
-					},
-					{
-						"key": "resourceTypes",
-						"value": "STORY",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"url": {
-					"raw": "https://{{SACserviceFQDN}}/api/v1/Repositories?$format=json&$select=id",
-					"protocol": "https",
-					"host": [
-						"{{SACserviceFQDN}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"Repositories"
-					],
-					"query": [
-						{
-							"key": "$format",
-							"value": "json",
-							"description": "return the results as a json stucture"
-						},
-						{
-							"key": "$select",
-							"value": "id",
-							"description": "the columns to select, de-select or delete this query param to see all the columns"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "READ activities log (Step 5 - read Activities endpoint)",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"console.info(pm.info.requestName+' '+pm.info.eventName+': Reading Activities API endpoint to obtain oldest log entry. It will also validate the Activities API endpoint which requires the OAuth Service \\'Activities\\'');\r",
-							"pm.variables.set(\"recovery\",pm.info.requestName);"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Reading oldest log entry\", function ()\r",
-							"    {\r",
-							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403,429])\r",
-							"    }\r",
-							");\r",
-							"\r",
-							"switch (pm.response.code)\r",
-							"{\r",
-							"    case 401:\r",
-							"    case 403:\r",
-							"    {\r",
-							"        console.error(pm.info.requestName+' '+pm.info.eventName+': No access to activities log. The OAuth client may not have been granted access to the \\'Activities\\' Service, or the access token is not valid. Fetching a new access token');\r",
-							"        break;\r",
-							"    } // end case 401 \r",
-							"\r",
-							"    case 429:\r",
-							"    // in the event SAP Analytics Cloud is receiving too many requests, a HTTP response 429 will be issued.\r",
-							"    // in such a case, we shall wait for the 'Retry-After' value and simply re-attempt the same request.\r",
-							"    {\r",
-							"        const retryafter=pm.response.headers.get('Retry-After') ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
-							"        console.info(pm.info.requestName+' '+pm.info.eventName+': SAP Analytics Cloud is receiving too many requests. Retrying in '+retryafter+'ms');\r",
-							"        setTimeout(()=> {},retryafter);\r",
-							"        postman.setNextRequest(pm.info.requestName);\r",
-							"        break;\r",
-							"    }  // end case 429\r",
-							"\r",
-							"    case 200: \r",
-							"    {\r",
-							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
-							"        pm.variables.set(\"ContinuousErrors\",0);\r",
-							"\r",
-							"\r",
-							"\r",
-							"        const total_entries = pm.response.headers.get('epm-page-count'); // the total number of pages there are for this query. Given our pageSize is just 1, this is the numnber of pages, but also then the number of entires in total\r",
-							"        \r",
-							"\r",
-							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! The a valid response was obtained. This SAP Analytics Cloud Service has '+total_entries+' activity logs');\r",
-							"\r",
-							"\r",
-							"        const lines = responseBody.split('\\n');  // lines is an array, each element is a row\r",
-							"        lines.splice(0, 4);                  // lines has the first 5 lines removed from it, as this is the header\r",
-							"         let columns_array = lines[0].split('\",\"');          // split each row into columns\r",
-							"        \r",
-							"        while (columns_array.length<8)\r",
-							"        {\r",
-							"            // we have fewer columns than we expect. It means the description column has carriage returns in it and we need to 'shift' the rows below up, and join it to this row, minus the carriage returns\r",
-							"            lines[0]=lines[0].concat(\" \",lines[1]);\r",
-							"            lines.splice(1,1);\r",
-							"            columns_array = lines[0].split('\",\"');  \r",
-							"        }\r",
-							"\r",
-							"        let timezone_hours   = parseInt(pm.variables.get(\"TimeZoneHours\"));\r",
-							"        let timezone_minutes = parseInt(pm.variables.get(\"TimeZoneMinutes\"));\r",
-							"        if ((timezone_hours   === undefined)|| (!Number.isInteger(timezone_hours  )))  { timezone_hours   = - Math.floor((new Date().getTimezoneOffset())/60) };\r",
-							"        if ((timezone_minutes === undefined)|| (!Number.isInteger(timezone_minutes)))  { timezone_minutes = -            (new Date().getTimezoneOffset())%60  };\r",
-							"\r",
-							"\r",
-							"        let oldest_date_GMT = columns_array[7] // get the timestamp from row 1 (index0) in the 8th column (index7)\r",
-							"        let oldestdate_this_time_zone= new Date(oldest_date_GMT);\r",
-							"        \r",
-							"        oldestdate_this_time_zone.setHours(oldestdate_this_time_zone.getHours()     + timezone_hours);    // we add (or substract) the hours depending upon the timezone\r",
-							"        oldestdate_this_time_zone.setMinutes(oldestdate_this_time_zone.getMinutes() + timezone_minutes);  // we add (or substract) the minutes depending upon the timezone\r",
-							"\r",
-							"        const todays_date = new Date();\r",
-							"        todays_date.setHours(todays_date.getHours()  + timezone_hours );\r",
-							"        todays_date.setMinutes(todays_date.getMinutes() + todays_date.getTimezoneOffset() + timezone_minutes );\r",
-							"        let todays_date_my_timezone= new Date(todays_date.getFullYear().toString().concat(\".\",(\"0\"+(todays_date.getMonth()+1)).slice(-2),\".\",(\"0\"+todays_date.getDate()).slice(-2),\r",
-							"                                                                                        \" \",(\"0\"+todays_date.getHours()).slice(-2),\r",
-							"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\":\",(\"0\"+todays_date.getMinutes()).slice(-2),\r",
-							"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\":\",(\"0\"+todays_date.getSeconds()).slice(-2 )));\r",
-							"\r",
-							"        let oldest_activities_log_entry_in_days = Math.floor( (todays_date_my_timezone-oldestdate_this_time_zone) / (1000 * 3600 * 24) )\r",
-							"\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+': The oldest log entry found was for '+oldestdate_this_time_zone+' which was '+oldest_activities_log_entry_in_days+' days ago');\r",
-							"\r",
-							"        postman.setNextRequest();\r",
-							"\r",
-							"\r",
-							"        break;\r",
-							"    }  // end case 200\r",
-							"\r",
-							"    default: // response code is unexpected\r",
-							"    {\r",
-							"       // we got an unexpected response from the SAC API\r",
-							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
-							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
-							"        errors++;\r",
-							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
-							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
-							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
-							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
-							"        if (errors >= maxerrors)\r",
-							"        {\r",
-							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
-							"            pm.variables.set(\"ContinuousErrors\",0); \r",
-							"            postman.setNextRequest(null);\r",
-							"        }\r",
-							"        else if (errors >= 2)\r",
-							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
-							"            postman.setNextRequest(pm.info.requestName);\r",
-							"        }\r",
-							"        else\r",
-							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
-							"            postman.setNextRequest(pm.info.requestName);\r",
-							"        };\r",
-							"   }\r",
-							";\r",
-							"}; // end switch pm.response.code"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{accesstoken}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					},
-					{
-						"key": "x-sap-sac-custom-auth",
-						"value": "true",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "https://{{SACserviceFQDN}}/api/v1/audit/activities/exportActivities?pageSize=1&pageIndex=1&sortKey=Timestamp&sortDescending=false",
-					"protocol": "https",
-					"host": [
-						"{{SACserviceFQDN}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"audit",
-						"activities",
-						"exportActivities"
-					],
-					"query": [
-						{
-							"key": "pageSize",
-							"value": "1",
-							"description": "If enabled it limits the number of records (rows) returned in each page."
-						},
-						{
-							"key": "pageIndex",
-							"value": "1"
-						},
-						{
-							"key": "sortKey",
-							"value": "Timestamp"
-						},
-						{
-							"key": "sortDescending",
-							"value": "false"
-						}
-					]
-				}
-			},
-			"response": []
-		},
 		{
 			"name": "GET accesstoken (Step 1 - obtain a valid token)",
 			"event": [
@@ -589,6 +108,148 @@
 			"response": []
 		},
 		{
+			"name": "FETCH csrf token (Step 2 - read general API endpoint)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.info(pm.info.requestName+' '+pm.info.eventName+': Reading general API endpoint to obtain a new x-csrf-token. This will validate if the SACserviceFQDN is valid or not. It will also validate the general API endpoint');\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACserviceFQDN : '+pm.variables.get(\"SACserviceFQDN\"));\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACtokenFQDN   : '+pm.variables.get(\"SACtokenFQDN\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': SACplatform    : '+pm.variables.get(\"SACplatform\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Username       : '+pm.variables.get(\"Username\")+' (not used in this request)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': accesstoken    : '+pm.variables.get(\"accesstoken\")+' (obtained from the token URL endpoint and re-presented to this endpoint)');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Now making a request to the general API endpoint...');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Fetch x-csrf-token\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,429]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken or the csrf-token must be invalid. We shall get new ones of each!\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
+							"        postman.setNextRequest(\"GET accesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
+							"        break;\r",
+							"    } // end if response is 401\r",
+							"\r",
+							"    case 429:\r",
+							"    {\r",
+							"        const retryafter=(pm.response.headers.get('Retry-After')!=undefined) ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SAP Analytics Cloud is receiving too many requests. Retrying in '+retryafter+'ms');\r",
+							"        setTimeout(()=> {},retryafter);\r",
+							"        postman.setNextRequest(pm.info.requestName);\r",
+							"        break;\r",
+							"    }\r",
+							"    \r",
+							"    case 200:\r",
+							"    {\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid x-csrf-token was fetched from the /csrf endpoint. This means the general API of SAP Analytics Cloud is available');\r",
+							"        pm.environment.set(\"x-csrf-token\",postman.getResponseHeader(\"x-csrf-token\"));\r",
+							"        postman.setNextRequest();\r",
+							"        break;\r",
+							"    }\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"        // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        };\r",
+							"    } // end switch pm.response.code\r",
+							"};\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"type": "text",
+						"value": "fetch"
+					},
+					{
+						"key": "x-sap-sac-custom-auth",
+						"type": "text",
+						"value": "true"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/csrf",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"csrf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "READ users (Step 3 - read SCIM endpoint)",
 			"event": [
 				{
@@ -597,7 +258,8 @@
 						"exec": [
 							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading SCIM API endpoint to obtain total user count. This will validate if the SACserviceFQDN is valid or not. It will also validate the SCIM API endpoint which requires the OAuth Service \\'User Provisioning\\'');"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				},
 				{
@@ -633,6 +295,7 @@
 							"    console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid response was obtained and means your SACserviceFQDN is set correctly. This SAP Analytics Cloud Service has '+total_users_in_this_SAC_service+' users. It means your OAuth Client has been granted the \\'User Provisioning\\' access');\r",
 							"    \r",
 							"    \r",
+							"\r",
 							"    // checking SAMLSSO Environment variable is set\r",
 							"    \r",
 							"    const samlsso=pm.variables.get(\"SAMLSSO\");\r",
@@ -643,20 +306,33 @@
 							"        case 'userid':\r",
 							"        case 'default':\r",
 							"        {\r",
-							"            console.info(pm.info.requestName+' '+pm.info.eventName+': SAMLSSO               : '+samlsso);\r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+': SAMLSSO                              : '+samlsso);\r",
 							"            break;\r",
 							"        }\r",
 							"        case undefined:\r",
 							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': SAMLSSO               : Undefined! Variable set as \\'default\\' for you. Please update the environment variable SAMLSSO if SSO is enabled. Supported values: default, userid, email and custom');\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': SAMLSSO                              : Undefined! Variable set as \\'default\\' for you. Please update the environment variable SAMLSSO if SSO is enabled. Supported values: default, userid, email and custom');\r",
 							"            pm.environment.set(\"SAMLSSO\",\"default\");\r",
 							"            break;\r",
 							"        }\r",
 							"        default:  \r",
 							"        {\r",
-							"            console.error(pm.info.requestName+' '+pm.info.eventName+': SAMLSSO               : '+samlsso+'  (not set correctly. Please update the environment variable SAMLSSO to be: default, userid, email or custom)');\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': SAMLSSO                              : '+samlsso+'  (not set correctly. Please update the environment variable SAMLSSO to be: default, userid, email or custom)');\r",
 							"            break;\r",
 							"        }\r",
+							"    };\r",
+							"\r",
+							"\r",
+							"    let abort_after_continous_errors_reaches = parseInt(pm.variables.get(\"abort_after_continous_errors_reaches\"));\r",
+							"    if ((abort_after_continous_errors_reaches   === undefined)|| (!Number.isInteger(abort_after_continous_errors_reaches  )))\r",
+							"    {\r",
+							"        abort_after_continous_errors_reaches   =3;\r",
+							"        pm.environment.set(\"abort_after_continous_errors_reaches\",abort_after_continous_errors_reaches);\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': abort_after_continous_errors_reaches : Undefined! Variable set as \\'3\\' for you.');\r",
+							"    }\r",
+							"    else\r",
+							"    {\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': abort_after_continous_errors_reaches : '+abort_after_continous_errors_reaches);\r",
 							"    };\r",
 							"    \r",
 							"\r",
@@ -670,33 +346,33 @@
 							"    {\r",
 							"        timezone_hours   =0;\r",
 							"        pm.environment.set(\"TimeZoneHours\",timezone_hours);\r",
-							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': TimeZoneHours         : Undefined! Variable set as \\'0\\' for you. Please update the environment variable TimeZoneHours to be a number between -23 and 23');\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': TimeZoneHours                        : Undefined! Variable set as \\'0\\' for you. Please update the environment variable TimeZoneHours to be a number between -23 and 23');\r",
 							"    }\r",
 							"    else\r",
 							"    {\r",
-							"        console.info(pm.info.requestName+' '+pm.info.eventName+': TimeZoneHours         : '+timezone_hours);\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': TimeZoneHours                        : '+timezone_hours);\r",
 							"    };\r",
 							"    \r",
 							"    if ((timezone_minutes === undefined)|| (!Number.isInteger(timezone_minutes)))  \r",
 							"    { \r",
 							"        timezone_minutes =0;\r",
 							"        pm.environment.set(\"TimeZoneMinutes\",timezone_minutes);\r",
-							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': TimeZoneMinutes       : Undefined! Variable set as \\'0\\' for you. Please update the environment variable TimeZoneMinutes to be -30, 0 or 30');\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': TimeZoneMinutes                      : Undefined! Variable set as \\'0\\' for you. Please update the environment variable TimeZoneMinutes to be -30, 0 or 30');\r",
 							"    }\r",
 							"    else\r",
 							"    {\r",
-							"        console.info(pm.info.requestName+' '+pm.info.eventName+': TimeZoneMinutes       : '+timezone_minutes);\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': TimeZoneMinutes                      : '+timezone_minutes);\r",
 							"    };\r",
 							"\r",
 							"    if (timezone_text     === undefined) \r",
 							"    { \r",
 							"        timezone_text    ='UTC';\r",
 							"        pm.environment.set(\"TimeZoneDescription\",timezone_text);\r",
-							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': TimeZoneDescription   : Undefined! Variable set as \\'UTC\\' for you. Please update the environment variable TimeZoneDescription to be the description of your timezone');\r",
+							"        console.warn(pm.info.requestName+' '+pm.info.eventName+': TimeZoneDescription                  : Undefined! Variable set as \\'UTC\\' for you. Please update the environment variable TimeZoneDescription to be the description of your timezone');\r",
 							"    }\r",
 							"    else\r",
 							"    {\r",
-							"        console.info(pm.info.requestName+' '+pm.info.eventName+': TimeZoneDescription   : '+timezone_text);\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': TimeZoneDescription                  : '+timezone_text);\r",
 							"    };\r",
 							"\r",
 							"\r",
@@ -812,7 +488,8 @@
 							"    console.error(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response Body: '+ responseBody);\r",
 							"};"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -863,6 +540,529 @@
 							"key": "count",
 							"value": "1"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "READ repository content (Step 4 - read Repositories endpoint)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"READ repository content\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401 status was returned. This means this session is not authorised, likely due to an invalid access token. Response Body: '+ responseBody);\r",
+							"        break;\r",
+							"    } // end case response is 401\r",
+							"    case 200:\r",
+							"    {\r",
+							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"        pm.variables.set(\"ContinuousErrors\",0);\r",
+							"        // load the response into a variable 'resources'\r",
+							"        const resources = JSON.parse(responseBody)[\"d\"].results;\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A vadid response was obtained. There are '+resources.length+ ' resources in the Repository')\r",
+							"\r",
+							"        \r",
+							"        break;\r",
+							"    }\r",
+							"    default:  // response code is unexpected\r",
+							"    {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        };\r",
+							"        break;\r",
+							"    };\r",
+							"\r",
+							"} // end switch response code"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Repositories API endpoint to obtain total resources count. This will validate if the SACserviceFQDN is valid or not.');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-sap-sac-custom-auth",
+						"type": "text",
+						"value": "true"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "$format",
+						"value": "json",
+						"type": "text"
+					},
+					{
+						"key": "resourceTypes",
+						"value": "STORY",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/Repositories?$format=json&$select=id",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Repositories"
+					],
+					"query": [
+						{
+							"key": "$format",
+							"value": "json",
+							"description": "return the results as a json stucture"
+						},
+						{
+							"key": "$select",
+							"value": "id",
+							"description": "the columns to select, de-select or delete this query param to see all the columns"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "READ activities log (Step 5 - read Activities endpoint)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.info(pm.info.requestName+' '+pm.info.eventName+': Reading Activities API endpoint to obtain oldest log entry. It will also validate the Activities API endpoint which requires the OAuth Service \\'Activities\\'');\r",
+							"pm.variables.set(\"recovery\",pm.info.requestName);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Reading oldest log entry\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200])\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': No access to activities log. The OAuth client may not have been granted access to the \\'Activities\\' Service, or the access token is not valid. Fetching a new access token');\r",
+							"        break;\r",
+							"    } // end case 401 \r",
+							"\r",
+							"    case 429:\r",
+							"    // in the event SAP Analytics Cloud is receiving too many requests, a HTTP response 429 will be issued.\r",
+							"    // in such a case, we shall wait for the 'Retry-After' value and simply re-attempt the same request.\r",
+							"    {\r",
+							"        const retryafter=(pm.response.headers.get('Retry-After')!=undefined) ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': SAP Analytics Cloud is receiving too many requests. Retrying in '+retryafter+'ms');\r",
+							"        setTimeout(()=> {},retryafter);\r",
+							"        postman.setNextRequest(pm.info.requestName);\r",
+							"        break;\r",
+							"    }  // end case 429\r",
+							"\r",
+							"    case 200: \r",
+							"    {\r",
+							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"        pm.variables.set(\"ContinuousErrors\",0);\r",
+							"\r",
+							"\r",
+							"\r",
+							"        const total_entries = pm.response.headers.get('epm-page-count'); // the total number of pages there are for this query. Given our pageSize is just 1, this is the numnber of pages, but also then the number of entires in total\r",
+							"        \r",
+							"\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! The a valid response was obtained. This SAP Analytics Cloud Service has '+total_entries+' activity logs');\r",
+							"\r",
+							"\r",
+							"        const lines = responseBody.split('\\n');  // lines is an array, each element is a row\r",
+							"        lines.splice(0, 4);                  // lines has the first 5 lines removed from it, as this is the header\r",
+							"         let columns_array = lines[0].split('\",\"');          // split each row into columns\r",
+							"        \r",
+							"        while (columns_array.length<8)\r",
+							"        {\r",
+							"            // we have fewer columns than we expect. It means the description column has carriage returns in it and we need to 'shift' the rows below up, and join it to this row, minus the carriage returns\r",
+							"            lines[0]=lines[0].concat(\" \",lines[1]);\r",
+							"            lines.splice(1,1);\r",
+							"            columns_array = lines[0].split('\",\"');  \r",
+							"        }\r",
+							"\r",
+							"        let timezone_hours   = parseInt(pm.variables.get(\"TimeZoneHours\"));\r",
+							"        let timezone_minutes = parseInt(pm.variables.get(\"TimeZoneMinutes\"));\r",
+							"        if ((timezone_hours   === undefined)|| (!Number.isInteger(timezone_hours  )))  { timezone_hours   = - Math.floor((new Date().getTimezoneOffset())/60) };\r",
+							"        if ((timezone_minutes === undefined)|| (!Number.isInteger(timezone_minutes)))  { timezone_minutes = -            (new Date().getTimezoneOffset())%60  };\r",
+							"\r",
+							"\r",
+							"        let oldest_date_GMT = columns_array[7] // get the timestamp from row 1 (index0) in the 8th column (index7)\r",
+							"        let oldestdate_this_time_zone= new Date(oldest_date_GMT);\r",
+							"        \r",
+							"        oldestdate_this_time_zone.setHours(oldestdate_this_time_zone.getHours()     + timezone_hours);    // we add (or substract) the hours depending upon the timezone\r",
+							"        oldestdate_this_time_zone.setMinutes(oldestdate_this_time_zone.getMinutes() + timezone_minutes);  // we add (or substract) the minutes depending upon the timezone\r",
+							"\r",
+							"        const todays_date = new Date();\r",
+							"        todays_date.setHours(todays_date.getHours()  + timezone_hours );\r",
+							"        todays_date.setMinutes(todays_date.getMinutes() + todays_date.getTimezoneOffset() + timezone_minutes );\r",
+							"        let todays_date_my_timezone= new Date(todays_date.getFullYear().toString().concat(\".\",(\"0\"+(todays_date.getMonth()+1)).slice(-2),\".\",(\"0\"+todays_date.getDate()).slice(-2),\r",
+							"                                                                                        \" \",(\"0\"+todays_date.getHours()).slice(-2),\r",
+							"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\":\",(\"0\"+todays_date.getMinutes()).slice(-2),\r",
+							"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\":\",(\"0\"+todays_date.getSeconds()).slice(-2 )));\r",
+							"\r",
+							"        let oldest_activities_log_entry_in_days = Math.floor( (todays_date_my_timezone-oldestdate_this_time_zone) / (1000 * 3600 * 24) )\r",
+							"\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': The oldest log entry found was for '+oldestdate_this_time_zone+' which was '+oldest_activities_log_entry_in_days+' days ago');\r",
+							"        \r",
+							"        const SAC_platform = pm.variables.get(\"SACplatform\");\r",
+							"        if (SAC_platform==='NEO')\r",
+							"        {\r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            postman.setNextRequest()\r",
+							"        }\r",
+							"\r",
+							"\r",
+							"        break;\r",
+							"    }  // end case 200\r",
+							"\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            postman.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        };\r",
+							"   }\r",
+							";\r",
+							"}; // end switch pm.response.code"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "x-sap-sac-custom-auth",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/audit/activities/exportActivities?pageSize=1&pageIndex=1&sortKey=Timestamp&sortDescending=false",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"audit",
+						"activities",
+						"exportActivities"
+					],
+					"query": [
+						{
+							"key": "pageSize",
+							"value": "1",
+							"description": "If enabled it limits the number of records (rows) returned in each page."
+						},
+						{
+							"key": "pageIndex",
+							"value": "1"
+						},
+						{
+							"key": "sortKey",
+							"value": "Timestamp"
+						},
+						{
+							"key": "sortDescending",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "READ system owner (Step 6 - Display System Owner)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"READ system owner\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403,429]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken or the csrf-token must be invalid. We shall get new ones of each!\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new tokens: accesstoken & x-csrf-token');\r",
+							"        postman.setNextRequest(\"GET accesstoken (Step 1 - obtain a valid token)\");        \r",
+							"        pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"        break;\r",
+							"    } // end case 401 \r",
+							"\r",
+							"    case 429:\r",
+							"    // in the event SAP Analytics Cloud is receiving too many requests, a HTTP response 429 will be issued.\r",
+							"    // in such a case, we shall wait for the 'Retry-After' value and simply re-attempt the same request.\r",
+							"    {\r",
+							"        const retryafter=(pm.response.headers.get('Retry-After')!=undefined) ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SAP Analytics Cloud is receiving too many requests. Retrying in '+retryafter+'ms');\r",
+							"        setTimeout(()=> {},retryafter);\r",
+							"        postman.setNextRequest(pm.info.requestName);\r",
+							"        break;\r",
+							"    }  // end case 429\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"        pm.variables.set(\"ContinuousErrors\",0);\r",
+							"\r",
+							"        const readbody                  = JSON.parse(responseBody);\r",
+							"        const totalResults              = readbody.totalResults;\r",
+							"  //      console.log(\"totalResults\", totalResults);\r",
+							"        if (totalResults===1)\r",
+							"        {\r",
+							"            const system_owner       =readbody.Resources[0];\r",
+							"            const teams = system_owner.groups===undefined ? 0 : system_owner.groups.length;\r",
+							"            \r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+\": System Owner:                  UUID (SCIMv2 property id): \"+system_owner.id);\r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+\": System Owner:         User ID (SCIMv2 property userName): \"+system_owner.userName);\r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+\": System Owner: display name (SCIMv2 property displayName): \"+system_owner.displayName);\r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+\": System Owner:             email (SCIMv2 property emails): \"+system_owner.emails[0].value);\r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+\": System Owner:      idpUserId (SCIMv2 property idpUserId): \"+system_owner[\"urn:sap:params:scim:schemas:extension:sac:2.0:user-custom-parameters\"].idpUserId);\r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+\": System Owner:    externalId (SCIMv2 property externalId): \"+system_owner.externalId);\r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+\": System Owner:                             is a member of: \"+teams+' teams');\r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+\": System Owner:                    full SCIM API meta data: \",system_owner);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+\": System Owner not found.\");\r",
+							"        }\r",
+							"        postman.setNextRequest(null);\r",
+							"        break;\r",
+							"    }   // end case response is 200\r",
+							"    default:\r",
+							"    {\r",
+							"        // response code is unexpected\r",
+							"        // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            postman.setNextRequest(NextPostmanRequest());\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            postman.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        ;\r",
+							"        break;\r",
+							"    }\r",
+							"}; // end swtich pm.response.code\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"filter_for_userids\",\r",
+							"      \"roles.value eq \\\\\\\"\"\r",
+							"    + \"PROFILE:sap.epm:System_Owner\" \r",
+							"    + \"\\\\\\\" \" );\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading system owner');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"type": "text",
+						"value": "{{x-csrf-token}}"
+					},
+					{
+						"key": "x-sap-sac-custom-auth",
+						"type": "text",
+						"value": "true"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:SearchRequest\"],\r\n     \"filter\":\r\n        \"{{filter_for_userids}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/scim2/Users/.search",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"scim2",
+						"Users",
+						".search"
 					]
 				}
 			},

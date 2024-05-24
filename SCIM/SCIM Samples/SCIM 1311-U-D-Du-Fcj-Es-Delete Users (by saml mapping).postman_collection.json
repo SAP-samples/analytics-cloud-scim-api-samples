@@ -1,11 +1,11 @@
 {
 	"info": {
-		"_postman_id": "fcabcc3f-8cb4-41ef-813d-86f0c2813747",
+		"_postman_id": "caf0e3d9-c8b7-4f7f-9dfb-1aacba1c475c",
 		"name": "SCIM 1311-U-D-Du-Fcj-Es-Delete Users (by saml mapping)",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/](https://blogs.sap.com/2021/05/28/sap-analytics-cloud-scim-api-best-practices-and-sample-scripts/)\n\n# About\n\nScript version 0.8\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (& for other related content)\n\n[https://community.sap.com/t5/technology-blogs-by-sap/sap-analytics-cloud-user-and-team-provisioning-scim-api-best-practices-and/ba-p/13509352](https://community.sap.com/t5/technology-blogs-by-sap/sap-analytics-cloud-user-and-team-provisioning-scim-api-best-practices-and/ba-p/13509352)\n\n# Questions\n\nPlease create a new question [https://community.sap.com/t5/forums/postpage/choose-node/true/board-id/technology-questions](https://community.sap.com/t5/forums/postpage/choose-node/true/board-id/technology-questions) (rather than a comment to the blog post since blog posts do not support threads)\n\n# About\n\nScript version 0.9\n\nSample scripts created by Matthew Shaw, SAP. [https://community.sap.com/t5/user/viewprofilepage/user-id/70553](https://community.sap.com/t5/user/viewprofilepage/user-id/70553)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9591952",
-		"_collection_link": "https://matthewshaw.postman.co/workspace/SAP-Analytics-Cloud-Sample-Deve~26a222ea-7810-4431-88c7-df4be9f95a83/collection/9591952-fcabcc3f-8cb4-41ef-813d-86f0c2813747?action=share&source=collection_link&creator=9591952"
+		"_exporter_id": "31429660",
+		"_collection_link": "https://sap-se.postman.co/workspace/SAP-Analytics-Cloud~8ac5e5ee-c61c-4eda-99cb-9af804973bee/collection/31429660-caf0e3d9-c8b7-4f7f-9dfb-1aacba1c475c?action=share&source=collection_link&creator=31429660"
 	},
 	"item": [
 		{
@@ -96,7 +96,7 @@
 							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
 							"        errors++;\r",
 							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
-							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
 							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
 							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
 							"        if (errors >= maxerrors)\r",
@@ -242,7 +242,7 @@
 							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
 							"        errors++;\r",
 							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
-							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
 							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
 							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
 							"        if (errors >= maxerrors)\r",
@@ -396,7 +396,7 @@
 							"; // end if\r",
 							"\r",
 							"const errors=pm.variables.get(\"ContinuousErrors\");\r",
-							"const maxerrors=3;  // maxerrors needs to be at least 2, otherwise valid workflows may be able to correctly recover from an invalid access tokens or invalid csrf-tokens\r",
+							"const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors needs to be at least 2, otherwise valid workflows may be able to correctly recover from an invalid access tokens or invalid csrf-tokens\r",
 							"\r",
 							"if (errors >= maxerrors)\r",
 							"{\r",
@@ -514,7 +514,7 @@
 							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
 							"        errors++;\r",
 							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
-							"        const maxerrors=3;  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
 							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
 							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
 							"        if (errors >= maxerrors)\r",
