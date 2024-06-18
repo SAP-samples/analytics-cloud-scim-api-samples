@@ -1,11 +1,11 @@
 {
 	"info": {
-		"_postman_id": "449d89ad-9344-4c97-b8b4-e488fec9465c",
+		"_postman_id": "424d1741-6859-4dce-bdca-07d48fbd636d",
 		"name": "Activities 4001-Test-Es-Tests Single Environment Setup",
 		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/L1SUAhp/SAP%20SAC%20Activities%20Log%20Sample%20Scripts%20User%20Guide.pdf?rc=10](https://d.dam.sap.com/a/L1SUAhp/SAP%20SAC%20Activities%20Log%20Sample%20Scripts%20User%20Guide.pdf?rc=10)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2023/01/18/sap-analytics-cloud-activities-log-command-line-interface-cli-to-automate-downloads-associated-best-practices/](https://blogs.sap.com/2023/01/18/sap-analytics-cloud-activities-log-command-line-interface-cli-to-automate-downloads-associated-best-practices/)\n\n# About\n\nScript version 0.8\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9591952",
-		"_collection_link": "https://matthewshaw.postman.co/workspace/SAP-Analytics-Cloud-Sample-Deve~26a222ea-7810-4431-88c7-df4be9f95a83/collection/9591952-449d89ad-9344-4c97-b8b4-e488fec9465c?action=share&creator=9591952&source=collection_link"
+		"_exporter_id": "31429660",
+		"_collection_link": "https://sap-se.postman.co/workspace/SAP-Analytics-Cloud~8ac5e5ee-c61c-4eda-99cb-9af804973bee/collection/31429660-424d1741-6859-4dce-bdca-07d48fbd636d?action=share&source=collection_link&creator=31429660"
 	},
 	"item": [
 		{
@@ -60,17 +60,17 @@
 							"        pm.environment.set(\"accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
 							"        pm.environment.set(\"x-csrf-token\", \"fetch\");               // we will need to request a new csrf-token as we have a new session\r",
 							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid accesstoken was obtained. This means your SACtokenFQDN, SACplatform, Username and Password are all valid. You can now test the Activities endpoint. The accesstoken provided was '+jsonData.access_token+' and will be re-presented in the header of subsequent requests');\r",
-							"        postman.setNextRequest();                                  // let the next request run (if being run in the runner)\r",
+							"        pm.execution.setNextRequest();                                  // let the next request run (if being run in the runner)\r",
 							"    }\r",
 							"else if (pm.response.code === 401)\r",
 							"    {\r",
 							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
-							"        postman.setNextRequest(null);\r",
+							"        pm.execution.setNextRequest(null);\r",
 							"    }\r",
 							"else\r",
 							"    {\r",
 							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Check your SACtokenFQDN is set correctly. Response Body: '+ responseBody);\r",
-							"        postman.setNextRequest(null);\r",
+							"        pm.execution.setNextRequest(null);\r",
 							"    }\r",
 							"; // end if"
 						],
@@ -133,7 +133,7 @@
 							"        const csrftoken=pm.environment.get(\"x-csrf-token\");\r",
 							"        if (csrftoken===\"fetch\")\r",
 							"        {\r",
-							"            pm.environment.set(\"x-csrf-token\",postman.getResponseHeader(\"x-csrf-token\"));\r",
+							"            pm.environment.set(\"x-csrf-token\",pm.response.headers.get(\"x-csrf-token\"));\r",
 							"        }\r",
 							"};\r",
 							"\r",
@@ -221,19 +221,19 @@
 				"header": [
 					{
 						"key": "x-csrf-token",
-						"type": "text",
-						"value": "{{x-csrf-token}}"
+						"value": "{{x-csrf-token}}",
+						"type": "text"
 					},
 					{
 						"key": "x-sap-sac-custom-auth",
-						"type": "text",
-						"value": "true"
+						"value": "true",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
+						"value": "application/json",
 						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
+						"type": "text"
 					}
 				],
 				"url": {

@@ -1,10 +1,11 @@
 {
 	"info": {
-		"_postman_id": "400801f2-2165-4e14-bac2-a7014adf3235",
+		"_postman_id": "2cefc99e-0ff4-493c-8efe-ffb03de54d89",
 		"name": "BTP Audit 4201-Test-Es-Tests Single Environment Setup",
 		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/vfjnhzM/](https://d.dam.sap.com/a/vfjnhzM/)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2023/02/23/sap-business-technology-platform-audit-logs-command-line-interface-cli-to-automate-downloads-plus-associated-best-practices-and-faqs/](https://blogs.sap.com/2023/02/23/sap-business-technology-platform-audit-logs-command-line-interface-cli-to-automate-downloads-plus-associated-best-practices-and-faqs/)\n\n# About\n\nScript version 0.8\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9591952"
+		"_exporter_id": "31429660",
+		"_collection_link": "https://sap-se.postman.co/workspace/SAP-Analytics-Cloud~8ac5e5ee-c61c-4eda-99cb-9af804973bee/collection/31429660-2cefc99e-0ff4-493c-8efe-ffb03de54d89?action=share&source=collection_link&creator=31429660"
 	},
 	"item": [
 		{
@@ -53,21 +54,21 @@
 							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid accesstoken was obtained. This means your BTPtokenFQDN, BTPplatform, Username and Password are all valid. You can now test the AuditLog endpoint. The accesstoken provided was '+jsonData.access_token+' and will be re-presented in the header of subsequent requests');\r",
 							"        switch (pm.variables.get(\"BTPplatform\") )\r",
 							"        {\r",
-							"            case 'NEO': { postman.setNextRequest(\"READ audit log NEO (Step 2 - read Audit Log endpoint)\"); break; }\r",
-							"            default :   { postman.setNextRequest(); }\r",
+							"            case 'NEO': { pm.execution.setNextRequest(\"READ audit log NEO (Step 2 - read Audit Log endpoint)\"); break; }\r",
+							"            default :   { pm.execution.setNextRequest(); }\r",
 							"        }\r",
 							"        break;\r",
 							"    }\r",
 							"    case 401:\r",
 							"    {\r",
 							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
-							"        postman.setNextRequest(null);\r",
+							"        pm.execution.setNextRequest(null);\r",
 							"        break;\r",
 							"    }\r",
 							"    default:\r",
 							"    {\r",
 							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Check your BTPtokenFQDN is set correctly. Response Body: '+ responseBody);\r",
-							"        postman.setNextRequest(null);\r",
+							"        pm.execution.setNextRequest(null);\r",
 							"    }\r",
 							"}; // end switch"
 						],
@@ -144,7 +145,7 @@
 							"    }\r",
 							"    \r",
 							"};\r",
-							"postman.setNextRequest(null);"
+							"pm.execution.setNextRequest(null);"
 						],
 						"type": "text/javascript"
 					}
@@ -181,9 +182,9 @@
 				"header": [
 					{
 						"key": "Content-Type",
+						"value": "application/json",
 						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
+						"type": "text"
 					}
 				],
 				"url": {
@@ -236,7 +237,7 @@
 							"    }\r",
 							"    \r",
 							"};\r",
-							"postman.setNextRequest(null);"
+							"pm.execution.setNextRequest(null);"
 						],
 						"type": "text/javascript"
 					}
@@ -274,9 +275,9 @@
 				"header": [
 					{
 						"key": "Content-Type",
+						"value": "application/json",
 						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
+						"type": "text"
 					}
 				],
 				"url": {

@@ -55,17 +55,17 @@
 							"        pm.environment.set(\"Source-accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
 							"        pm.environment.set(\"Source-x-csrf-token\", \"fetch\");               // we will need to request a new csrf-token as we have a new session\r",
 							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid accesstoken was obtained. This means your Source-SACtokenFQDN, Source-SACplatform, Source-Username and Source-Password are all valid. You can now test the source SCIM endpoint. The accesstoken provided was '+jsonData.access_token+' and will be re-presented in the header of subsequent requests');\r",
-							"        postman.setNextRequest();                                  // let the next request run (if being run in the runner)\r",
+							"        pm.execution.setNextRequest();                                  // let the next request run (if being run in the runner)\r",
 							"    }\r",
 							"else if (pm.response.code === 401)\r",
 							"    {\r",
 							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
-							"        postman.setNextRequest(null);\r",
+							"        pm.execution.setNextRequest(null);\r",
 							"    }\r",
 							"else\r",
 							"    {\r",
 							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Check your Source-SACtokenFQDN is set correctly. Response Body: '+ responseBody);\r",
-							"        postman.setNextRequest(null);\r",
+							"        pm.execution.setNextRequest(null);\r",
 							"    }\r",
 							"; // end if"
 						],
@@ -154,17 +154,17 @@
 							"        pm.environment.set(\"Target-accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
 							"        pm.environment.set(\"Target-x-csrf-token\", \"fetch\");               // we will need to request a new csrf-token as we have a new session\r",
 							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid accesstoken was obtained. This means your Target-SACtokenFQDN, Target-SACplatform, Target-Username and Target-Password are all valid. You can now test the target SCIM endpoint. The accesstoken provided was '+jsonData.access_token+' and will be re-presented in the header of subsequent requests');\r",
-							"        postman.setNextRequest();                                  // let the next request run (if being run in the runner)\r",
+							"        pm.execution.setNextRequest();                                  // let the next request run (if being run in the runner)\r",
 							"    }\r",
 							"else if (pm.response.code === 401)\r",
 							"    {\r",
 							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
-							"        postman.setNextRequest(null);\r",
+							"        pm.execution.setNextRequest(null);\r",
 							"    }\r",
 							"else\r",
 							"    {\r",
 							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Check your Target-SACtokenFQDN is set correctly. Response Body: '+ responseBody);\r",
-							"        postman.setNextRequest(null);\r",
+							"        pm.execution.setNextRequest(null);\r",
 							"    }\r",
 							"; // end if"
 						],
@@ -243,7 +243,7 @@
 							"        const csrftoken=pm.environment.get(\"Source-x-csrf-token\");\r",
 							"        if (csrftoken===\"fetch\")\r",
 							"        {\r",
-							"            pm.environment.set(\"Source-x-csrf-token\",postman.getResponseHeader(\"x-csrf-token\"));\r",
+							"            pm.environment.set(\"Source-x-csrf-token\",pm.response.headers.get(\"x-csrf-token\"));\r",
 							"        }\r",
 							"};\r",
 							"\r",
@@ -285,19 +285,19 @@
 				"header": [
 					{
 						"key": "x-csrf-token",
-						"type": "text",
-						"value": "{{Source-x-csrf-token}}"
+						"value": "{{Source-x-csrf-token}}",
+						"type": "text"
 					},
 					{
 						"key": "x-sap-sac-custom-auth",
-						"type": "text",
-						"value": "true"
+						"value": "true",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
+						"value": "application/json",
 						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
+						"type": "text"
 					}
 				],
 				"url": {
@@ -365,7 +365,7 @@
 							"        const csrftoken=pm.environment.get(\"Target-x-csrf-token\");\r",
 							"        if (csrftoken===\"fetch\")\r",
 							"        {\r",
-							"            pm.environment.set(\"Target-x-csrf-token\",postman.getResponseHeader(\"x-csrf-token\"));\r",
+							"            pm.environment.set(\"Target-x-csrf-token\",pm.response.headers.get(\"x-csrf-token\"));\r",
 							"        }\r",
 							"};\r",
 							"\r",
@@ -476,19 +476,19 @@
 				"header": [
 					{
 						"key": "x-csrf-token",
-						"type": "text",
-						"value": "{{Target-x-csrf-token}}"
+						"value": "{{Target-x-csrf-token}}",
+						"type": "text"
 					},
 					{
 						"key": "x-sap-sac-custom-auth",
-						"type": "text",
-						"value": "true"
+						"value": "true",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
+						"value": "application/json",
 						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
+						"type": "text"
 					}
 				],
 				"url": {

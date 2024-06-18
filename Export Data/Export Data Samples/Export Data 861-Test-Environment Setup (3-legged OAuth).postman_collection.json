@@ -1,10 +1,11 @@
 {
 	"info": {
-		"_postman_id": "a5103196-2878-4f76-89e1-d4d0fe5fc199",
+		"_postman_id": "6690da7b-f102-4dba-9797-277180924026",
 		"name": "Export Data 861-Test-Environment Setup (3-legged OAuth)",
 		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/A69ssVS](https://d.dam.sap.com/a/A69ssVS)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/](https://blogs.sap.com/2022/05/04/sap-analytics-cloud-export-data-api-sample-scripts/)\n\n# About\n\nScript version 0.7.1\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "9591952"
+		"_exporter_id": "31429660",
+		"_collection_link": "https://sap-se.postman.co/workspace/SAP-Analytics-Cloud~8ac5e5ee-c61c-4eda-99cb-9af804973bee/collection/31429660-6690da7b-f102-4dba-9797-277180924026?action=share&source=collection_link&creator=31429660"
 	},
 	"item": [
 		{
@@ -43,7 +44,7 @@
 							"        const csrftoken=pm.environment.get(\"x-csrf-token\");\r",
 							"        if (csrftoken===\"fetch\")\r",
 							"        {\r",
-							"            pm.environment.set(\"x-csrf-token\",postman.getResponseHeader(\"x-csrf-token\"));\r",
+							"            pm.environment.set(\"x-csrf-token\",pm.response.headers.get(\"x-csrf-token\"));\r",
 							"        }\r",
 							"};\r",
 							"\r",
@@ -139,19 +140,20 @@
 				"header": [
 					{
 						"key": "x-csrf-token",
-						"type": "text",
-						"value": "{{x-csrf-token}}"
+						"value": "{{x-csrf-token}}",
+						"type": "text"
 					},
 					{
 						"key": "x-sap-sac-custom-auth",
+						"value": "true",
 						"type": "text",
-						"value": "true"
+						"disabled": true
 					},
 					{
 						"key": "Content-Type",
+						"value": "application/json",
 						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
+						"type": "text"
 					}
 				],
 				"url": {

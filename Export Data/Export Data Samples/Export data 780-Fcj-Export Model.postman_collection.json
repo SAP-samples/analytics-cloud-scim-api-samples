@@ -1,47 +1,30 @@
 {
 	"info": {
-		"_postman_id": "bd3ac84e-3261-4945-945e-f5de9f7edf2d",
-		"name": "Embedded 734-Fj-Update System Configuration",
-		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/Wg2pPhA/](https://d.dam.sap.com/a/Wg2pPhA/)\n\n# Blog (for Q&A)\n\n[https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/](https://blogs.sap.com/2022/04/07/sap-analytics-cloud-embedded-edition-best-practices-sample-scripts-for-administration/)\n\n# About\n\nScript version 0.7.5\n\nSample scripts created by Matthew Shaw, SAP. [https://people.sap.com/matthew.shaw/#content:blogposts](https://people.sap.com/matthew.shaw/#content:blogposts)",
+		"_postman_id": "8f284e90-c4fc-443e-9806-632c57e1afb1",
+		"name": "Export data 780-Fcj-Export Model",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "31429660",
-		"_collection_link": "https://sap-se.postman.co/workspace/SAP-Analytics-Cloud~8ac5e5ee-c61c-4eda-99cb-9af804973bee/collection/31429660-bd3ac84e-3261-4945-945e-f5de9f7edf2d?action=share&source=collection_link&creator=31429660"
+		"_collection_link": "https://sap-se.postman.co/workspace/SAP-Analytics-Cloud~8ac5e5ee-c61c-4eda-99cb-9af804973bee/collection/31429660-8f284e90-c4fc-443e-9806-632c57e1afb1?action=share&source=collection_link&creator=31429660"
 	},
 	"item": [
 		{
-			"name": "UPDATE System Configuration",
+			"name": "READ Fact Data",
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"console.log(pm.info.requestName+' '+pm.info.eventName+': Updating System Configuration');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Fact Data');\r",
 							"pm.variables.set(\"recovery\",pm.info.requestName);\r",
 							"\r",
 							"\r",
-							"const SystemConfigSettings_from_file=pm.iterationData.get(\"file_SystemConfig\");\r",
-							"const Validated_SystemConfigSettings = [];\r",
-							"\r",
-							"SystemConfigSettings_from_file.forEach( myfunction_ValidateEntry );\r",
-							"\r",
-							"function myfunction_ValidateEntry(entry)\r",
+							"// we have a variable called 'nextlink'. This variable contains the URL parameters for the next page of results, should the last page contains a 'next link'\r",
+							"// a 'next link' will be included in the responseBody of the request when there are more results to be returned in other pages.\r",
+							"// you can optionally set the page size in the params with parameter pageszie if you would like to control the number of results per page\r",
+							"if (pm.variables.get(\"nextlink\"))\r",
 							"{\r",
-							"    if (entry.value===\"\")\r",
-							"    {\r",
-							"        //entry.value='__undefined';\r",
-							"        //Validated_SystemConfigSettings.push(entry);\r",
-							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Entry '+entry.name+' does not have a value. It is not currently possible to set this value to be \\'undefined\\'. This entry will not form part of the system configuration update');\r",
-							"    }\r",
-							"    else\r",
-							"    {\r",
-							"        Validated_SystemConfigSettings.push(entry);\r",
-							"    } // end if\r",
-							"}; // end function\r",
-							"\r",
-							"\r",
-							"//SystemConfig=JSON.stringify(Validated_SystemConfigSettings).replace(/\"__undefined\"/g, 'undefined');\r",
-							"SystemConfig=JSON.stringify(Validated_SystemConfigSettings);\r",
-							"pm.variables.set(\"SetTenantSystemConfig\",(SystemConfig));"
+							"    pm.request.url.query.add(pm.variables.get(\"nextlink\"))\r",
+							"}"
 						],
 						"type": "text/javascript"
 					}
@@ -50,137 +33,12 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Submit System Configuration Update\", function ()\r",
+							"pm.test(\"READ Fact Data\", function ()\r",
 							"    {\r",
-							"        pm.expect(pm.response.code).to.be.oneOf([202,401,403]);\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403]);\r",
 							"    }\r",
 							");\r",
 							"\r",
-							"switch (pm.response.code)\r",
-							"{\r",
-							"    case 401:\r",
-							"    case 403:\r",
-							"    {\r",
-							"        // we are not authorised, so our accesstoken  must be invalid. We shall get a new one\r",
-							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
-							"        // so we don't end up in an endless loop.\r",
-							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
-							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
-							"        errors++;\r",
-							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new tenant access token');\r",
-							"        pm.execution.setNextRequest(\"GET tenantaccesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
-							"       break;\r",
-							"    } // end if response is 401 or 403\r",
-							"\r",
-							"    case 202:\r",
-							"    {\r",
-							"    pm.variables.set(\"ContinuousErrors\",0);\r",
-							"    // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
-							"    pm.variables.set(\"NeedGetToBeAuthorised\",false);\r",
-							"    console.log(pm.info.requestName+' '+pm.info.eventName+': System Configuration update accepted');\r",
-							"    const readbody    = JSON.parse(responseBody);\r",
-							"    pm.variables.set(\"logId\",readbody.logId)\r",
-							"    pm.execution.setNextRequest();\r",
-							"    break;\r",
-							"    }\r",
-							"\r",
-							"    default: // response code is unexpected\r",
-							"    {\r",
-							"       // we got an unexpected response from the SAC API\r",
-							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
-							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
-							"        errors++;\r",
-							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
-							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
-							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
-							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
-							"        if (errors >= maxerrors)\r",
-							"        {\r",
-							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
-							"            pm.variables.set(\"ContinuousErrors\",0); \r",
-							"            pm.execution.setNextRequest(null);\r",
-							"        }\r",
-							"        else if (errors >= 2)\r",
-							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
-							"            pm.execution.setNextRequest(pm.info.requestName);\r",
-							"        }\r",
-							"        else\r",
-							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
-							"            pm.execution.setNextRequest(pm.info.requestName);\r",
-							"        }\r",
-							"        break;\r",
-							"    }\r",
-							"};"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{tenantaccesstoken}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PATCH",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"SetTenantSystemConfig\": {{SetTenantSystemConfig}}\r\n}"
-				},
-				"url": {
-					"raw": "https://{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}/api/v1/tenant/{{Embedded_tenant_uuid}}/config",
-					"protocol": "https",
-					"host": [
-						"{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"tenant",
-						"{{Embedded_tenant_uuid}}",
-						"config"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Confirm System Configuration Update",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Log');\r",
-							"pm.variables.set(\"recovery\",pm.info.requestName);"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"System Configuration Updated\", function ()\r",
-							"    {\r",
-							"        if (pm.response.code === 200)  { pm.expect(pm.response.json().status).to.be.oneOf([\"IN PROGRESS\",\"SUCCESS\"]) };\r",
-							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403]);\r",
-							"    } );\r",
 							"\r",
 							"switch (pm.response.code)\r",
 							"{\r",
@@ -194,8 +52,8 @@
 							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
 							"        errors++;\r",
 							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new tenant access token');\r",
-							"        pm.execution.setNextRequest(\"GET tenantaccesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
+							"        pm.execution.setNextRequest(\"GET accesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
 							"       break;\r",
 							"    } // end if response is 401 or 403\r",
 							"\r",
@@ -203,33 +61,38 @@
 							"    {\r",
 							"    pm.variables.set(\"ContinuousErrors\",0);\r",
 							"    // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"    pm.variables.set(\"NeedGetToBeAuthorised\",false);\r",
 							"    const readbody    = JSON.parse(responseBody);\r",
 							"\r",
-							"    if (readbody.status === \"IN PROGRESS\")\r",
+							"    const totalresultcountacrossallpages=readbody['@odata.count'];\r",
+							"    if (totalresultcountacrossallpages!==undefined)\r",
 							"    {\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Request still in progress... waiting 30 seconds before next refresh');\r",
-							"        setTimeout(()=> {},30000);\r",
-							"        pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        // if $count in the request params to set to true, then a @odata.count will be returned in each page of the results and we can display it here\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Entities across all pages (odata count): '+totalresultcountacrossallpages);\r",
+							"    };\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Entities in Page: '+readbody['@des.entitiesInPage']);\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Processing Time : '+readbody['@des.processingTimeInMilliseconds']+' ms');  // this is the processing time on the SAP Analytics Cloud backend to get and prepare the data\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Fact Data Response Body = ',readbody.value);\r",
+							"  \r",
+							"    const nextlink=readbody['@odata.nextLink'];\r",
+							"    //console.log(pm.info.requestName+' '+pm.info.eventName+': Next Link       : '+nextlink);\r",
+							"    // we need to see if the responseBody contains a 'nextlink'.\r",
+							"    // if a 'nextlink' is found then we must repeat this call, and include that nextlink parameters\r",
+							"    // if no nextlink is found, we should stop as all results have been returned\r",
+							"    if (nextlink===undefined)\r",
+							"    {\r",
+							"        pm.variables.unset(\"nextlink\");\r",
+							"        pm.execution.setNextRequest();   // this means Postman will continue to the next request. If it was setNextRequest(null), then Postman would quit this iteration and move to the next value in the data file, if there is one.\r",
 							"    }\r",
 							"    else\r",
-							"    {\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+':  status: '+readbody.status);\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+':   start: '+readbody.start);\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+':  target: '+readbody.target);\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+': message: '+readbody.message);\r",
-							"        console.log(pm.info.requestName+' '+pm.info.eventName+':    stop: '+readbody.stop);\r",
-							"        if (readbody.status===\"SUCCESS\")\r",
-							"        {\r",
-							"            console.info(pm.info.requestName+' '+pm.info.eventName+': System Configuration was successfully updated');\r",
-							"        }\r",
-							"        else\r",
-							"        {\r",
-							"            console.error(pm.info.requestName+' '+pm.info.eventName+': System Configuration could not be updated. Try again later and contact SAP Product Support if the issue persists. Use component LOD-ANA-OEM-CP when logging your SAP Product Support incident');\r",
-							"            \r",
-							"        };\r",
-							"        pm.execution.setNextRequest(null);\r",
-							"    }\r",
+							"    { \r",
+							"        pm.variables.set(\"nextlink\",nextlink.substr(nextlink.search(\"\\\\?\")+1));\r",
+							"        pm.execution.setNextRequest(pm.info.requestName);\r",
+							"    };\r",
+							"\r",
+							"    \r",
 							"    break;\r",
+							"\r",
 							"    }\r",
 							"\r",
 							"    default: // response code is unexpected\r",
@@ -242,6 +105,7 @@
 							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
 							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
 							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"\r",
 							"        if (errors >= maxerrors)\r",
 							"        {\r",
 							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
@@ -275,7 +139,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{tenantaccesstoken}}",
+							"value": "{{accesstoken}}",
 							"type": "string"
 						}
 					]
@@ -294,31 +158,267 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "https://{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}/api/v1/tenant/{{Embedded_tenant_uuid}}/logs/{{logId}}",
+					"raw": "https://{{SACserviceFQDN}}/api/v1/dataexport/providers/{{ExportData_NamespaceID}}/{{file_ProviderID}}/FactData?$count=true",
 					"protocol": "https",
 					"host": [
-						"{{Embedded_endpoints_sac_embedded_edition_service_config_FQDN}}"
+						"{{SACserviceFQDN}}"
 					],
 					"path": [
 						"api",
 						"v1",
-						"tenant",
-						"{{Embedded_tenant_uuid}}",
-						"logs",
-						"{{logId}}"
+						"dataexport",
+						"providers",
+						"{{ExportData_NamespaceID}}",
+						"{{file_ProviderID}}",
+						"FactData"
+					],
+					"query": [
+						{
+							"key": "pagesize",
+							"value": "50000",
+							"description": "If enabled it limits the number of records (rows) returned in each page. Automatic paging is always enabled which ensures the response is always less than 20Mb. You can, though, further limit the number rows if you wish to do so.",
+							"disabled": true
+						},
+						{
+							"key": "$select",
+							"value": "keycolumn1,keycolumn2,keycolumn3",
+							"description": "Contains all key columns you would like to be returned. You can get the key columns from the provider metadata endpoint. If unspecifed, then all key columns are returned",
+							"disabled": true
+						},
+						{
+							"key": "$top",
+							"value": "5",
+							"description": "Returns top N values.\n\n",
+							"disabled": true
+						},
+						{
+							"key": "$count",
+							"value": "true",
+							"description": "if enabled, each response contains the @odata.count property which holds the total number of rows, even though each 'page' will be limited to the number of rows such that the data is less than 20Mb."
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache",
+							"description": "if enabled, the data is 'fetched' again from the model which has a performance impact, but it dies mean any changes made will be reflected\n",
+							"disabled": true
+						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "GET tenantaccesstoken",
+			"name": "READ Dimension Master Data",
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"console.log(pm.info.requestName+' '+pm.info.eventName+': Getting tenant access token');\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Dimension Master Data');\r",
+							"pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"\r",
+							"// we have a variable called 'nextlink'. This variable contains the URL parameters for the next page of results, should the last page contains a 'next link'\r",
+							"// a 'next link' will be included in the responseBody of the request when there are more results to be returned in other pages.\r",
+							"// you can optionally set the page size in the params with parameter pageszie if you would like to control the number of results per page\r",
+							"if (pm.variables.get(\"nextlink\"))\r",
+							"{\r",
+							"    pm.request.url.query.add(pm.variables.get(\"nextlink\"))\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"READ Dimension Master Data\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken  must be invalid. We shall get a new one\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
+							"        pm.execution.setNextRequest(\"GET accesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
+							"       break;\r",
+							"    } // end if response is 401 or 403\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"    pm.variables.set(\"ContinuousErrors\",0);\r",
+							"    // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"    pm.variables.set(\"NeedGetToBeAuthorised\",false);\r",
+							"    \r",
+							"    const readbody    = JSON.parse(responseBody);\r",
+							"    const totalresultcountacrossallpages=readbody['@odata.count'];\r",
+							"    if (totalresultcountacrossallpages!==undefined)\r",
+							"    {\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Entities across all pages (odata count): '+totalresultcountacrossallpages);\r",
+							"    };\r",
+							"\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Entities in Page: '+readbody['@des.entitiesInPage']);\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Processing Time : '+readbody['@des.processingTimeInMilliseconds']+' ms');\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Dimension Master Data Response Body = ',responseBody);\r",
+							"  \r",
+							"\r",
+							"    function myfunction_Display_Data( entry )\r",
+							"    {\r",
+							"         console.log('   '+entry.ID+': '+entry.Description);\r",
+							"    };\r",
+							"\r",
+							"\r",
+							"    const DimensionMasterData=readbody.value;\r",
+							"    console.log('Dimension Master Data Values: ',DimensionMasterData.length);\r",
+							"    DimensionMasterData.forEach( myfunction_Display_Data );\r",
+							"\r",
+							"    \r",
+							"    const nextlink=readbody['@odata.nextLink'];\r",
+							"    //console.log(pm.info.requestName+' '+pm.info.eventName+': Next Link       : '+nextlink);\r",
+							"    // we need to see if the responseBody contains a 'nextlink'.\r",
+							"    // if a 'nextlink' is found then we must repeat this call, and include that nextlink parameters\r",
+							"    // if no nextlink is found, we should stop as all results have been returned\r",
+							"    if (nextlink===undefined)\r",
+							"    {\r",
+							"        pm.variables.unset(\"nextlink\");\r",
+							"        pm.execution.setNextRequest(null);  // Postman will quit this iteration and move to the next value in the data file, if there is one.\r",
+							"    }\r",
+							"    else\r",
+							"    { \r",
+							"        pm.variables.set(\"nextlink\",nextlink.substr(nextlink.search(\"\\\\?\")+1));\r",
+							"        pm.execution.setNextRequest(pm.info.requestName);\r",
+							"    };\r",
+							"    \r",
+							"    break;\r",
+							"\r",
+							"    }\r",
+							"\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            pm.execution.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        break;\r",
+							"    }\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"name": "Content-Type",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/dataexport/providers/{{ExportData_NamespaceID}}/{{file_ProviderID}}/{{file_DimensionName}}Master?$count=true",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"dataexport",
+						"providers",
+						"{{ExportData_NamespaceID}}",
+						"{{file_ProviderID}}",
+						"{{file_DimensionName}}Master"
+					],
+					"query": [
+						{
+							"key": "pagesize",
+							"value": "10000",
+							"description": "If enabled it limits the number of records (rows) returned in each page. Automatic paging is always enabled which ensures the response is always less than 20Mb. You can, though, further limit the number rows if you wish to do so.",
+							"disabled": true
+						},
+						{
+							"key": "$count",
+							"value": "true",
+							"description": "if enabled, each response contains the @odata.count property which holds the total number of rows, even though each 'page' will be limited to the number of rows such that the data is less than 20Mb."
+						},
+						{
+							"key": "$top",
+							"value": "5",
+							"description": "Returns top N values.",
+							"disabled": true
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache",
+							"description": "if enabled, the data is 'fetched' again from the model which has a performance impact, but it dies mean any changes made will be reflected\n",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET accesstoken",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Getting access token');\r",
 							"const SAC_platform = pm.variables.get(\"SACplatform\");\r",
 							"if (SAC_platform==='NEO')\r",
 							"{\r",
@@ -326,7 +426,7 @@
 							"}\r",
 							"else  // we are on a Cloud Foundary Platform\r",
 							"{\r",
-							"   pm.variables.set(\"oauthpath\",\"/oauth/\");\r",
+							"    pm.variables.set(\"oauthpath\",\"/oauth/\");\r",
 							"};"
 						],
 						"type": "text/javascript"
@@ -338,26 +438,23 @@
 						"exec": [
 							"pm.test(\"GET accesstoken\", function()\r",
 							"    {\r",
-							"        pm.expect(pm.response.code).to.equal(200)\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
 							"    }\r",
 							");\r",
 							"\r",
-							"switch (pm.response.code)\r",
-							"{\r",
-							"    case 200:\r",
+							"if (pm.response.code === 200)\r",
 							"    {\r",
 							"        const jsonData = JSON.parse(responseBody);\r",
-							"        pm.environment.set(\"tenantaccesstoken\", jsonData.access_token);  // setting the tenantaccesstoken so its re-used for all subsequent requests\r",
+							"        pm.environment.set(\"accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
+							"        pm.environment.set(\"x-csrf-token\", \"fetch\");               // we will need to request a new csrf-token as we have a new session\r",
 							"        pm.execution.setNextRequest(pm.variables.get(\"recovery\"));      // we will now return to the request that sent us here in the first place\r",
-							"        break;\r",
 							"    }\r",
-							"    case 401:\r",
+							"else if (pm.response.code === 401)\r",
 							"    {\r",
-							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid Embedded_uua_clientid or Embedded_uua_clientsecret: '+ responseBody);\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
 							"        pm.execution.setNextRequest(null);\r",
-							"        break;\r",
 							"    }\r",
-							"    default:\r",
+							"else\r",
 							"    {\r",
 							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Response Body: '+ responseBody);\r",
 							"        if (pm.variables.get(\"recovery\") === pm.info.requestName)\r",
@@ -370,10 +467,10 @@
 							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Will make one more attempt to get a new accesstoken');\r",
 							"            pm.variables.set(\"recovery\",pm.info.requestName);\r",
 							"            pm.execution.setNextRequest(pm.info.requestName);\r",
-							"        }; //end if \r",
-							"        break;\r",
+							"        }\r",
+							"        ; //end if \r",
 							"    }\r",
-							"}; // end swtich\r",
+							"; // end if\r",
 							"\r",
 							"const errors=pm.variables.get(\"ContinuousErrors\");\r",
 							"const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors needs to be at least 2, otherwise valid workflows may be able to correctly recover from an invalid access tokens or invalid csrf-tokens\r",
@@ -399,13 +496,13 @@
 					"type": "basic",
 					"basic": [
 						{
-							"key": "password",
-							"value": "{{Embedded_uua_clientsecret}}",
+							"key": "username",
+							"value": "{{Username}}",
 							"type": "string"
 						},
 						{
-							"key": "username",
-							"value": "{{Embedded_uua_clientid}}",
+							"key": "password",
+							"value": "{{Password}}",
 							"type": "string"
 						}
 					]
@@ -413,10 +510,10 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "https://{{Embedded_uua_url_FQDN}}{{oauthpath}}token?grant_type=client_credentials",
+					"raw": "https://{{SACtokenFQDN}}{{oauthpath}}token?grant_type=client_credentials",
 					"protocol": "https",
 					"host": [
-						"{{Embedded_uua_url_FQDN}}{{oauthpath}}token"
+						"{{SACtokenFQDN}}{{oauthpath}}token"
 					],
 					"query": [
 						{
@@ -427,26 +524,6 @@
 				}
 			},
 			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
 		}
 	]
 }

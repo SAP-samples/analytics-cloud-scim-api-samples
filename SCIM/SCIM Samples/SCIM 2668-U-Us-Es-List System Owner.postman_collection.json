@@ -35,7 +35,7 @@
 							"        errors++;\r",
 							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
 							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new tokens: accesstoken & x-csrf-token');\r",
-							"        postman.setNextRequest(\"GET accesstoken\");        \r",
+							"        pm.execution.setNextRequest(\"GET accesstoken\");        \r",
 							"        pm.variables.set(\"recovery\",pm.info.requestName);\r",
 							"        break;\r",
 							"    } // end case 401 \r",
@@ -47,7 +47,7 @@
 							"        const retryafter=(pm.response.headers.get('Retry-After')!=undefined) ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
 							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SAP Analytics Cloud is receiving too many requests. Retrying in '+retryafter+'ms');\r",
 							"        setTimeout(()=> {},retryafter);\r",
-							"        postman.setNextRequest(pm.info.requestName);\r",
+							"        pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        break;\r",
 							"    }  // end case 429\r",
 							"\r",
@@ -77,7 +77,7 @@
 							"        {\r",
 							"            console.error(pm.info.requestName+' '+pm.info.eventName+\": System Owner not found.\");\r",
 							"        }\r",
-							"        postman.setNextRequest(null);\r",
+							"        pm.execution.setNextRequest(null);\r",
 							"        break;\r",
 							"    }   // end case response is 200\r",
 							"    default:\r",
@@ -95,17 +95,17 @@
 							"        {\r",
 							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
 							"            pm.variables.set(\"ContinuousErrors\",0); \r",
-							"            postman.setNextRequest(NextPostmanRequest());\r",
+							"            pm.execution.setNextRequest(NextPostmanRequest());\r",
 							"        }\r",
 							"        else if (errors >= 2)\r",
 							"        {\r",
 							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
-							"            postman.setNextRequest(pm.info.requestName);\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        }\r",
 							"        else\r",
 							"        {\r",
 							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
-							"            postman.setNextRequest(pm.info.requestName);\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        }\r",
 							"        ;\r",
 							"        break;\r",
@@ -146,19 +146,19 @@
 				"header": [
 					{
 						"key": "x-csrf-token",
-						"type": "text",
-						"value": "{{x-csrf-token}}"
+						"value": "{{x-csrf-token}}",
+						"type": "text"
 					},
 					{
 						"key": "x-sap-sac-custom-auth",
-						"type": "text",
-						"value": "true"
+						"value": "true",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
+						"value": "application/json",
 						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
+						"type": "text"
 					}
 				],
 				"body": {
@@ -211,13 +211,13 @@
 							"    {\r",
 							"        const jsonData = JSON.parse(responseBody);\r",
 							"        pm.environment.set(\"accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
-							"        postman.setNextRequest();                                   // we will now get a new x-csrf-token\r",
+							"        pm.execution.setNextRequest();                                   // we will now get a new x-csrf-token\r",
 							"        break;\r",
 							"    }\r",
 							"    case 401:\r",
 							"    {\r",
 							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
-							"        postman.setNextRequest(null);\r",
+							"        pm.execution.setNextRequest(null);\r",
 							"    }\r",
 							"    default:\r",
 							"    {\r",
@@ -225,13 +225,13 @@
 							"        if (pm.variables.get(\"recovery\") === pm.info.requestName)\r",
 							"        {\r",
 							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Already attempted to get a valid request. Will now quit');\r",
-							"            postman.setNextRequest(null);\r",
+							"            pm.execution.setNextRequest(null);\r",
 							"        }\r",
 							"        else\r",
 							"        {\r",
 							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Will make one more attempt to get a new accesstoken');\r",
 							"            pm.variables.set(\"recovery\",pm.info.requestName);\r",
-							"            postman.setNextRequest(pm.info.requestName);\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        }; //end if \r",
 							"        break;\r",
 							"    }\r",
@@ -244,7 +244,7 @@
 							"{\r",
 							"    console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting');\r",
 							"    pm.variables.set(\"ContinuousErrors\",0); \r",
-							"    postman.setNextRequest(null);\r",
+							"    pm.execution.setNextRequest(null);\r",
 							"}\r",
 							"else if (errors >= 2)\r",
 							"{\r",
@@ -329,7 +329,7 @@
 							"        errors++;\r",
 							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
 							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
-							"        postman.setNextRequest(\"GET accesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
+							"        pm.execution.setNextRequest(\"GET accesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
 							"        break;\r",
 							"    } // end if response is 401\r",
 							"    case 200:\r",
@@ -338,8 +338,8 @@
 							"        // so we don't need to do post-processing of this call, just continue to the next\r",
 							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetched a new x-csrf-token');\r",
 							"        // errors must not be reset as the next call to UPDATE team must re-submit the request, leaving 'errors' unchanged will ensure that the call is repeated\r",
-							"        pm.environment.set(\"x-csrf-token\",postman.getResponseHeader(\"x-csrf-token\"));\r",
-							"        postman.setNextRequest(pm.variables.get(\"recovery\"));\r",
+							"        pm.environment.set(\"x-csrf-token\",pm.response.headers.get(\"x-csrf-token\"));\r",
+							"        pm.execution.setNextRequest(pm.variables.get(\"recovery\"));\r",
 							"        break;\r",
 							"    }\r",
 							"    default: // response code is unexpected\r",
@@ -356,17 +356,17 @@
 							"        {\r",
 							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
 							"            pm.variables.set(\"ContinuousErrors\",0); \r",
-							"            postman.setNextRequest(null);\r",
+							"            pm.execution.setNextRequest(null);\r",
 							"        }\r",
 							"        else if (errors >= 2)\r",
 							"        {\r",
 							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
-							"            postman.setNextRequest(pm.info.requestName);\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        }\r",
 							"        else\r",
 							"        {\r",
 							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
-							"            postman.setNextRequest(pm.info.requestName);\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        };\r",
 							"    } // end switch pm.response.code\r",
 							"};\r",
@@ -392,19 +392,19 @@
 				"header": [
 					{
 						"key": "x-csrf-token",
-						"type": "text",
-						"value": "fetch"
+						"value": "fetch",
+						"type": "text"
 					},
 					{
 						"key": "x-sap-sac-custom-auth",
-						"type": "text",
-						"value": "true"
+						"value": "true",
+						"type": "text"
 					},
 					{
 						"key": "Content-Type",
+						"value": "application/json",
 						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
+						"type": "text"
 					}
 				],
 				"url": {
