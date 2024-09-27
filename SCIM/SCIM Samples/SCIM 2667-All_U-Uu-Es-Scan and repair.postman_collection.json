@@ -973,7 +973,7 @@
 							"                        \"email\": user.emails[0].value,\r",
 							"                        \"idpUserId\": user[\"urn:sap:params:scim:schemas:extension:sac:2.0:user-custom-parameters\"].idpUserId,\r",
 							"                        \"externalId\":user.externalId,\r",
-							"                        \"systemowner\": ( (user.roles && (user.roles[0]==='PROFILE:sap.epm:System_Owner')) === true ? true : false)\r",
+							"                        \"systemowner\": ( ((user.roles) && (user.roles.find( role => {return role.value==='PROFILE:sap.epm:System_Owner'}))) === true ? true : false)\r",
 							"                        }\r",
 							"        } ).forEach( myfunction_process_user );\r",
 							"        \r",
