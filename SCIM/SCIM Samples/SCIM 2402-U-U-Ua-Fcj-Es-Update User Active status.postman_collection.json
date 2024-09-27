@@ -1,0 +1,1134 @@
+{
+	"info": {
+		"_postman_id": "616c0a00-70ed-4941-a1dd-8bfd85528060",
+		"name": "SCIM 2402-U-U-Ua-Fcj-Es-Update User Active status",
+		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (& for other related content)\n\n[https://community.sap.com/t5/technology-blogs-by-sap/sap-analytics-cloud-user-and-team-provisioning-scim-api-best-practices-and/ba-p/13509352](https://community.sap.com/t5/technology-blogs-by-sap/sap-analytics-cloud-user-and-team-provisioning-scim-api-best-practices-and/ba-p/13509352)\n\n# Questions\n\nPlease create a new question [https://community.sap.com/t5/forums/postpage/choose-node/true/board-id/technology-questions](https://community.sap.com/t5/forums/postpage/choose-node/true/board-id/technology-questions) (rather than a comment to the blog post since blog posts do not support threads)\n\n# About\n\nScript version 0.9\n\nSample scripts created by Matthew Shaw, SAP. [https://community.sap.com/t5/user/viewprofilepage/user-id/70553](https://community.sap.com/t5/user/viewprofilepage/user-id/70553)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31429660",
+		"_collection_link": "https://sap-se.postman.co/workspace/SAP-Analytics-Cloud~8ac5e5ee-c61c-4eda-99cb-9af804973bee/collection/31429660-616c0a00-70ed-4941-a1dd-8bfd85528060?action=share&source=collection_link&creator=31429660"
+	},
+	"item": [
+		{
+			"name": "READ user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"READ user\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403,429]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken or the csrf-token must be invalid. We shall get new ones of each!\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new tokens: accesstoken & x-csrf-token');\r",
+							"        pm.execution.setNextRequest(\"GET accesstoken\");        \r",
+							"        pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"        break;\r",
+							"    } // end case 401 \r",
+							"\r",
+							"    case 429:\r",
+							"    // in the event SAP Analytics Cloud is receiving too many requests, a HTTP response 429 will be issued.\r",
+							"    // in such a case, we shall wait for the 'Retry-After' value and simply re-attempt the same request.\r",
+							"    {\r",
+							"        const retryafter=(pm.response.headers.get('Retry-After')!=undefined) ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SAP Analytics Cloud is receiving too many requests. Retrying in '+retryafter+'ms');\r",
+							"        setTimeout(()=> {},retryafter);\r",
+							"        pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        break;\r",
+							"    }  // end case 429\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"        pm.variables.set(\"ContinuousErrors\",0);\r",
+							"        const userid        = pm.iterationData.get(\"file_userid\");\r",
+							"        const active        = pm.iterationData.get(\"file_active\"); // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
+							"        const readbody      = JSON.parse(pm.response.text());\r",
+							"        const totalResults  = readbody.totalResults;\r",
+							"\r",
+							"        switch (totalResults)\r",
+							"        {\r",
+							"            case 0:\r",
+							"            {\r",
+							"                console.error(pm.info.requestName+' '+pm.info.eventName+\": Could not find a user with id \"+userid+\". Aborting this user.\");\r",
+							"                pm.execution.setNextRequest(null);\r",
+							"                break;\r",
+							"            }\r",
+							"            case 1:\r",
+							"            {\r",
+							"                function UserIsSystemOwner( user )\r",
+							"                {\r",
+							"                    return ((user.roles) && (user.roles.find( role => {return role.value==='PROFILE:sap.epm:System_Owner'})));\r",
+							"                }\r",
+							"\r",
+							"                function UserNeedsUpdating( user )\r",
+							"                {\r",
+							"                    return (!user.active===(active.toString()==='true'))\r",
+							"                }\r",
+							"\r",
+							"                const UserToUpdate  =readbody.Resources.filter( user => user.userName===userid )[0];\r",
+							"\r",
+							"                if ( UserIsSystemOwner( UserToUpdate ) )\r",
+							"                {\r",
+							"                    console.error(pm.info.requestName+' '+pm.info.eventName+\": User \"+userid+\" found, however, this is the System Owner. The System Owner can not be updated via the API. Aborting this user.\");\r",
+							"                    pm.execution.setNextRequest(null);\r",
+							"                }\r",
+							"                else if ( !UserNeedsUpdating( UserToUpdate ) )\r",
+							"                {\r",
+							"                    console.log(pm.info.requestName+' '+pm.info.eventName+\": User \"+userid+\" found, however, this user does not need to be updated. Aborting this user.\");\r",
+							"                    pm.execution.setNextRequest(null);\r",
+							"                }\r",
+							"                else\r",
+							"                {\r",
+							"                    console.log(pm.info.requestName+' '+pm.info.eventName+\": User \"+userid+\" found, proceeding to update.\");\r",
+							"                    pm.variables.set(\"UserToUpdate\",UserToUpdate);\r",
+							"                    pm.execution.setNextRequest();\r",
+							"                }\r",
+							"                break;\r",
+							"            }\r",
+							"            default:\r",
+							"            {\r",
+							"                console.error(pm.info.requestName+' '+pm.info.eventName+\": There is more than one user with the same id, \"+userid+\", which means it's uncertain which user should be updated. Aborting this user.\");\r",
+							"                pm.execution.setNextRequest(null);\r",
+							"                break;\r",
+							"            }\r",
+							"        }\r",
+							"        break;\r",
+							"    }   // end case response is 200\r",
+							"    default:\r",
+							"    {\r",
+							"        // response code is unexpected\r",
+							"        // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ pm.response.text());\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            pm.execution.setNextRequest(NextPostmanRequest());\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ pm.response.text());\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ pm.response.text());\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        ;\r",
+							"        break;\r",
+							"    }\r",
+							"}; // end swtich pm.response.code"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const userid    = pm.iterationData.get(\"file_userid\");\r",
+							"pm.variables.set(\"previouserror\",0); // resets this counter on each new user. \r",
+							"\r",
+							"pm.variables.set(\"filter_for_user\",\r",
+							"      \"userName eq \\\\\\\"\"\r",
+							"    + userid \r",
+							"    + \"\\\\\\\" \" );\r",
+							"\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading user '+userid);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"value": "{{x-csrf-token}}",
+						"type": "text"
+					},
+					{
+						"key": "x-sap-sac-custom-auth",
+						"value": "true",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:SearchRequest\"],\r\n     \"filter\":\r\n        \"{{filter_for_user}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/scim2/Users/.search",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"scim2",
+						"Users",
+						".search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE user active status",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"const errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"\r",
+							"if (errors>0)\r",
+							"{\r",
+							"    console.warn(pm.info.requestName+' '+pm.info.eventName+': Re-submitting request following previous error');\r",
+							"}\r",
+							"else\r",
+							"{\r",
+							"    const active        = pm.iterationData.get(\"file_active\"); // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
+							"    const UserToUpdate    = pm.variables.get(\"UserToUpdate\");\r",
+							"    const active_status = (active.toString() === 'true') ? 'activated' : 'deactivated';\r",
+							"\r",
+							"    console.log(pm.info.requestName+' '+pm.info.eventName+': Updating user '+UserToUpdate.userName+' \\''+UserToUpdate.displayName+'\\' to be '+active_status);\r",
+							"\r",
+							"    const Operations=new Array();\r",
+							"\r",
+							"    Operations.push({\r",
+							"        \"op\": \"replace\",\r",
+							"        \"path\": \"active\",\r",
+							"        \"value\": active\r",
+							"    });\r",
+							"\r",
+							"    const user_patch_request=\r",
+							"    {\r",
+							"        \"schemas\": [\r",
+							"            \"urn:ietf:params:scim:api:messages:2.0:PatchOp\"\r",
+							"        ],\r",
+							"        \"Operations\": Operations\r",
+							"    };\r",
+							"    pm.variables.set(\"user_uuid\",UserToUpdate.id);\r",
+							"    pm.variables.set(\"user_request_body\",JSON.stringify(user_patch_request));\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"UPDATE user active status\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403,429])\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"const active         = pm.iterationData.get(\"file_active\"); // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
+							"const active_status  = (active.toString() === 'true') ? 'activated' : 'deactivated';\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken or the csrf-token must be invalid. We shall get new ones of each!\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
+							"        pm.execution.setNextRequest(\"GET accesstoken\");\r",
+							"        break;\r",
+							"    } // end if response is 401\r",
+							"    \r",
+							"    case 429:\r",
+							"    // in the event SAP Analytics Cloud is receiving too many requests, a HTTP response 429 will be issued.\r",
+							"    // in such a case, we shall wait for the 'Retry-After' value and simply re-attempt the same request.\r",
+							"    {\r",
+							"        const retryafter=(pm.response.headers.get('Retry-After')!=undefined) ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SAP Analytics Cloud is receiving too many requests. Retrying in '+retryafter+'ms');\r",
+							"        setTimeout(()=> {},retryafter);\r",
+							"        pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        break;\r",
+							"    }  // end case 429\r",
+							"\r",
+							"    case 400:\r",
+							"    {\r",
+							"        // \r",
+							"        // we are trapping a condition here when the PATCH request returns a 400 typically with a pm.response.text():\r",
+							"        //  {\"schemas\":[\"urn:ietf:params:scim:api:messages:2.0:Error\"],\"status\":\"400\",\"scimType\":\"invalidValue\",\"detail\":\"Request is unparsable, syntactically incorrect, or violates schema.\"}\r",
+							"        // this will occur when:\r",
+							"        //    1 ) the users email is not 100% the same when compared between the emails[0].value and the idpUserId AND when the SAML SSO is either default or email.\r",
+							"        //    2 ) the users idpUserId value is not 100% the same when compared between the userName and the idpUserId AND when the SAML SSO is userid\r",
+							"        //\r",
+							" \r",
+							"        pm.variables.set(\"ContinuousErrors\",0); // seems odd perhaps that we are not adding to the error count, but we are managing this error by capturing the error in the previouserror,\r",
+							"                                                // and then repairing the user, before then trying again. \r",
+							"        const UserToUpdate  = pm.variables.get(\"UserToUpdate\");\r",
+							"        const previouserror = pm.variables.get(\"previouserror\"); // was set to 0 in the first request of this collection.\r",
+							"\r",
+							"        switch (previouserror)\r",
+							"        {\r",
+							"            case 0:\r",
+							"            {\r",
+							"                // no previous error\r",
+							"                console.info(pm.info.requestName+' '+pm.info.eventName+': Update for user '+UserToUpdate.userName+' \\''+UserToUpdate.displayName+'\\' failed. To resolve this error, the user will now be repaired, and a subsequent update will then be re-attempted. Response code: '+pm.response.code+' '+pm.response.text());\r",
+							"                pm.variables.set(\"previouserror\",pm.response.code)\r",
+							"                pm.variables.set(\"repair_user\",UserToUpdate);\r",
+							"                pm.variables.set(\"recovery_from_repair\",pm.info.requestName);\r",
+							"                pm.execution.setNextRequest(\"READ user for repair\");\r",
+							"                user_needs_repair=true;  // needed so we later skip the pm.execution.setNextRequest setting later that would ignore the line above this\r",
+							"                break;\r",
+							"            }\r",
+							"            case 400:\r",
+							"            default:\r",
+							"            {\r",
+							"                // there was a previous error\r",
+							"                console.error(pm.info.requestName+' '+pm.info.eventName+': Update for user '+UserToUpdate.userName+' \\''+UserToUpdate.displayName+'\\' failed for the second time and after a possible repair of that user. It might be because the user is the System Owner. This user could not be '+active_status+'.  Response code: '+pm.response.code+' '+pm.response.text());\r",
+							"                pm.execution.setNextRequest(null);\r",
+							"                break;\r",
+							"            } // end default case\r",
+							"        } // end previouserror switch\r",
+							"        break;\r",
+							"    }\r",
+							"\r",
+							"    case 428:\r",
+							"    {\r",
+							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"        pm.variables.set(\"ContinuousErrors\",0);\r",
+							"        const UserToUpdate    = pm.variables.get(\"UserToUpdate\");\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': '+UserToUpdate.userName+' \\''+UserToUpdate.displayName+'\\' could not be '+active_status+' due to insufficient licenses. Response code: '+pm.response.code+' '+pm.response.text());\r",
+							"        pm.execution.setNextRequest(null);\r",
+							"        break;\r",
+							"    } // end 428\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"        pm.variables.set(\"ContinuousErrors\",0);\r",
+							"        const UserAfterUpdate = JSON.parse(pm.response.text());\r",
+							"        const UserToUpdate    = pm.variables.get(\"UserToUpdate\");\r",
+							"\r",
+							"        function UserNeedsUpdating( user )\r",
+							"        {\r",
+							"            return (!user.active===(active.toString()==='true'))\r",
+							"        }\r",
+							"\r",
+							"        if (UserNeedsUpdating( UserAfterUpdate ))\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': '+UserToUpdate.userName+' \\''+UserToUpdate.displayName+'\\' was not updated as expected. Active status remains '+UserAfterUpdate.active+'.');\r",
+							"            pm.test('Update user active status '+UserToUpdate.userName,function() { throw new Error( UserToUpdate.userName ) });\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.log(pm.info.requestName+' '+pm.info.eventName+': '+UserToUpdate.userName+' \\''+UserToUpdate.displayName+'\\' now '+active_status+'.');\r",
+							"        }\r",
+							"        pm.execution.setNextRequest(null);\r",
+							"        break;\r",
+							"    }\r",
+							"    default:\r",
+							"    {\r",
+							"        // response code is unexpected\r",
+							"        // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ pm.response.text());\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            pm.execution.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ pm.response.text());\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ pm.response.text());\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        ;\r",
+							"        break;\r",
+							"    }\r",
+							"};"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"value": "{{x-csrf-token}}",
+						"type": "text"
+					},
+					{
+						"key": "x-sap-sac-custom-auth",
+						"value": "true",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{user_request_body}}"
+				},
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/scim2/Users/{{user_uuid}}",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"scim2",
+						"Users",
+						"{{user_uuid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "READ user for repair",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"READ user for repair\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403,429]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"function email_is_valid( user )\r",
+							"{\r",
+							"    switch (pm.variables.get(\"SAMLSSO\"))\r",
+							"    {\r",
+							"        case 'custom':\r",
+							"        {\r",
+							"            return (  (user.emails[0].value===user.emails[0].value.toLowerCase())  );\r",
+							"            break;\r",
+							"        }\r",
+							"        case 'email':\r",
+							"        case 'default':\r",
+							"        {\r",
+							"            // we test if the email is in lowercase or not, and we also test if the email stored in idpUserId matches the email address as seen in the user interface.\r",
+							"            return (  (user.emails[0].value===user.emails[0].value.toLowerCase()) \r",
+							"                    &&(user.emails[0].value===user[\"urn:sap:params:scim:schemas:extension:sac:2.0:user-custom-parameters\"].idpUserId)\r",
+							"            )\r",
+							"            break;\r",
+							"        }\r",
+							"        default:\r",
+							"        {\r",
+							"            return true;\r",
+							"            break;\r",
+							"        }\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"function UserIsValid( user )\r",
+							"{\r",
+							"    return (email_is_valid( user ));\r",
+							"}\r",
+							"\r",
+							"function UserIsSystemOwner( user )\r",
+							"{\r",
+							"    return ((user.roles) && (user.roles.find( role => {return role.value==='PROFILE:sap.epm:System_Owner'})));\r",
+							"}\r",
+							"\r",
+							"function ConsoleErrorLogUser( user, error )\r",
+							"{\r",
+							"    console.error(\"User is inconsistent: uuid(id):\"+user.id+\" id(userName):\"+user.userName+\" email(emails.value):\"+user.emails[0].value+\" SAMLmapping(idpUserId):\"+user[\"urn:sap:params:scim:schemas:extension:sac:2.0:user-custom-parameters\"].idpUserId+\" Error:\"+error)\r",
+							"}\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken or the csrf-token must be invalid. We shall get new ones of each!\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
+							"        pm.execution.setNextRequest(\"GET accesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
+							"        break;\r",
+							"    } // end case response is 401\r",
+							"\r",
+							"    case 429:\r",
+							"    // in the event SAP Analytics Cloud is receiving too many requests, a HTTP response 429 will be issued.\r",
+							"    // in such a case, we shall wait for the 'Retry-After' value and simply re-attempt the same request.\r",
+							"    {\r",
+							"        const retryafter=(pm.response.headers.get('Retry-After')!=undefined) ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SAP Analytics Cloud is receiving too many requests. Retrying in '+retryafter+'ms');\r",
+							"        setTimeout(()=> {},retryafter);\r",
+							"        pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        break;\r",
+							"    }  // end case 429\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"        // we will NOT reset the errors to 0 as it could result in an endless loop.\r",
+							"        const repair_user=(JSON.parse(pm.response.text()));\r",
+							"\r",
+							"        if (UserIsSystemOwner( repair_user ))\r",
+							"        {\r",
+							"            console.info(pm.info.requestName+' '+pm.info.eventName+\": This user is the System Owner and can not be updated via the API. Please expect updates to this user to fail: \"+repair_user.userName);\r",
+							"        }\r",
+							"\r",
+							"        if (!UserIsValid(repair_user))\r",
+							"        {\r",
+							"            ConsoleErrorLogUser( repair_user, \"e-mail inconsistent, or not lowercase\");\r",
+							"            if (UserIsSystemOwner( repair_user ))\r",
+							"            {\r",
+							"                console.error(pm.info.requestName+' '+pm.info.eventName+\": Can not repair System Owner as the System Owner can not be updated via the API: \"+repair_user.userName);\r",
+							"                pm.execution.setNextRequest(pm.variables.get(\"recovery_from_repair\"));\r",
+							"            }\r",
+							"            else\r",
+							"            {\r",
+							"                console.error(pm.info.requestName+' '+pm.info.eventName+\": Attempting to repair user \"+repair_user.userName);\r",
+							"                pm.variables.set(\"repair_user\",repair_user);\r",
+							"                pm.execution.setNextRequest(\"REPAIR user\");\r",
+							"            }\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.log(pm.info.requestName+' '+pm.info.eventName+': User definition seems consistent: '+repair_user.userName);\r",
+							"            pm.execution.setNextRequest(pm.variables.get(\"recovery_from_repair\"));\r",
+							"        }\r",
+							"        \r",
+							"        \r",
+							"        break;\r",
+							"    }\r",
+							"    default:  // response code is unexpected\r",
+							"    {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ pm.response.text());\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            pm.execution.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ pm.response.text());\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ pm.response.text());\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        };\r",
+							"        break;\r",
+							"    };\r",
+							"\r",
+							"} // end switch response code"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"const repair_user = pm.variables.get(\"repair_user\");\r",
+							"pm.variables.set(\"user_uuid\",repair_user.id);\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading user for repair: '+ repair_user.userName+' '+repair_user.displayName );"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-sap-sac-custom-auth",
+						"value": "true",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/scim2/Users/{{user_uuid}}",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"scim2",
+						"Users",
+						"{{user_uuid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REPAIR user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"REPAIR user\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403,429]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    case 403:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken or the csrf-token must be invalid. We shall get new ones of each!\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
+							"        pm.execution.setNextRequest(\"GET accesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
+							"        break;\r",
+							"    } // end case response is 401\r",
+							"\r",
+							"    case 429:\r",
+							"    // in the event SAP Analytics Cloud is receiving too many requests, a HTTP response 429 will be issued.\r",
+							"    // in such a case, we shall wait for the 'Retry-After' value and simply re-attempt the same request.\r",
+							"    {\r",
+							"        const retryafter=(pm.response.headers.get('Retry-After')!=undefined) ? parseInt(pm.response.headers.get('Retry-After')) : 5000;\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': SAP Analytics Cloud is receiving too many requests. Retrying in '+retryafter+'ms');\r",
+							"        setTimeout(()=> {},retryafter);\r",
+							"        pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        break;\r",
+							"    }  // end case 429\r",
+							"\r",
+							"    case 200:\r",
+							"    {\r",
+							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
+							"        pm.variables.set(\"ContinuousErrors\",0);\r",
+							"        const repair_user=pm.variables.get(\"repair_user\");\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': User repaired successfully: '+repair_user.userName);\r",
+							"        pm.execution.setNextRequest(pm.variables.get(\"recovery_from_repair\"));\r",
+							"        break;\r",
+							"    }\r",
+							"    default:  // response code is unexpected\r",
+							"    {\r",
+							"       // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ pm.response.text());\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            pm.execution.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ pm.response.text());\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ pm.response.text());\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        };\r",
+							"        break;\r",
+							"    };\r",
+							"\r",
+							"} // end switch response code"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"const repair_user=pm.variables.get(\"repair_user\");\r",
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Repairing user: '+ repair_user.userName );\r",
+							"\r",
+							"const target_user_request= {};\r",
+							"const elements_to_remove = ['meta','id'];\r",
+							"\r",
+							"Object.keys(repair_user).forEach( key => {  if (!elements_to_remove.includes(key)) { target_user_request[key]=repair_user[key] }} );\r",
+							"\r",
+							"\r",
+							"switch (pm.variables.get(\"SAMLSSO\"))\r",
+							"{\r",
+							"    case 'default':\r",
+							"    {\r",
+							"        // the next line is important. There's a problem (which may now have been resolved) with the default authentication and creating users with a mixed CaSe of email.\r",
+							"        // the problem is/was, that if the idpUserId that contains the email along with the emails[0].value must always be the same for this authenticaiton method (and also when SAML SSO is mapped on email)\r",
+							"        // however, when the user is created via the SCIM API, the idpUserId email case is lowered. It means the email is the same email, but in a different case to emails[0].value\r",
+							"        // this difference means that PATCH requests will fail. Its gets complicated, because a user could be created manually and then this issue doesn't occur. However, we then have another problem,\r",
+							"        // which is the case of these users could also be mixed.  So we shall prevent these problems, by setting the email into lowercase. We shall use the emails[0].value value as the 'source' email as this\r",
+							"        // is the one seen, and editable, within the user interface\r",
+							"        target_user_request.emails[0].value=target_user_request.emails[0].value.toLowerCase();\r",
+							"        target_user_request[\"urn:sap:params:scim:schemas:extension:sac:2.0:user-custom-parameters\"].idpUserId=target_user_request.emails[0].value;\r",
+							"\r",
+							"        // the next line should remain commented-out, because this will copy the idpUserId to the email which is typically not desired\r",
+							"        // target_user_request.emails[0].value=target_user_request[\"urn:sap:params:scim:schemas:extension:sac:2.0:user-custom-parameters\"].idpUserId;\r",
+							"        break;\r",
+							"    }\r",
+							"    case 'email':\r",
+							"    {\r",
+							"        //target_user_request.emails[0].value=target_user_request[\"urn:sap:params:scim:schemas:extension:sac:2.0:user-custom-parameters\"].idpUserId;\r",
+							"        target_user_request[\"urn:sap:params:scim:schemas:extension:sac:2.0:user-custom-parameters\"].idpUserId=target_user_request.emails[0].value;\r",
+							"        break;\r",
+							"    }\r",
+							"\r",
+							"    case 'custom':\r",
+							"    {\r",
+							"        // nothing to do\r",
+							"        break;\r",
+							"    }\r",
+							"\r",
+							"    case 'userid':\r",
+							"    {\r",
+							"        // SAP Analytics Cloud is using a custom IdP Mapping on userid property. \r",
+							"        target_user_request[\"urn:sap:params:scim:schemas:extension:sac:2.0:user-custom-parameters\"].idpUserId=target_userid;\r",
+							"        break;\r",
+							"    }\r",
+							"\r",
+							"}; // end switch on SAML SSO\r",
+							"\r",
+							"\r",
+							"pm.variables.set(\"user_request_body\",JSON.stringify(target_user_request));\r",
+							"pm.variables.set(\"user_uuid\",repair_user.id);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-sap-sac-custom-auth",
+						"value": "true",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"name": "Content-Type",
+						"type": "text"
+					},
+					{
+						"key": "x-csrf-token",
+						"value": "{{x-csrf-token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{user_request_body}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/scim2/Users/{{user_uuid}}",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"scim2",
+						"Users",
+						"{{user_uuid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET accesstoken",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Getting access token');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"GET accesstoken\", function()\r",
+							"    {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 200:\r",
+							"    {\r",
+							"        const jsonData = JSON.parse(pm.response.text());\r",
+							"        pm.environment.set(\"accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
+							"        pm.execution.setNextRequest();                                   // we will now get a new x-csrf-token\r",
+							"        break;\r",
+							"    }\r",
+							"    case 401:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ pm.response.text());\r",
+							"        pm.execution.setNextRequest(null);\r",
+							"    }\r",
+							"    default:\r",
+							"    {\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Response Body: '+ pm.response.text());\r",
+							"        if (pm.variables.get(\"recovery\") === pm.info.requestName)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Already attempted to get a valid request. Will now quit');\r",
+							"            pm.execution.setNextRequest(null);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Will make one more attempt to get a new accesstoken');\r",
+							"            pm.variables.set(\"recovery\",pm.info.requestName);\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        }; //end if \r",
+							"        break;\r",
+							"    }\r",
+							"}; // switch case\r",
+							"\r",
+							"const errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors needs to be at least 2, otherwise valid workflows may be able to correctly recover from an invalid access tokens or invalid csrf-tokens\r",
+							"\r",
+							"if (errors >= maxerrors)\r",
+							"{\r",
+							"    console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting');\r",
+							"    pm.variables.set(\"ContinuousErrors\",0); \r",
+							"    pm.execution.setNextRequest(null);\r",
+							"}\r",
+							"else if (errors >= 2)\r",
+							"{\r",
+							"    console.info(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected');\r",
+							"    // a valid accesstoken may have been obtained, but the request where it came from could have failed, hence the need to trap for a continous loop of errors here\r",
+							"};"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "{{Username}}",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "{{Password}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://{{SACtokenFQDN}}/oauth/token?grant_type=client_credentials",
+					"protocol": "https",
+					"host": [
+						"{{SACtokenFQDN}}"
+					],
+					"path": [
+						"oauth",
+						"token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FETCH csrf token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new x-csrf-token');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Fetch x-csrf-token\", function ()\r",
+							"    {\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,401]);\r",
+							"    }\r",
+							");\r",
+							"\r",
+							"\r",
+							"switch (pm.response.code)\r",
+							"{\r",
+							"    case 401:\r",
+							"    {\r",
+							"        // we are not authorised, so our accesstoken or the csrf-token must be invalid. We shall get new ones of each!\r",
+							"        // A 401 error might be because something is wrong with the call or even the SAP SAC SCIM API, so we need to start counting errors,\r",
+							"        // so we don't end up in an endless loop.\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetching a new access token');\r",
+							"        pm.execution.setNextRequest(\"GET accesstoken\"); // once a new accesstoken is successfully returned this call will be repeated thanks to the 'recovery' variable set in the pre-request\r",
+							"        break;\r",
+							"    } // end if response is 401\r",
+							"    case 200:\r",
+							"    {\r",
+							"        // if NeedGetToBeAuthorised is true, then we're here because we need to issue a GET call to authorise the session (otherwise we could get a 403).\r",
+							"        // so we don't need to do post-processing of this call, just continue to the next\r",
+							"        console.log(pm.info.requestName+' '+pm.info.eventName+': Fetched a new x-csrf-token');\r",
+							"        // errors must not be reset as the next call to UPDATE team must re-submit the request, leaving 'errors' unchanged will ensure that the call is repeated\r",
+							"        pm.environment.set(\"x-csrf-token\",pm.response.headers.get(\"x-csrf-token\"));\r",
+							"        pm.execution.setNextRequest(pm.variables.get(\"recovery\"));\r",
+							"        break;\r",
+							"    }\r",
+							"    default: // response code is unexpected\r",
+							"    {\r",
+							"        // we got an unexpected response from the SAC API\r",
+							"        let errors=pm.variables.get(\"ContinuousErrors\");\r",
+							"        if (!errors) { errors=0 };  // in case errors has not yet been set we need to set it to 0\r",
+							"        errors++;\r",
+							"        pm.variables.set(\"ContinuousErrors\",errors);\r",
+							"        const maxerrors=parseInt( (pm.environment.get(\"abort_after_continous_errors_reaches\")!=undefined) ? parseInt(pm.environment.get(\"abort_after_continous_errors_reaches\")) : 3 );  // maxerrors should be at least 2 to allow for recovery of invalid access token and csrf tokens\r",
+							"                            // it means a setting of 1 would mean any call following would not be allowed to re-attempt the call.\r",
+							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
+							"        if (errors >= maxerrors)\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ pm.response.text());\r",
+							"            pm.variables.set(\"ContinuousErrors\",0); \r",
+							"            pm.execution.setNextRequest(null);\r",
+							"        }\r",
+							"        else if (errors >= 2)\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ pm.response.text());\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        }\r",
+							"        else\r",
+							"        {\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ pm.response.text());\r",
+							"            pm.execution.setNextRequest(pm.info.requestName);\r",
+							"        };\r",
+							"    } // end switch pm.response.code\r",
+							"};\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accesstoken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-csrf-token",
+						"value": "fetch",
+						"type": "text"
+					},
+					{
+						"key": "x-sap-sac-custom-auth",
+						"value": "true",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"name": "Content-Type",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{SACserviceFQDN}}/api/v1/csrf",
+					"protocol": "https",
+					"host": [
+						"{{SACserviceFQDN}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"csrf"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
