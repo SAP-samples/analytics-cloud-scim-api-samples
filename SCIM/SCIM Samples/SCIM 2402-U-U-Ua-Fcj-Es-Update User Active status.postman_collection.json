@@ -264,7 +264,7 @@
 						"exec": [
 							"pm.test(\"UPDATE user active status\", function ()\r",
 							"    {\r",
-							"        pm.expect(pm.response.code).to.be.oneOf([200,401,403,429])\r",
+							"        pm.expect(pm.response.code).to.be.oneOf([200,400,401,403,429])\r",
 							"    }\r",
 							");\r",
 							"\r",
@@ -331,6 +331,7 @@
 							"            default:\r",
 							"            {\r",
 							"                // there was a previous error\r",
+							"                pm.test('Update user active status '+UserToUpdate.userName,function() { throw new Error( UserToUpdate.userName ) });\r",
 							"                console.error(pm.info.requestName+' '+pm.info.eventName+': Update for user '+UserToUpdate.userName+' \\''+UserToUpdate.displayName+'\\' failed for the second time and after a possible repair of that user. It might be because the user is the System Owner. This user could not be '+active_status+'.  Response code: '+pm.response.code+' '+pm.response.text());\r",
 							"                pm.execution.setNextRequest(null);\r",
 							"                break;\r",
