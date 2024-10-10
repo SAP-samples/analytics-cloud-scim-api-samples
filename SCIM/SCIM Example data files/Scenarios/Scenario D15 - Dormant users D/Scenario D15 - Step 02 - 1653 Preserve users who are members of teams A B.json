@@ -1,0 +1,26 @@
+[
+  {
+    "file_source_team": "TeamA",
+	"file_target_team": "AdminToolKit_D15_Dormant_Users_D_deactivate",
+	"file_users_action": "remove",
+	"file_roles_action": "keep"
+  },
+  {
+    "file_source_team": "TeamB",
+	"file_target_team": "AdminToolKit_D15_Dormant_Users_D_deactivate",
+	"file_users_action": "remove",
+	"file_roles_action": "keep"
+  },
+  {
+    "file_source_team": "TeamA",
+	"file_target_team": "AdminToolKit_D15_Dormant_Users_D_delete",
+	"file_users_action": "remove",
+	"file_roles_action": "keep"
+  },
+  {
+    "file_source_team": "TeamB",
+	"file_target_team": "AdminToolKit_D15_Dormant_Users_D_delete",
+	"file_users_action": "remove",
+	"file_roles_action": "keep"
+  }
+]

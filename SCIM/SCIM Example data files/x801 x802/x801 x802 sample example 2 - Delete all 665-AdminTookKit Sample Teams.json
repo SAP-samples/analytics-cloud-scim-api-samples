@@ -96,22 +96,34 @@
     "file_delete_team": "AdminToolKit_Users_That_Did_Not_Create_Public_Folder_Content"
   },
   {
-    "file_delete_team": "AdminToolKit_Users_Dormant_A__Created_3_Months_No_Recent_Login_Fewer_Than_3_Logins_Last_3_Months"
+    "file_delete_team": "AdminToolKit_D12_Dormant_Users_A_deactivate"
   },
   {
-    "file_delete_team": "AdminToolKit_Users_Dormant_B__Dormant_A_Plus_No_Private_Folder_Content"
+    "file_delete_team": "AdminToolKit_D12_Dormant_Users_A_delete"
   },
   {
-    "file_delete_team": "AdminToolKit_Users_Dormant_C__Dormant_B_Plus_No_Public_Folder_Content"
+    "file_delete_team": "AdminToolKit_D13_Dormant_Users_B_deactivate"
   },
   {
-    "file_delete_team": "AdminToolKit_Users_Dormant_D__Dormant_C_Plus_Are_Not_Managers"
+    "file_delete_team": "AdminToolKit_D13_Dormant_Users_B_delete"
   },
   {
-    "file_delete_team": "AdminToolKit_Users_Dormant_E__Dormant_D_Plus_Are_Activated"
+    "file_delete_team": "AdminToolKit_D14_Dormant_Users_C_deactivate"
   },
   {
-    "file_delete_team": "AdminToolKit_Users_Dormant_F__Dormant_E_Plus_Are_Named_Licensed"
+    "file_delete_team": "AdminToolKit_D14_Dormant_Users_C_delete"
+  },
+  {
+    "file_delete_team": "AdminToolKit_D15_Dormant_Users_D_deactivate"
+  },
+  {
+    "file_delete_team": "AdminToolKit_D15_Dormant_Users_D_delete"
+  },
+  {
+    "file_delete_team": "AdminToolKit_D16_Dormant_Users_E_deactivate"
+  },
+  {
+    "file_delete_team": "AdminToolKit_D16_Dormant_Users_E_delete""
   },
   {
     "file_delete_team": "AdminToolKit_Users_That_Are_Managers_With_BI_Concurrent_Setting"

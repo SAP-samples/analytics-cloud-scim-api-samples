@@ -1,0 +1,12 @@
+[
+  {
+    "file_delete_team": "AdminToolKit_D13_Dormant_Users_B_deactivate",
+    "file_delete_users_in_team": false,
+    "file_delete": true
+  },
+  {
+    "file_delete_team": "AdminToolKit_D13_Dormant_Users_B_delete",
+    "file_delete_users_in_team": true,
+    "file_delete": true
+  }
+]

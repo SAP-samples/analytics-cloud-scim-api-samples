@@ -36,7 +36,8 @@
 							"console.log(pm.info.requestName+' '+pm.info.eventName+': Username       : '+pm.variables.get(\"Username\"));\r",
 							""
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				},
 				{
@@ -51,25 +52,27 @@
 							"\r",
 							"if (pm.response.code === 200)\r",
 							"    {\r",
-							"        const jsonData = JSON.parse(responseBody);\r",
+							"        const jsonData = JSON.parse(pm.response.text());\r",
 							"        pm.environment.set(\"accesstoken\", jsonData.access_token);  // setting the accesstoken so its re-used for all subsequent requests\r",
 							"        pm.environment.set(\"x-csrf-token\", \"fetch\");               // we will need to request a new csrf-token as we have a new session\r",
 							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid accesstoken was obtained. This means your SACtokenFQDN, SACplatform, Username and Password are all valid. You can now test the SCIM endpoint. The accesstoken provided was '+jsonData.access_token+' and will be re-presented in the header of subsequent requests');\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': If the identify provider, '+pm.environment.get(\"SACtokenFQDN\")+', is hosted on the SAP Business Technology Platform then you can use the following URL in a web browser to observe the full SAML response which includes the \\'attributes\\' available to SAP Analytics Cloud. This is often very helpful when troubleshooting SAML attribute mapping issues. The URL is >>>>>>>>  https://'+pm.environment.get(\"SACtokenFQDN\")+'/config?action=who&details=true&trustMigrationOnly=true  <<<<<<<<');\r",
 							"        pm.execution.setNextRequest();                                  // let the next request run (if being run in the runner)\r",
 							"    }\r",
 							"else if (pm.response.code === 401)\r",
 							"    {\r",
-							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ responseBody);\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Invalid username or password: '+ pm.response.text());\r",
 							"        pm.execution.setNextRequest(null);\r",
 							"    }\r",
 							"else\r",
 							"    {\r",
-							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Check your SACtokenFQDN is set correctly. Response Body: '+ responseBody);\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': Unhandled error. Check your SACtokenFQDN is set correctly. Response Body: '+ pm.response.text());\r",
 							"        pm.execution.setNextRequest(null);\r",
 							"    }\r",
 							"; // end if"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -181,18 +184,18 @@
 							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
 							"        if (errors >= maxerrors)\r",
 							"        {\r",
-							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ pm.response.text());\r",
 							"            pm.variables.set(\"ContinuousErrors\",0); \r",
 							"            pm.execution.setNextRequest(null);\r",
 							"        }\r",
 							"        else if (errors >= 2)\r",
 							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ pm.response.text());\r",
 							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        }\r",
 							"        else\r",
 							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ pm.response.text());\r",
 							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        };\r",
 							"    } // end switch pm.response.code\r",
@@ -286,11 +289,11 @@
 							"\r",
 							"if (pm.response.code === 401)\r",
 							"{\r",
-							"    console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401 status was returned. This means this session is not authorised, likely due to an invalid access token, or your OAuth Client has not been granted the \\'User Provisioning\\' access. Response Body: '+ responseBody);\r",
+							"    console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401 status was returned. This means this session is not authorised, likely due to an invalid access token, or your OAuth Client has not been granted the \\'User Provisioning\\' access. Response Body: '+ pm.response.text());\r",
 							"}\r",
 							"else if (pm.response.code === 200)\r",
 							"{\r",
-							"    const readbody    = JSON.parse(responseBody);\r",
+							"    const readbody    = JSON.parse(pm.response.text());\r",
 							"    const total_users_in_this_SAC_service= readbody.totalResults;\r",
 							"    console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A valid response was obtained and means your SACserviceFQDN is set correctly. This SAP Analytics Cloud Service has '+total_users_in_this_SAC_service+' users. It means your OAuth Client has been granted the \\'User Provisioning\\' access');\r",
 							"    \r",
@@ -485,7 +488,7 @@
 							"else // response code is unexpected\r",
 							"{\r",
 							"    // we got an unexpected response from the SAC API\r",
-							"    console.error(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response Body: '+ responseBody);\r",
+							"    console.error(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response Body: '+ pm.response.text());\r",
 							"};"
 						],
 						"type": "text/javascript",
@@ -562,7 +565,7 @@
 							"{\r",
 							"    case 401:\r",
 							"    {\r",
-							"        console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401 status was returned. This means this session is not authorised, likely due to an invalid access token. Response Body: '+ responseBody);\r",
+							"        console.error(pm.info.requestName+' '+pm.info.eventName+': A HTTP 401 status was returned. This means this session is not authorised, likely due to an invalid access token. Response Body: '+ pm.response.text());\r",
 							"        break;\r",
 							"    } // end case response is 401\r",
 							"    case 200:\r",
@@ -570,9 +573,17 @@
 							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
 							"        pm.variables.set(\"ContinuousErrors\",0);\r",
 							"        // load the response into a variable 'resources'\r",
-							"        const resources = JSON.parse(responseBody)[\"d\"].results;\r",
-							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A vadid response was obtained. There are '+resources.length+ ' resources in the Repository')\r",
-							"\r",
+							"        const resources = JSON.parse(pm.response.text())[\"d\"].results;\r",
+							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! A vadid response was obtained. There are '+resources.length+ ' resources in the Repository');\r",
+							"        try {\r",
+							"            const internal_tenant_id = resources.find( resource => { return (resource.openURL!='') }).openURL.split('/')[5];\r",
+							"            const trigger_indexing_url = \"https://\".concat( pm.environment.get(\"SACserviceFQDN\"), \"/sap/fpa/services/rest/fpa/indexing?tenant=\", internal_tenant_id, \"&action=initialIndexing\");\r",
+							"            console.log(pm.info.requestName+' '+pm.info.eventName+\": The /api/v1/Repositories endpoint provides access to resource metadata. The metadata is kept up-to-date and there should be no need to reindex the content. However, there are a few exceptions. One exception is when your SAP Analytics Cloud Service (or tenant) has been migrated by SAP and the resources have been transported from another tenant via a non-conventional route. In this case, the metadata may need to be reindexed. Reindexing the content is needed only once and it can only be performed by a user logged in as the \\'System Owner\\'. Reindexing is triggered by making a browser-based request to the URL \"+trigger_indexing_url+\" when already logged in as the System Owner. You should then observe the response for \\'status\\' to be \\'200\\'. This indicates the re-indexing has started which typically takes about 15 minutes to complete, but occasionally longer if there is a great deal of content. During this time, the /api/v1/Repositories will return an HTTP response status of 501 and description \\'An internal server error has occurred\\'. Once the 15 minutes have passed, the endpoint will then return all the content as expected. There may be other exceptions that mean re-indexing might be necessary. Re-indexing should not be a task repeated on any frequent basis, but solely in an exceptional manner. This URL is not documented and thus not fully supported by SAP, even though SAP Support may direct you to make this request and it will often resolve any \\'missing\\' metadata.\");\r",
+							"        }\r",
+							"        catch\r",
+							"        {\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+\": No content was found referencing an internal tenant ID. This is not expected.\");\r",
+							"        }\r",
 							"        \r",
 							"        break;\r",
 							"    }\r",
@@ -588,18 +599,18 @@
 							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
 							"        if (errors >= maxerrors)\r",
 							"        {\r",
-							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ pm.response.text());\r",
 							"            pm.variables.set(\"ContinuousErrors\",0); \r",
 							"            pm.execution.setNextRequest(null);\r",
 							"        }\r",
 							"        else if (errors >= 2)\r",
 							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ pm.response.text());\r",
 							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        }\r",
 							"        else\r",
 							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ pm.response.text());\r",
 							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        };\r",
 							"        break;\r",
@@ -607,7 +618,8 @@
 							"\r",
 							"} // end switch response code"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				},
 				{
@@ -617,7 +629,8 @@
 							"pm.variables.set(\"recovery\",pm.info.requestName);\r",
 							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading Repositories API endpoint to obtain total resources count. This will validate if the SACserviceFQDN is valid or not.');"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -642,7 +655,6 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json",
-						"name": "Content-Type",
 						"type": "text"
 					},
 					{
@@ -658,7 +670,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://{{SACserviceFQDN}}/api/v1/Repositories?$format=json&$select=id",
+					"raw": "https://{{SACserviceFQDN}}/api/v1/Repositories?$format=json&$select=id,openURL",
 					"protocol": "https",
 					"host": [
 						"{{SACserviceFQDN}}"
@@ -676,7 +688,7 @@
 						},
 						{
 							"key": "$select",
-							"value": "id",
+							"value": "id,openURL",
 							"description": "the columns to select, de-select or delete this query param to see all the columns"
 						}
 					]
@@ -741,7 +753,7 @@
 							"        console.info(pm.info.requestName+' '+pm.info.eventName+': Great! The a valid response was obtained. This SAP Analytics Cloud Service has '+total_entries+' activity logs');\r",
 							"\r",
 							"\r",
-							"        const lines = responseBody.split('\\n');  // lines is an array, each element is a row\r",
+							"        const lines = pm.response.text().split('\\n');  // lines is an array, each element is a row\r",
 							"        lines.splice(0, 4);                  // lines has the first 5 lines removed from it, as this is the header\r",
 							"         let columns_array = lines[0].split('\",\"');          // split each row into columns\r",
 							"        \r",
@@ -803,18 +815,18 @@
 							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
 							"        if (errors >= maxerrors)\r",
 							"        {\r",
-							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ pm.response.text());\r",
 							"            pm.variables.set(\"ContinuousErrors\",0); \r",
 							"            pm.execution.setNextRequest(null);\r",
 							"        }\r",
 							"        else if (errors >= 2)\r",
 							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ pm.response.text());\r",
 							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        }\r",
 							"        else\r",
 							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ pm.response.text());\r",
 							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        };\r",
 							"   }\r",
@@ -942,7 +954,7 @@
 							"        // Need to set the ContinuousErrors count to 0 as we got a valid response from the API\r",
 							"        pm.variables.set(\"ContinuousErrors\",0);\r",
 							"\r",
-							"        const readbody                  = JSON.parse(responseBody);\r",
+							"        const readbody                  = JSON.parse(pm.response.text());\r",
 							"        const totalResults              = readbody.totalResults;\r",
 							"  //      console.log(\"totalResults\", totalResults);\r",
 							"        if (totalResults===1)\r",
@@ -979,18 +991,18 @@
 							"                            // a setting of 3 is recommended to allow at least 1 re-attempted call and any subsequent call also failing for a potentially different reason\r",
 							"        if (errors >= maxerrors)\r",
 							"        {\r",
-							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ responseBody);\r",
+							"            console.error(pm.info.requestName+' '+pm.info.eventName+': Too many continuous errors. Aborting. Response: '+ pm.response.text());\r",
 							"            pm.variables.set(\"ContinuousErrors\",0); \r",
 							"            pm.execution.setNextRequest(NextPostmanRequest());\r",
 							"        }\r",
 							"        else if (errors >= 2)\r",
 							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ responseBody);\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Continuous errors detected. Response: '+ pm.response.text());\r",
 							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        }\r",
 							"        else\r",
 							"        {\r",
-							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ responseBody);\r",
+							"            console.warn(pm.info.requestName+' '+pm.info.eventName+': Unexpected error. Response: '+ pm.response.text());\r",
 							"            pm.execution.setNextRequest(pm.info.requestName);\r",
 							"        }\r",
 							"        ;\r",
