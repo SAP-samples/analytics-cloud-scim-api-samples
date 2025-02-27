@@ -4,8 +4,7 @@
 		"name": "SCIM 1406-U-U-Ulpddtn-Fj-Es-Update User DateTimeNumFormat DataAccessLang",
 		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (& for other related content)\n\n[https://community.sap.com/t5/technology-blogs-by-sap/sap-analytics-cloud-user-and-team-provisioning-scim-api-best-practices-and/ba-p/13509352](https://community.sap.com/t5/technology-blogs-by-sap/sap-analytics-cloud-user-and-team-provisioning-scim-api-best-practices-and/ba-p/13509352)\n\n# Questions\n\nPlease create a new question [https://community.sap.com/t5/forums/postpage/choose-node/true/board-id/technology-questions](https://community.sap.com/t5/forums/postpage/choose-node/true/board-id/technology-questions) (rather than a comment to the blog post since blog posts do not support threads)\n\n# About\n\nScript version 0.9\n\nSample scripts created by Matthew Shaw, SAP. [https://community.sap.com/t5/user/viewprofilepage/user-id/70553](https://community.sap.com/t5/user/viewprofilepage/user-id/70553)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "31429660",
-		"_collection_link": "https://sap-se.postman.co/workspace/SAP-Analytics-Cloud~8ac5e5ee-c61c-4eda-99cb-9af804973bee/collection/31429660-b986c063-4f1e-4d6a-a125-79d56103fd36?action=share&source=collection_link&creator=31429660"
+		"_exporter_id": "31429660"
 	},
 	"item": [
 		{
@@ -263,7 +262,10 @@
 							"\r",
 							"const cleanupnotificationsnumberofdays=customparams.cleanUpNotificationsNumberOfDays; // possible values: 0, 1, 2, etc..\r",
 							"const systemnotificationsemailoptin=customparams.systemNotificationsEmailOptIn; // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
-							"const marketingemailoptin =customparams.marketingEmailOptIn;                    // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
+							"\r",
+							"// marketingemailoptin is a legacy attribute that is no longer used. If it is present in the request body in the future, it will cause that request to fail.\r",
+							"// Thus, it is being removed now to prevent a failed request in the future. Given that it has no purpose today, it's very safe to remove it.\r",
+							"// const marketingemailoptin =customparams.marketingEmailOptIn;                    // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
 							"const isconcurrent        =customparams.isConcurrent;                           // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
 							"\r",
 							"const extension           =readbody[\"urn:scim:schemas:extension:enterprise:1.0\"];\r",
@@ -290,11 +292,11 @@
 							"pm.variables.set(\"numberformatting\",numberformatting);  // possible values include: '1,234.56', '1.234,56', '1 234,56'\r",
 							"pm.variables.set(\"cleanupnotificationsnumberofdays\",cleanupnotificationsnumberofdays); // possible values: 0, 1, 2, etc..\r",
 							"pm.variables.set(\"systemnotificationsemailoptin\",systemnotificationsemailoptin); // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
-							"pm.variables.set(\"marketingemailoptin\",marketingemailoptin); // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
 							"pm.variables.set(\"isconcurrent\",isconcurrent);       // possible values: 'true' or 'false' are valid, unlike 'TRUE' or 'FALSE'\r",
 							"pm.variables.set(\"manager\",JSON.stringify(manager)); // JSON array"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				},
 				{
@@ -375,7 +377,8 @@
 							"   }\r",
 							";"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -411,7 +414,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"schemas\": [\r\n        \"urn:ietf:params:scim:schemas:core:2.0:User\",\r\n        \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\",\r\n        \"urn:ietf:params:scim:schemas:extension:sap:user-custom-parameters:1.0\"\r\n    ],\r\n    \"userName\": \"{{username}}\",\r\n    \"id\": \"{{id}}\",\r\n    \"preferredLanguage\": \"{{preferredlanguage}}\",\r\n    \"meta\": {{meta}},\r\n    \"name\": {{name}},\r\n    \"displayName\": \"{{displayname}}\",\r\n    \"active\": {{active}},\r\n    \"emails\": {{emails}},\r\n    \"photos\": {{photos}},\r\n    \"roles\": {{roles}},\r\n    \"groups\": {{groups}},\r\n    \"urn:ietf:params:scim:schemas:extension:sap:user-custom-parameters:1.0\": {\r\n        \"dataAccessLanguage\": \"{{dataaccesslanguage}}\",\r\n        \"dateFormatting\": \"{{dateformatting}}\",\r\n        \"timeFormatting\": \"{{timeformatting}}\",\r\n        \"numberFormatting\": \"{{numberformatting}}\",\r\n        \"cleanUpNotificationsNumberOfDays\": {{cleanupnotificationsnumberofdays}},\r\n        \"systemNotificationsEmailOptIn\": {{systemnotificationsemailoptin}},\r\n        \"marketingEmailOptIn\": {{marketingemailoptin}},\r\n        \"isConcurrent\": {{isconcurrent}}\r\n    },\r\n    \"urn:scim:schemas:extension:enterprise:1.0\": {\r\n        \"manager\": {{manager}}\r\n    }\r\n}"
+					"raw": "{\r\n    \"schemas\": [\r\n        \"urn:ietf:params:scim:schemas:core:2.0:User\",\r\n        \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\",\r\n        \"urn:ietf:params:scim:schemas:extension:sap:user-custom-parameters:1.0\"\r\n    ],\r\n    \"userName\": \"{{username}}\",\r\n    \"id\": \"{{id}}\",\r\n    \"preferredLanguage\": \"{{preferredlanguage}}\",\r\n    \"meta\": {{meta}},\r\n    \"name\": {{name}},\r\n    \"displayName\": \"{{displayname}}\",\r\n    \"active\": {{active}},\r\n    \"emails\": {{emails}},\r\n    \"photos\": {{photos}},\r\n    \"roles\": {{roles}},\r\n    \"groups\": {{groups}},\r\n    \"urn:ietf:params:scim:schemas:extension:sap:user-custom-parameters:1.0\": {\r\n        \"dataAccessLanguage\": \"{{dataaccesslanguage}}\",\r\n        \"dateFormatting\": \"{{dateformatting}}\",\r\n        \"timeFormatting\": \"{{timeformatting}}\",\r\n        \"numberFormatting\": \"{{numberformatting}}\",\r\n        \"cleanUpNotificationsNumberOfDays\": {{cleanupnotificationsnumberofdays}},\r\n        \"systemNotificationsEmailOptIn\": {{systemnotificationsemailoptin}},\r\n        \"isConcurrent\": {{isconcurrent}}\r\n    },\r\n    \"urn:scim:schemas:extension:enterprise:1.0\": {\r\n        \"manager\": {{manager}}\r\n    }\r\n}"
 				},
 				"url": {
 					"raw": "https://{{SACserviceFQDN}}/api/v1/scim/Users/{{file_userid}}",
