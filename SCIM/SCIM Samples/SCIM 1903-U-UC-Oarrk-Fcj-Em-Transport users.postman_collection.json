@@ -1761,7 +1761,6 @@
 							"        {\r",
 							"            pm.execution.setNextRequest('CREATE target team without folder');\r",
 							"        };\r",
-							"        break;\r",
 							"    }\r",
 							"else if ( (pm.response.code === 200) && (NeedGetToBeAuthorised) )\r",
 							"    {\r",
@@ -1854,7 +1853,9 @@
 							"   }\r",
 							";"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
 					}
 				},
 				{
@@ -1864,7 +1865,9 @@
 							"console.log(pm.info.requestName+' '+pm.info.eventName+': Reading target team '+pm.variables.get(\"currentteam\"));\r",
 							"pm.variables.set(\"recovery\",pm.info.requestName);"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
 					}
 				}
 			],

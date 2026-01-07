@@ -4,8 +4,7 @@
 		"name": "SCIM 2667-All_U-Uu-Es-Scan and repair",
 		"description": "# Provided 'as is'\n\nThese samples are being provided \"AS IS\", without any warranty obligations whatsoever on the part of SAP. SAP makes no express or implied warranties of any type, including, but not limited to, implied warranties of merchantability and of fitness for a particular purpose.\n\n# User guide\n\n[https://d.dam.sap.com/a/kv3cXuB](https://d.dam.sap.com/a/kv3cXuB)\n\n# Blog (& for other related content)\n\n[https://community.sap.com/t5/technology-blogs-by-sap/sap-analytics-cloud-user-and-team-provisioning-scim-api-best-practices-and/ba-p/13509352](https://community.sap.com/t5/technology-blogs-by-sap/sap-analytics-cloud-user-and-team-provisioning-scim-api-best-practices-and/ba-p/13509352)\n\n# Questions\n\nPlease create a new question [https://community.sap.com/t5/forums/postpage/choose-node/true/board-id/technology-questions](https://community.sap.com/t5/forums/postpage/choose-node/true/board-id/technology-questions) (rather than a comment to the blog post since blog posts do not support threads)\n\n# About\n\nScript version 0.9.2\n\nSample scripts created by Matthew Shaw, SAP. [https://community.sap.com/t5/user/viewprofilepage/user-id/70553](https://community.sap.com/t5/user/viewprofilepage/user-id/70553)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "31429660",
-		"_collection_link": "https://sap-se.postman.co/workspace/SAP-Analytics-Cloud~8ac5e5ee-c61c-4eda-99cb-9af804973bee/collection/31429660-425a6f84-8878-49c5-a861-320def67b012?action=share&source=collection_link&creator=31429660"
+		"_exporter_id": "31429660"
 	},
 	"item": [
 		{
@@ -1018,7 +1017,7 @@
 							"        {\r",
 							"                return {\"id\": user.id,\r",
 							"                        \"userName\": user.userName,\r",
-							"                        \"email\": user.emails[0].value,\r",
+							"                        \"email\": ((user.emails===undefined) ? '' : user.emails[0].value),\r",
 							"                        \"idpUserId\": user[\"urn:sap:params:scim:schemas:extension:sac:2.0:user-custom-parameters\"].idpUserId,\r",
 							"                        \"externalId\":user.externalId,\r",
 							"                        \"systemowner\": ( ((user.roles) && (user.roles.find( role => {return role.value==='PROFILE:sap.epm:System_Owner'}))) === true ? true : false)\r",
@@ -1106,7 +1105,8 @@
 							"}; // end swtich pm.response.code"
 						],
 						"type": "text/javascript",
-						"packages": {}
+						"packages": {},
+						"requests": {}
 					}
 				},
 				{
@@ -1126,7 +1126,8 @@
 							""
 						],
 						"type": "text/javascript",
-						"packages": {}
+						"packages": {},
+						"requests": {}
 					}
 				}
 			],
